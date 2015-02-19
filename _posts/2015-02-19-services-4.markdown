@@ -1,13 +1,13 @@
 ---
 layout: default
-img: operations.png
+img: interact.png
 category: graph
-title: Full description of supported operations
+title: Navigate the API graph 
 description: |
   <p class="lead">
-  Double-click on resource nodes and view all the supported 
-  operations, along with parameters, responses, MIME types
-  and applied security schemes.
+  When the full API is visualized right in front of you, you can interact
+  with it in various ways.  Drag it around and zoom in/out using the mouse
+  wheel. See how resources are interconnected and undestand its semantics. 
   </p>
 
 ---

@@ -1,12 +1,13 @@
 ---
 layout: default
-img: security.png
+img: operations.png
 category: graph
-title: Inspect security policies
+title: Full description of supported operations
 description: |
   <p class="lead">
-  Double-click on security nodes and investigate all the 
-  security policies and schemes applied by the API.
+  Double-click on resource nodes and view all the supported 
+  operations, along with parameters, responses, MIME types
+  and applied security schemes.
   </p>
 
 ---

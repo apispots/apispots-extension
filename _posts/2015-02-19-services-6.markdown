@@ -1,12 +1,12 @@
 ---
 layout: default
-img: models.png
+img: security.png
 category: graph
-title: Understand information architecture
+title: Inspect security policies
 description: |
   <p class="lead">
-  Double-click on model resources to view the 
-  supported schema for each model definition.
+  Double-click on security nodes and investigate all the 
+  security policies and schemes applied by the API.
   </p>
 
 ---
