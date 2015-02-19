@@ -6,7 +6,9 @@ title: With a click of a button
 description: |
   <p class="lead">
   Right from your Chrome browser. 
-  <br> As simple as that.
+  <br>Navigate to a URL that contains a valid Swagger <strong>2.0</strong> document - either <strong>JSON</strong> or <strong>YAML</strong>.
+  <br>A little icon (page action) will appear on the right of the URL.
+  <br>Click on it and magic happens.
   </p>
 
 ---
