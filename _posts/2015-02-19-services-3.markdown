@@ -5,7 +5,9 @@ category: graph
 title: With a click of a button
 description: |
   <p class="lead">
-  Right from your Chrome browser.  As simple as that - no shit.
+  Right from your Chrome browser. 
+  <br> As simple as that. 
+  <br> No bull shit.
   </p>
 
 ---
