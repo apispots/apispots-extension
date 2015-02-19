@@ -1,7 +1,7 @@
 ---
 layout: default
 img: swagger-json.png
-category: 
+category: graph
 title: Go from this
 description: |
   <p class="lead">A special thanks to <a target="_blank"
