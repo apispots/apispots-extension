@@ -35,6 +35,10 @@ h6 {
    background-size: cover;
 }
 
+.navbar-default .navbar-brand {
+    color: #3498db!important;
+}
+
 .intro-message {
     position: relative;
     padding-top: 20%;
