@@ -7,7 +7,7 @@ description: |
   <p class="lead">
   When the full API is visualized right in front of you, you can interact
   with it in various ways.  Drag it around and zoom in/out using the mouse
-  wheel. See how resources are interconnected and undestand its semantics. 
+  wheel. See how resources are interconnected and understand its semantics. 
   </p>
 
 ---
