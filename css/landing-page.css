@@ -32,7 +32,7 @@ h6 {
     text-align: center;
     color: #f1c40f;
     background: url(../img/intro-bg.png) no-repeat center center;
-   background-size: cover;
+   /* background-size: cover; */
 }
 
 .intro-message {
