@@ -6,7 +6,9 @@ title: With a click of a button
 description: |
   <p class="lead">
   Right from your Chrome browser. 
-  <br> As simple as that. 
+  <br> As simple as that.
+  <br> Totally <strong>FREE</strong>.
+  <br> No vendor lock-in. 
   <br> No bull shit.
   </p>
 

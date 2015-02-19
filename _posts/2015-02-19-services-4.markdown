@@ -5,7 +5,7 @@ category: graph
 title: Try it out for yourself
 description: |
   <p class="lead">	
-  <a href='http://chefarchitect.github.io/swagger.ed/downloads/swagger.ed.zip'>Click to download the extension</a>
+  <a href='http://chefarchitect.github.io/swagger.ed/downloads/swagger.ed.zip'>Click here to download the extension</a>
   
   <br> Unzip the bundle and drag-n-drop the <strong>*.crx</strong> file into your Chrome Extensions page (More Tools -> Extensions).
   
