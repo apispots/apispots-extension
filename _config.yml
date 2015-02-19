@@ -2,8 +2,8 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://yoursite.com
-title: Your Awesome Site
+url: https://github.com/chefArchitect/swagger.ed
+title: swagger.ed
 email: chrysanthos.spiliotopoulos@gmail.com
 description: > # "Write an awesome description for your new site here. 
   You can edit this line in _config.yml. It will appear in your document 
