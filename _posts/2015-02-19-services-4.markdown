@@ -4,12 +4,10 @@ img: google-chrome-extensions.jpg
 category: graph
 title: Try it out for yourself
 description: |
-  <p class="lead">
-  Right from your Chrome browser. 
-  <br> As simple as that. 
-  <br> No bull shit.
+  <a href='http://chefarchitect.github.io/swagger.ed/downloads/swagger.ed.zip'>Click to download the extension</a>
   
-  <a>Click to download extension</a>
+  <br> Unzip the bundle and drag-n-drop the <strong>*.crx</strong> file into your Chrome Extensions page (More Tools -> Extensions).
+  
   </p>
 
 ---
