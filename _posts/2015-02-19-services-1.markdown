@@ -4,10 +4,10 @@ img: swagger-json.png
 category: graph
 title: Go from this
 description: |
-  <p class="lead">A special thanks to <a target="_blank"
-  href="http://join.deathtothestockphoto.com/">Death to the Stock
-  Photo</a> for providing the photographs that you see in this template.
-  Visit their website to become a member!</p>
+  <p class="lead">
+  ... from a valid <a href='http://swagger.io' target='_blank'>Swagger 2.0</a> 
+  powered API definition...
+  </p>
 
 ---
 
