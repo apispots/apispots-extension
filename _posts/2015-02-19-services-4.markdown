@@ -1,14 +1,13 @@
 ---
 layout: default
-img: google-chrome-extensions.jpg
+img: operations.png
 category: graph
-title: Try it out for yourself
+title: Full description of supported operations
 description: |
-  <p class="lead">	
-  <a href='http://chefarchitect.github.io/swagger.ed/downloads/swagger.ed.zip'>Click here to download the extension</a>
-  
-  <br> Unzip the bundle and drag-n-drop the <strong>*.crx</strong> file into your Chrome Extensions page (More Tools -> Extensions).
-  
+  <p class="lead">
+  Double-click on resource nodes and view all the supported 
+  operations, along with parameters, responses, MIME types
+  and applied security schemes.
   </p>
 
 ---
