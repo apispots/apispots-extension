@@ -1,0 +1,15 @@
+---
+layout: default
+img: google-chrome-extensions.jpg
+category: graph
+title: Try it out for yourself
+description: |
+  <p class="lead">
+  Right from your Chrome browser. 
+  <br> As simple as that. 
+  <br> No bull shit.
+  
+  <a>Click to download extension</a>
+  </p>
+
+---
