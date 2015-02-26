@@ -5,7 +5,7 @@ locale: en_US
 description: Change the way you look at APIs
 logo: common/site-logo.png
 search: false
-url: http://chefarchitect.github.io/swagger.ed/
+url: http://chefarchitect.github.io/swagger.ed
 
 # Jekyll configuration
 
