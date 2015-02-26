@@ -1,31 +1,41 @@
-# ----------------------- #
-#      Main Configs       #
-# ----------------------- #
+# Site wide configuration
 
-url: https://github.com/chefArchitect/swagger.ed
 title: swagger.ed
-email: chrysanthos.spiliotopoulos@gmail.com
-description: > # "Write an awesome description for your new site here. 
-  You can edit this line in _config.yml. It will appear in your document 
-  head meta (for Google search results) and in your feed.xml site 
-  description."
+locale: en_US
+description: Change the way you look at APIs
+logo: common/site-logo.png
+search: false
+url: http://localhost:4000
 
-# ----------------------- #
-#    Jekyll & Plugins     #
-# ----------------------- #
+# Jekyll configuration
 
-# Build settings
-markdown: kramdown
-permalink: pretty
+permalink:   /:categories/:title/
+markdown:    kramdown
+highlighter: pygments
+sass:
+  sass_dir: _sass
+  style: compressed
+gems:
+  - jekyll-sitemap
 
-# ----------------------- #
-#   3rd Party Settings    #
-# ----------------------- #
+kramdown:
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..2
+  use_coderay: false
 
-social:
-  - title: twitter
-    url: https://twitter.com/chefArchitect
-  - title: github
-    url: https://github.com/chefArchitect
-  - title: linkedin
-    url: http://linkedin.com/pub/chris-spiliotopoulos/3a/7a6/a8/en
+include: [".htaccess"]
+exclude: ["lib", "config.rb", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp", "less", "*.sublime-project", "*.sublime-workspace", "test", "spec", "Gruntfile.js", "package.json", "node_modules", "Gemfile", "Gemfile.lock", "LICENSE", "README.md", "vendor"]
+
+
+# Site owner
+owner:
+  name: Chris Spiliotopoulos
+  avatar: authors/chris.jpg
+  email: chrysanthos.spiliotopoulos@gmail.com
+  disqus-shortname: swaggered
+  twitter: chefArchitect
+  github: https://github.com/chefArchitect/swagger.ed
+  linkedin: #username
+ 
