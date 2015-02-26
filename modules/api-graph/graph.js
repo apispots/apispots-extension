@@ -222,27 +222,36 @@ swagger.ed.Graph = (function () {
 
 				for ( var idx in parts) {
 					level++;
-
+					
 					var part = parts[idx];
 
+					if (part == '')
+						continue;
+					
 					/*
 					 * create the node and edge
 					 */
 
 					// locate the part within the path
 					var loc = path.indexOf(part);
-					var id = path.substring(0, loc) + part;
+					var key = path.substring(0, loc) + part;
 
-					var node = {
-						id : id,
-						label : part,
-						parent : parent,
-						type : 'resource'
-					};
-					var edge = null;
-
+					var id = 'path:' + key;
+					
 					// add the node to the graph
 					if (! _private.getNode(id)) {
+						
+						// create the node
+						var node = {
+								id : id,
+								key: key,
+								label : part,
+								parent : parent,
+								type : 'resource'
+							};
+						
+						var edge = null;
+						
 						// get the resource object (if exists)
 						var res = _globals.api.paths[id];
 
@@ -319,21 +328,26 @@ swagger.ed.Graph = (function () {
 				 */
 				var idx = 0;
 				for ( var key in _globals.api.definitions) {
+					
 					// get the model object
 					var model = _globals.api.definitions[key];
 
+					var id = 'model:' + key;
+					
 					// create the node and edge
 					var node = {
-						id : key,
-						label : key,
+						id : id,
+						key: key,
+						label: key,
 						color : {
 							background : '#9b59b6'
 						},
 						type : 'model'
 					};
+					
 					var edge = {
 						from : '#models',
-						to : key
+						to : id
 					};
 
 					_globals.nodes.push(node);
@@ -375,12 +389,16 @@ swagger.ed.Graph = (function () {
 				 */
 				var idx = 0;
 				for ( var key in _globals.api.securityDefinitions) {
+				
 					// get the security object
 					var security = _globals.api.securityDefinitions[key];
 
+					var id = 'security:' + key;
+					
 					// create the node and edge
 					var node = {
-						id : key,
+						id : id,
+						key: key,
 						label : key,
 						color : {
 							background : '#e74c3c'
@@ -389,7 +407,7 @@ swagger.ed.Graph = (function () {
 					};
 					var edge = {
 						from : '#security',
-						to : key
+						to : id
 					};
 
 					_globals.nodes.push(node);
@@ -593,13 +611,13 @@ swagger.ed.Graph = (function () {
 			try {
 
 				// get the corresponding API resource path
-				var path = _globals.api.paths[node.id];
+				var path = _globals.api.paths[node.key];
 
 				if (typeof path == 'undefined')
 					return null;
 
 				// set the title
-				details.title = "Path: " + node.id;
+				details.title = "Path: " + node.key;
 
 				/*
 				 * render the supported operations
@@ -870,9 +888,9 @@ swagger.ed.Graph = (function () {
 			try {
 
 				// get the corresponding API resource model definition
-				var model = _globals.api.definitions[node.id];
+				var model = _globals.api.definitions[node.key];
 
-				details.title = "Model: " + node.id;
+				details.title = "Model: " + node.key;
 
 				/*
 				 * required properties
@@ -928,9 +946,9 @@ swagger.ed.Graph = (function () {
 			try {
 
 				// get the corresponding API resource model definition
-				var policy = _globals.api.securityDefinitions[node.id];
+				var policy = _globals.api.securityDefinitions[node.key];
 
-				details.title = "Security policy: " + node.id;
+				details.title = "Security policy: " + node.key;
 
 				/*
 				 * render the policies
