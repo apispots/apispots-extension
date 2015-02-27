@@ -47,10 +47,22 @@
 		try
 		{
 			if (typeof spec == 'undefined')
-				return console.error( 'A Swagger definition has not been injected...Please check your settings.' );
+				return console.error( 'An API catalog definition has not been injected...Please check your settings.' );
 		
+			var opts = {
+				resPath: './'	
+			};
+			
 			// visualize the catalog
-			swagger.ed.Catalog.draw( spec );
+			swagger.ed.Catalog.draw( spec, opts );
+			
+			swagger.ed.Catalog.on( 'onCatalogLinkDetails', function(e, data){
+				console.log(data);
+			});
+			
+			swagger.ed.Catalog.on( 'onSwaggerLinkDetails', function(e, data){
+				console.log(data);
+			});
 		}
 		catch (e)
 		{
