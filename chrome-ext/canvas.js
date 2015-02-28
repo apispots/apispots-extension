@@ -16,7 +16,10 @@ chrome.runtime.onMessage.addListener(function(msg, sender, cb) {
 	case 'onVisualizeApi':
 
 		// visualize the API
-		swagger.ed.Graph.draw(msg.api);
+		var opts = {
+			resPath : 'libs/swagger.ed/api-graph/'
+		};
+		swagger.ed.Graph.draw(msg.api, opts);
 		
 		// draw the backlink
 		drawBacklink();

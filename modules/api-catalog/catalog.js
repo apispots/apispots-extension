@@ -25,8 +25,6 @@ swagger.ed.Catalog = (function() {
 	
 	"use strict";
 	
-	
-	
 	/*
 	 * global object
 	 */
@@ -36,9 +34,9 @@ swagger.ed.Catalog = (function() {
 		edges : [],
 		network : null,
 		catalog : null
-		
+	
 	};
-
+	
 	/*
 	 * PRIVATE METHODS
 	 */
@@ -51,8 +49,9 @@ swagger.ed.Catalog = (function() {
 			
 			opts = opts || {};
 			
-			_globals.resPath = ( typeof opts.resPath != 'undefined' ? opts.resPath : './' )
-			
+			_globals.resPath = (typeof opts.resPath != 'undefined' ? opts.resPath
+					: './')
+
 			_private.destroy();
 			
 			// store globally
@@ -164,7 +163,8 @@ swagger.ed.Catalog = (function() {
 			
 			try {
 				
-				if ( ( typeof _globals.catalog.apis == 'undefined' ) || (_globals.catalog.apis.length == 0) )
+				if ((typeof _globals.catalog.apis == 'undefined')
+						|| (_globals.catalog.apis.length == 0))
 					return;
 				
 				// create the root node
@@ -241,12 +241,10 @@ swagger.ed.Catalog = (function() {
 					return;
 				
 				var swaggerUrl = null;
-				for (var idx in api.properties)
-				{
+				for ( var idx in api.properties) {
 					var prop = api.properties[idx];
 					
-					if (prop.type.toUpperCase() === 'swagger'.toUpperCase())
-					{
+					if (prop.type.toUpperCase() === 'swagger'.toUpperCase()) {
 						swaggerUrl = prop.url;
 						break;
 					}
@@ -262,7 +260,7 @@ swagger.ed.Catalog = (function() {
 					id : key,
 					key : key,
 					title : 'Swagger definition',
-					label: 'Swagger',
+					label : 'Swagger',
 					parent : id,
 					type : 'swagger',
 					shape : 'image',
@@ -272,7 +270,7 @@ swagger.ed.Catalog = (function() {
 				var edge = {
 					from : id,
 					to : key,
-					style: 'dash-line'
+					style : 'dash-line'
 				};
 				
 				// add the node and edge
@@ -682,11 +680,11 @@ swagger.ed.Catalog = (function() {
 		'onLink' : function(node) {
 			
 			var link = {
-				name: node.label,
-				url: node.id
+				name : node.label,
+				url : node.id
 			};
 			
-			$(swagger.ed.Catalog).trigger( 'onCatalogLinkDetails', link );
+			$(swagger.ed.Catalog).trigger('onCatalogLinkDetails', link);
 			
 		},
 		
@@ -696,10 +694,10 @@ swagger.ed.Catalog = (function() {
 		'onSwagger' : function(node) {
 			
 			var link = {
-				url: node.id
+				url : node.id
 			};
 			
-			$(swagger.ed.Catalog).trigger( 'onSwaggerLinkDetails', link );
+			$(swagger.ed.Catalog).trigger('onSwaggerLinkDetails', link);
 			
 		},
 		
@@ -716,7 +714,7 @@ swagger.ed.Catalog = (function() {
 			_globals.catalog = null;
 			_globals.nodes = [];
 			_globals.edges = [];
-
+			
 		},
 		
 		/**

@@ -47,6 +47,11 @@ swagger.ed.Graph = (function() {
 		 */
 		'draw' : function draw(api, opts) {
 			
+			opts = opts || {};
+			
+			_globals.resPath = (typeof opts.resPath != 'undefined' ? opts.resPath
+					: './')
+
 			_private.destroy();
 			
 			// store globally
@@ -61,11 +66,13 @@ swagger.ed.Graph = (function() {
 				id : 'root',
 				label : api.info.title,
 				type : 'root',
-				shape : 'database',
+				image : _globals.resPath + 'res/api.png',
+				shape : 'image',
 				color : {
 					background : '#27ae60',
 				},
-				fontSize : '20'
+				fontSize : '20',
+				fontColor : '#34495e'
 			
 			};
 			
@@ -152,7 +159,8 @@ swagger.ed.Graph = (function() {
 				_private.createModal();
 				
 				// show the info bar
-				var title = (typeof _globals.api.info.title != 'undefined' ? _globals.api.info.title : '');
+				var title = (typeof _globals.api.info.title != 'undefined' ? _globals.api.info.title
+						: '');
 				_private.showInfo('info', 'API', title);
 				
 			} catch (e) {
@@ -210,6 +218,12 @@ swagger.ed.Graph = (function() {
 		'processResourcePath' : function(path) {
 			
 			try {
+				
+				if (path.endsWith('/'))
+					path = path.slice(0, -1);
+				
+				if (path.startsWith('/'))
+					path = path.slice(1);
 				
 				// split the path into sub-resource parts
 				var parts = path.split('/');
@@ -312,6 +326,10 @@ swagger.ed.Graph = (function() {
 			
 			try {
 				
+				if ((typeof _globals.api.definitions == 'undefined')
+						|| (Object.keys(_globals.api.definitions).length == 0))
+					return;
+				
 				// create the root node
 				var node = {
 					id : '#models',
@@ -372,6 +390,10 @@ swagger.ed.Graph = (function() {
 		'processSecurityDefinitions' : function() {
 			
 			try {
+				
+				if ((typeof _globals.api.securityDefinitions == 'undefined')
+						|| (Object.keys(_globals.api.securityDefinitions).length == 0))
+					return;
 				
 				// create the root node
 				var node = {
@@ -608,9 +630,24 @@ swagger.ed.Graph = (function() {
 			try {
 				
 				// get the corresponding API resource path
-				var path = _globals.api.paths[node.key];
+				var path = null;
 				
-				if (typeof path == 'undefined')
+				for (key in _globals.api.paths) {
+					var keyclone = new String(key);
+					
+					if (key.endsWith('/'))
+						keyclone = keyclone.slice(0, -1);
+					
+					if (key.startsWith('/'))
+						keyclone = keyclone.slice(1);
+					
+					if (keyclone === node.key) {
+						path = _globals.api.paths[key];
+						break;
+					}
+				}
+				
+				if ((typeof path == 'undefined') || (!path))
 					return null;
 				
 				// set the title
@@ -999,7 +1036,7 @@ swagger.ed.Graph = (function() {
 			_globals.api = null;
 			_globals.nodes = [];
 			_globals.edges = [];
-
+			
 		},
 		
 		/**
@@ -1080,8 +1117,11 @@ swagger.ed.Graph = (function() {
 		
 		/**
 		 * Draws the swagger graph
-		 * @param api The Swagger v2 parsed API object
-		 * @param opts The 
+		 * 
+		 * @param api
+		 *          The Swagger v2 parsed API object
+		 * @param opts
+		 *          The
 		 * @returns
 		 */
 		draw : _private.draw,
