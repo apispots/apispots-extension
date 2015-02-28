@@ -633,7 +633,7 @@ swagger.ed.Graph = (function() {
 				var path = null;
 				
 				for (key in _globals.api.paths) {
-					var keyclone = new String(key);
+					var keyclone = key;
 					
 					if (key.endsWith('/'))
 						keyclone = keyclone.slice(0, -1);
