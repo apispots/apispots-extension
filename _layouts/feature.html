@@ -22,6 +22,11 @@
         {% else %}
           <h1 class="entry-title">{% if page.headline %}{{ page.headline }}{% else %}{{ page.title }}{% endif %}</h1>
         {% endif %}
+        
+         {% if page.excerpt %}
+          <blockquote>{{ page.excerpt }}</blockquote>
+        {% endif %}
+        
       </header>
       <footer class="entry-meta">
         {% if page.author %}
@@ -40,10 +45,11 @@
         {% if page.ads == true %}{% include ad-sidebar.html %}<!-- /.google-ads -->{% endif %}
       </footer>
       <div class="entry-content">
-        {{ content }}
         
+        {{ content }}
+                
 		<!-- Download link -->        
-        <div markdown="0" class="text-center" style='margin-top: 40px;'><a href="https://github.com/chefArchitect/swagger.ed/raw/master/chrome-ext/dist/swagger.ed.crx" class="btn" style='font-size: 28px; background-color: #f1c40f;'>Download the Chrome extension</a></div>
+        <div markdown="0" class="text-center" style='margin-top: 40px;'><a href="https://github.com/chefArchitect/swagger.ed/releases/download/{{ site.artifact.version }}/swagger.ed.crx" class="btn" style='font-size: 28px; background-color: #f1c40f;'>Download the Chrome extension</a></div>
         
         
         {% if (site.owner.disqus-shortname and page.comments) or site.comments %}

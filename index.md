@@ -24,4 +24,4 @@ image:
     </div>
 {% endfor %}
 
-<div markdown="0" class="text-center" style='margin-top: 40px;'><a href="https://github.com/chefArchitect/swagger.ed/raw/master/chrome-ext/dist/swagger.ed.crx" class="btn" style='font-size: 28px; background-color: #f1c40f;'>Download the Chrome extension</a></div>
+<div markdown="0" class="text-center" style='margin-top: 40px;'><a href="https://github.com/chefArchitect/swagger.ed/releases/download/{{ site.artifact.version }}/swagger.ed.crx" class="btn" style='font-size: 28px; background-color: #f1c40f;'>Download the Chrome extension</a></div>
