@@ -1,0 +1,1393 @@
+var spec = {
+	"swagger": "2.0",
+	"info": {
+		"title": "DynDNS Email API",
+		"description": "We are pleased to offer a comprehensive Application Programming Interface (API) for Dyn Email Delivery and Email Delivery Express.",
+		"termsOfService": null,
+		"version": null
+	},
+	"host": "emailapi.dynect.net",
+	"basePath": "rest/RETURN-TYPE/",
+	"schemes": [
+		"http"
+	],
+	"produces": [
+		"application/json"
+	],
+	"consumes": [
+		"application/json"
+	],
+	"paths": {
+		"accounts": {
+			"put": {
+				"summary": "Updating an Email Sub-Account ",
+				"description": "Updating an Email Sub-Account ",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "address",
+						"in": "query",
+						"description": "Address.",
+						"type": "string"
+					},
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the master account (Only the master account can create sub-accounts)",
+						"type": "string"
+					},
+					{
+						"name": "bounceurl",
+						"in": "query",
+						"description": "Bounce Postback URL.",
+						"type": "string"
+					},
+					{
+						"name": "city",
+						"in": "query",
+						"description": "City.",
+						"type": "string"
+					},
+					{
+						"name": "companyname",
+						"in": "query",
+						"description": "Required. Name of the company assigned to this account.",
+						"type": "string"
+					},
+					{
+						"name": "country",
+						"in": "query",
+						"description": "Two-letter English abbreviation, based on the ISO 3166 standard.",
+						"type": "string"
+					},
+					{
+						"name": "generatenewapikey",
+						"in": "query",
+						"description": "Used to create a new API key for an existing account (1 or 0).",
+						"type": "string"
+					},
+					{
+						"name": "password",
+						"in": "query",
+						"description": "Required. Account password to be assigned. May be passed as clear text or MD5-encrypted with md5- as a prefix.nValid values and Examples:nClear text: Gat3keep3r!nMD5-encrypted: md5-025656084871ac56716d3a9ae15c9e01",
+						"type": "string"
+					},
+					{
+						"name": "phone",
+						"in": "query",
+						"description": "Required. Phone number for the account.",
+						"type": "string"
+					},
+					{
+						"name": "spamurl",
+						"in": "query",
+						"description": "Spam Postback URL.",
+						"type": "string"
+					},
+					{
+						"name": "state",
+						"in": "query",
+						"description": "State.",
+						"type": "string"
+					},
+					{
+						"name": "timezone",
+						"in": "query",
+						"description": "The timezone of the account, in [+/-]h.mm format.nValid values and Examples:nEastern Time (USA/Canada): -5.00nChina/Hong Kong/Singapore: +8.00",
+						"type": "string"
+					},
+					{
+						"name": "tracklinks",
+						"in": "query",
+						"description": "Toggle click tracking (1 or 0).",
+						"type": "string"
+					},
+					{
+						"name": "trackopens",
+						"in": "query",
+						"description": "Toggle open tracking (1 or 0).",
+						"type": "string"
+					},
+					{
+						"name": "trackunsubscribes",
+						"in": "query",
+						"description": "Toggle automatic list-unsubscribe support.",
+						"type": "string"
+					},
+					{
+						"name": "unsubscribeurl",
+						"in": "query",
+						"description": "Unsubscribe postback URL.",
+						"type": "string"
+					},
+					{
+						"name": "username",
+						"in": "query",
+						"description": "Required. Account username to be updated",
+						"type": "string"
+					},
+					{
+						"name": "zipcode",
+						"in": "query",
+						"description": "Zip.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"accounts/delete": {
+			"post": {
+				"summary": "Deleting an Email Sub-Account",
+				"description": "Deleting an Email Sub-Account",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the master account (Only the master account can create sub-accounts)",
+						"type": "string"
+					},
+					{
+						"name": "username",
+						"in": "query",
+						"description": "Required. Account username to be updated",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"opens/count": {
+			"get": {
+				"summary": "Email Open Count",
+				"description": "Returns total number of opens for the specified account for the specified date range. Including a date range is highly recommended.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Email address of recipient for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required.u00a0End date/time in full,u00a0ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "u00a0Email address of sender for filtering. Must be on the current Approved Sender list. u00a0if using a GET request, it is best practice to encode special characters such as the &#8220;at symbol&#8221; (@).",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required.u00a0Start date/time in full,u00a0ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"recipients/activate": {
+			"post": {
+				"summary": "Activate Recipient(s)",
+				"description": "Activating a specified Recipientu2019s status",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Required. Recipient&#8217;s Email address; can retrieve status for more than one Email address by specifying a comma-delimited list of Email addresses",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"recipients/status": {
+			"get": {
+				"summary": "Retrieve Recipient(s) Status",
+				"description": "Retrieve Recipient(s) Status",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Required. Recipient&#8217;s Email address. Can retrieve status for more than one Email address by specifying a comma-delimited list of Email addresses.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/bounces": {
+			"get": {
+				"summary": "Retrieve Email Bounces",
+				"description": "Retrieving the Email SPAM Complaints",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "bounce_code - Indicates the code associated with the bounced Email.",
+						"in": "query",
+						"description": "",
+						"type": "string"
+					},
+					{
+						"name": "bounce_code_id - The numeric code determined by the bounce processor.",
+						"in": "query",
+						"description": "",
+						"type": "string"
+					},
+					{
+						"name": "bounce_rule - Indicates the rule that caused this email to bounce.",
+						"in": "query",
+						"description": "",
+						"type": "string"
+					},
+					{
+						"name": "bounce_type",
+						"in": "query",
+						"description": "Type of bounce for filtering.nValid Values:nhardnsoft",
+						"type": "string"
+					},
+					{
+						"name": "bounce_type_id - Indicates whether the bounce type is a hard or soft bounce.nValid Values:n1 - Hard Bouncen2 - Soft Bounce",
+						"in": "query",
+						"description": "",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Email address of recipient for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "noheaders",
+						"in": "query",
+						"description": "Determines whether or not headers are included in the response.nValid values:n1 = Exclude bounce header content from the response.n0 = Default.  Include headers in response.",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "sender_id",
+						"in": "query",
+						"description": "Identifying number of the sender.",
+						"type": "string"
+					},
+					{
+						"name": "startindex",
+						"in": "query",
+						"description": "Number indicating where to begin reporting results.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/bounces/count": {
+			"get": {
+				"summary": "Retrieve Count of Email Bounces",
+				"description": "Retrieving a total count of Email bounces using the API requires specific syntax for the REST API.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required.u00a0Endu00a0date/time range in full,u00a0ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/clicks": {
+			"get": {
+				"summary": "Reports on Clicks",
+				"description": "Returns a list of links clicked for the specified account during the specified date range. Including a date range is highly recommended.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Email address of recipient for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "startindex",
+						"in": "query",
+						"description": "Starting index value (optional).",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email",
+					" Reporting"
+				]
+			}
+		},
+		"reports/clicks/count": {
+			"get": {
+				"summary": "Retrieve Count of Email Links Clicked",
+				"description": "Retrieving a total of Email links clicked",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "domainu00a0",
+						"in": "query",
+						"description": "Domain of the recipient, such as &#8220;gmail.com&#8221; or &#8220;comcast.net&#8221;",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Email address of recipient for filteringu0010.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filteringu0010.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required.u00a0Start date/time range in full, ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/clicks/count/unique": {
+			"get": {
+				"summary": "Retrieve Count of Email Links Clicked",
+				"description": "Retrieving a total of Email links clicked",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "domainu00a0",
+						"in": "query",
+						"description": "Domain of the recipient, such as &#8220;gmail.com&#8221; or &#8220;comcast.net&#8221;",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Email address of recipient for filteringu0010.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filteringu0010.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required.u00a0Start date/time range in full, ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/clicks/unique": {
+			"get": {
+				"summary": "Unique Click Report",
+				"description": "Returns a list of unique links clicked for the specified account during the specified date range. Including a date range is highly recommended.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Email address of recipient for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "startindex",
+						"in": "query",
+						"description": "Starting index value (optional).",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/complaints": {
+			"get": {
+				"summary": "Retrieve Email SPAM Complaints",
+				"description": "Retrieve Email SPAM Complaints",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "startindex",
+						"in": "query",
+						"description": "Number indicating where to begin reporting results.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/complaints/count": {
+			"get": {
+				"summary": "Retrieve Count of Email SPAM Complaints",
+				"description": "Retrieving a total count of Email complaints ",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required.u00a0Start date/time range in full,u00a0ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/delivered": {
+			"get": {
+				"summary": "Retrieve Emails Delivered",
+				"description": "Retrieve Emails Delivered",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "startindex",
+						"in": "query",
+						"description": "Number indicating where to begin reporting results.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/delivered/count": {
+			"get": {
+				"summary": "Retrieve Count of Emails Delivered",
+				"description": "Retrieve Count of Emails Delivered",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. Timestamp for the end of the report.",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/issues": {
+			"get": {
+				"summary": "Retrieve Email Issues",
+				"description": "Retrieve Email Issues",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Email address of recipient for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "sender_id",
+						"in": "query",
+						"description": "Identifying number of the sender.",
+						"type": "string"
+					},
+					{
+						"name": "startindex",
+						"in": "query",
+						"description": "Number indicating where to begin reporting results.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/issues/count": {
+			"get": {
+				"summary": "Retrieve Count of Email Issues",
+				"description": "Retrieving a total count of Email issues",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. Timestamp for the end of the report.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Timestamp for the start of the report.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/opens/count/unique": {
+			"get": {
+				"summary": "Retrieve Count of Email Opens",
+				"description": "Returns total number of unique opens for the specified account for the specified date range. Including a date range is highly recommended.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Email address of recipient for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required.u00a0End date/time in full,u00a0ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "u00a0Email address of sender for filtering. Must be on the current Approved Sender list. u00a0if using a GET request, it is best practice to encode special characters such as the &#8220;at symbol&#8221; (@).",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required.u00a0Start date/time in full,u00a0ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/sent": {
+			"get": {
+				"summary": "Retrieve Emails Sent",
+				"description": "Retrieve Emails Sent",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "startindex",
+						"in": "query",
+						"description": "Number indicating where to begin reporting results.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"reports/sent/count": {
+			"get": {
+				"summary": "Retrieve Count of Emails Sent",
+				"description": "Retrieve Count of Emails Sent",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with the desired information.",
+						"type": "string"
+					},
+					{
+						"name": "endtime",
+						"in": "query",
+						"description": "Required. End date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "Email address of sender for filtering.",
+						"type": "string"
+					},
+					{
+						"name": "starttime",
+						"in": "query",
+						"description": "Required. Start date/time range in full, ISO 8601 format",
+						"type": "string"
+					},
+					{
+						"name": "[X-HeaderName]",
+						"in": "query",
+						"description": "Name of searchable custom X-header. X-header names are in the format X-[name of header]. X-header values are the search parameter to find in the X-header field. Be sure to url-encode the search value.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"send": {
+			"post": {
+				"summary": "Send Email",
+				"description": "Sending Email",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account which will send the message.",
+						"type": "string"
+					},
+					{
+						"name": "bcc",
+						"in": "query",
+						"description": "Address(es) to blind copy the email to",
+						"type": "string"
+					},
+					{
+						"name": "bodyhtml",
+						"in": "query",
+						"description": "The text/html version of the email; this field may be encoded in 7-bit, 8-bit, quoted-printable, or base64.nNotes:n&#8211; Even though bodytext and bodyhtml are both optional, at least one of them must be provided for the email to be valid.n&#8211; If sending non-ASCII characters within your content, we recommend using Base64 encoding, as this has proven the most reliable way to preserve special characters across email providers.",
+						"type": "string"
+					},
+					{
+						"name": "bodytext",
+						"in": "query",
+						"description": "The plain/text version of the email; this field may be encoded in Base64 (recommended), quoted-printable, 8-bit, or 7-bit.nNotes:n&#8211; Even though bodytext and bodyhtml are both optional, at least one of them must be provided for the email to be valid.n&#8211; If sending non-ASCII characters within your contentu00a0you must Base64-encode it first, as this has proven the most reliable way to preserve special characters across email providers.",
+						"type": "string"
+					},
+					{
+						"name": "cc",
+						"in": "query",
+						"description": "Address(es) to copy the email to",
+						"type": "string"
+					},
+					{
+						"name": "comments",
+						"in": "query",
+						"description": "Additional comments about the message.",
+						"type": "string"
+					},
+					{
+						"name": "from",
+						"in": "query",
+						"description": "Required. Sender email address",
+						"type": "string"
+					},
+					{
+						"name": "importance",
+						"in": "query",
+						"description": "A hint from the originator on how important the message is. Can take values of either high, normal or low. Not related to transmission speed.",
+						"type": "string"
+					},
+					{
+						"name": "inreplyto",
+						"in": "query",
+						"description": "One or more message identifier(s) of the original message(s) to which the current message is a reply.",
+						"type": "string"
+					},
+					{
+						"name": "keywords",
+						"in": "query",
+						"description": "A comma-separated list of important words and phrases useful for recipient.",
+						"type": "string"
+					},
+					{
+						"name": "messageid",
+						"in": "query",
+						"description": "A unique message identifier that can be passed in via the api and override the Dyn automatically generated message id.",
+						"type": "string"
+					},
+					{
+						"name": "priority",
+						"in": "query",
+						"description": "Values are either normal, urgent, or non-urgent. This header can influence transmission speed and delivery.",
+						"type": "string"
+					},
+					{
+						"name": "references",
+						"in": "query",
+						"description": "The message identifier(s) of other message(s) to which the current message may be related.",
+						"type": "string"
+					},
+					{
+						"name": "replyby",
+						"in": "query",
+						"description": "The date and time by which a reply is requested. Date-time should be in local time format such as Thu, 13 Feb 2013 23:32:54 -0330.",
+						"type": "string"
+					},
+					{
+						"name": "replyto",
+						"in": "query",
+						"description": "The email address for the recipient to reply to. If left blank, defaults to the from address. The format can either be an email address or a properly formatted from header (example: &#8220;From Name&#8221; &lt;example@email.com&gt;).",
+						"type": "string"
+					},
+					{
+						"name": "resent-date",
+						"in": "query",
+						"description": "The date and time that a message is resent in the same format as replyby.",
+						"type": "string"
+					},
+					{
+						"name": "resent-from",
+						"in": "query",
+						"description": "The email address of the person who has resent the message, or on whose behalf the message has been resent.",
+						"type": "string"
+					},
+					{
+						"name": "resent-messageid",
+						"in": "query",
+						"description": "Contains a message identifier for a resent message.",
+						"type": "string"
+					},
+					{
+						"name": "resent-replyto",
+						"in": "query",
+						"description": "Resent Reply-to in the same format as the replyto header.",
+						"type": "string"
+					},
+					{
+						"name": "resent-sender",
+						"in": "query",
+						"description": "The email address of the person who has resent the message, if this is different from the resent-from value.",
+						"type": "string"
+					},
+					{
+						"name": "sender",
+						"in": "query",
+						"description": "This is the email address of the agent responsible for sending the message. This is an optional header and only relevant when the &#8216;from&#8217; email address is different to the &#8216;sender&#8217; email address.",
+						"type": "string"
+					},
+					{
+						"name": "sensitivity",
+						"in": "query",
+						"description": "How sensitive it is to disclose this message with values that can be either personal, private or company confidential.",
+						"type": "string"
+					},
+					{
+						"name": "subject",
+						"in": "query",
+						"description": "Required. The subject of the email being sent.",
+						"type": "string"
+					},
+					{
+						"name": "to",
+						"in": "query",
+						"description": "Required. Address(es) the email will be sent to",
+						"type": "string"
+					},
+					{
+						"name": "xheaders",
+						"in": "query",
+						"description": "Any additional custom X-headers to send in the email",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"suppressions": {
+			"post": {
+				"summary": "Add Email Address to Suppression List ",
+				"description": "Adding one or more recipients to the suppression list",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account where suppressed address(es) are to be added.",
+						"type": "string"
+					},
+					{
+						"name": "emailaddress",
+						"in": "query",
+						"description": "Required. Email address of recipient to suppress; for multiple addresses, specify a comma-delimited list of email addresses.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"suppressions/count": {
+			"get": {
+				"summary": "Retrieve Suppression Count",
+				"description": "Retrieving the count of Email addresses on the suppression list",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the account with desired information.",
+						"type": "string"
+					},
+					{
+						"name": "enddate",
+						"in": "query",
+						"description": "End date/time range in full, ISO 8601 format.",
+						"type": "string"
+					},
+					{
+						"name": "startdate",
+						"in": "query",
+						"description": "Start date/time range in full, ISO 8601 format.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		},
+		"xheaders": {
+			"post": {
+				"summary": "Update Email X-Headers ",
+				"description": "Updating the custom x-headers of an Email account",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "apikey",
+						"in": "query",
+						"description": "Required. API key of the master account (Only the master account can create sub-accounts)",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"Messaging",
+					" Email"
+				]
+			}
+		}
+	},
+	"definitions": {
+	}
+}

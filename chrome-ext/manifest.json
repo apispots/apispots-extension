@@ -1,0 +1,74 @@
+{
+	/*
+	 * Manifest version
+	 */
+	"manifest_version": 2,
+	
+	/*
+	 * Description
+	 */
+	"name": "swagger.ed",
+	"short_name": "swagger.ed",
+	"description": "Change the way you look at APIs.  New age API tools with swag.",
+	"version": "1.1.0",
+	
+	/*
+	 * Author info
+	 */
+	"author": "Chris Spiliotopoulos",
+	"homepage_url": "https://twitter.com/chefArchitect",
+	
+	"icons": { 
+		"128": "res/swagger-128.png",
+		"48": "res/swagger-48.png",
+		"32": "res/swagger-32.png",
+		"16": "res/swagger-16.png"
+	},
+	
+	/*
+	 * Background processors
+	 */
+	"background": { 
+		"scripts": [ "libs/async/async.js", 
+		             "libs/jquery/jquery.min.js", 
+		             "libs/swagger-converter/browser.min.js", 
+		             "libs/swagger-parser/swagger-parser.js", 
+		             "swagger-parser.js", 
+		             "background.js"] 
+	},
+	
+	/*
+	 * Content processors
+	 */
+	"content_scripts": [ 
+                      { "matches": ["http://*/*", "https://*/*", "file://*/*"], 
+                    	"js": [ "libs/async/async.js",
+                    	        "libs/jquery/jquery.min.js",
+                    	        "libs/js-yaml/js-yaml.min.js",
+                    	        "libs/swagger-converter/browser.min.js",
+                    	        "libs/swagger-parser/swagger-parser.js", 
+                    	        "swagger-parser.js",
+                    	        "content-script.js"] 
+                      } 
+    ],
+    
+    /*
+     * Permissions
+     */
+    "permissions": [ "tabs", "http://*/", "https://*/" ],
+  
+    /*
+     * Page actions
+     */
+    "page_action": {
+    	"default_name": "swagger.ed - click to open",
+    	"default_icon": "res/swagger-32.png"
+    }
+    
+    /*
+     * Content security
+     */
+//    "content_security_policy": "default-src 'none'; style-src 'self'; script-src 'self';"
+  
+  
+}

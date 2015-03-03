@@ -1,0 +1,94 @@
+<html lang="en">
+
+<head>
+
+
+<meta name="author" content="Chris Spiliotopoulos @chefArchitect">
+
+<title>Swagger Graph</title>
+
+<!-- JQuery -->
+<script src="../../libs/jquery/jquery.min.js"></script>
+
+<!-- Swagger converter -->
+<script src="../../libs/swagger-converter/browser.min.js"></script>
+
+<!-- Swagger parser -->
+<script src="../../libs/swagger-parser/swagger-parser.js"></script>
+
+<!-- VisJS -->
+<link href='../../libs/vis/vis.min.css' rel='stylesheet'>
+<script src="../../libs/vis/vis.min.js"></script>
+
+<!-- Bootstrap -->
+<link href='../../libs/bootstrap/css/bootstrap.min.css'
+	rel='stylesheet'>
+<script src="../../libs/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- highlight.js -->
+<link href='../../libs/highlightjs/styles/default.css'
+	rel='stylesheet'>
+<script src="../../libs/highlightjs/highlight.pack.js"></script>
+
+<!-- Swagger Graph -->
+<link rel="stylesheet" type="text/css" href="graph.css">
+<script src="graph.js"></script>
+
+<!-- Inject the local Swagger spec sample -->
+<script src="test/specs/newscred-article-api.json"></script>
+
+</head>
+
+<body>
+
+	
+	<script type="text/javascript">
+		
+	/**
+	 * Initialization
+	 */
+
+	$(onLoad);
+	
+	/*
+	 * Render the graph  
+	 */
+	function onLoad() {
+		
+		try
+		{
+			if (typeof spec == 'undefined')
+				return console.error( 'A Swagger definition has not been injected...Please check your settings.' );
+			
+			/*
+			 * parse the Swagger definition
+			 */
+			var opts = {
+				validateSchema : false // disable schema validation
+			};
+			
+			swagger.parser.parse(spec, opts, function(err, api) {
+	
+				if (err)
+					return console.error(err);
+	
+				// create a new instance of the graph
+				var opts = {
+					height: $(window).height()	
+				};
+				
+				// load the API into the visualizer
+ 				swagger.ed.Graph.draw( api, opts );
+			});
+		}
+		catch (e)
+		{
+			console.error(e);
+		}
+	};
+	
+	</script>
+
+</body>
+
+</html>

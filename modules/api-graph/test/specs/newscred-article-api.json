@@ -1,0 +1,2467 @@
+var spec = {
+	"swagger": "2.0",
+	"info": {
+		"title": "NewsCred Article API",
+		"description": "Returns a list of articles according to the specified set of parameters.",
+		"termsOfService": null,
+		"version": "v1"
+	},
+	"host": "api.newscred.com",
+	"basePath": "/",
+	"schemes": [
+		"http"
+	],
+	"produces": [
+		"application/json"
+	],
+	"consumes": [
+		"application/json"
+	],
+	"paths": {
+		"/topic/{guid]/articles/": {
+			"get": {
+				"summary": "Topic Articles",
+				"description": "Returns a list of articles related to the specified topic.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_mode",
+						"in": "query",
+						"description": "Enables article_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of articles. Value is the name of the predefined article filter list (applicable only when article filtering is enabled via article_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "categories",
+						"in": "query",
+						"description": "Limit items to the categories specified. Value is a space delimited list of dashed category names.  See Category module for more information.",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "get_topics",
+						"in": "query",
+						"description": "Set to true to include associated topics inline with each article. For faster response times, we recommend setting this to false unless topics are explicitly being used.",
+						"type": "string"
+					},
+					{
+						"name": "guid",
+						"in": "path",
+						"description": "The topic guid.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "has_images",
+						"in": "query",
+						"description": "Return only articles that have associated images (accessible via article/GUID/images). Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "languages",
+						"in": "query",
+						"description": "Limit items to those in the specified language. Value is a 2 letter ISO language code.",
+						"type": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "Search exclusively for fully licensed, full text content. Not available without a contract. Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Limit the media type of the returned items. Value is a space delimited list of media types. See Source module for a list of valid media types.",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. I.e. a pagesize of 10 and offest of 10 will return items 11-20. Used for paginating api queries.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"description": "Sort order for returned items. Valid values are date and relevance.",
+						"type": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "List of sources to retrieve items from. Valid sources are specified as a space delimited list of source GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of sources.Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topic",
+					" articles"
+				]
+			}
+		},
+		"articles/": {
+			"get": {
+				"summary": "Articles",
+				"description": "Returns a list of articles according to the specified set of parameters.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "article_filter_mode",
+						"in": "query",
+						"description": "Enables article_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "article_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of articles. Value is the name of the predefined article filter list (applicable only when article filtering is enabled via article_filter_mode).",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "boolean_operator",
+						"in": "query",
+						"description": "Indicates the boolean operation to use on search keywords that do not have explicit whitelist (+) or blacklist (-) operators on them. The value can either be and or or.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "categories",
+						"in": "query",
+						"description": "Limit items to the categories specified. Value is a space delimited list of dashed category names. See Category module for more information.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "exact",
+						"in": "query",
+						"description": "If this parameter is not specified, then stemming is applied, so that for example the query term ship matches articles containing shipping, and vice versa. Specifying exact=true turns stemming off.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of publication date range for which items are searched. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "get_topics",
+						"in": "query",
+						"description": "Set to true to include associated topics inline with each article. For faster response times, we recommend setting this to false unless topics are explicitly being used.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "has_images",
+						"in": "query",
+						"description": "Sort order for returned items. Valid values are date and relevance.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "languages",
+						"in": "query",
+						"description": "Limit items to those in the specified language. Value is a 2 letter ISO language code.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "Search exclusively for fully licensed, full text content. Not available without a contract. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "links",
+						"in": "query",
+						"description": "Value is a space delimited list of article links. Articles returned must match one of links provided.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "max_length",
+						"in": "query",
+						"description": "Returns only articles with at most this many words. For example, max_length=200",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Limit the media type of the returned items. Value is a space delimited list of media types. See Source module for a list of valid media types.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "min_length",
+						"in": "query",
+						"description": "Returns only articles with at least this many words. For example, min_length=100",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "mm",
+						"in": "query",
+						"description": "Minimum Match: specifies how many of the non whitelist/blacklist keywords must match for an article to be included in the results. Can be an integer (e.g., 1) or a percentage (e.g., 50%). The default value requires that all words match.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "modified_since",
+						"in": "query",
+						"description": "Get only articles that have been modified since the supplied date. An articles modified date is the same as its creation date if it hasnt been modified. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"description": "Specifies the set of words and phrases to search for. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "query_fields",
+						"in": "query",
+						"description": "Specifies which field to search when searching for articles. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "safe_search",
+						"in": "query",
+						"description": "Removes articles containing offensive words from search result; when set to true.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"description": "Sort order for returned items. Valid values are date, relevance, and modified_at.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "Limit items to the sources specified. Value is a space delimited list of source guids.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of sources.Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topics",
+						"in": "query",
+						"description": "Value is a space delimited list of topic guids. Articles returned must contain at least one of the topics provided.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of publication date range for which items are searched. ",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" articles"
+				]
+			}
+		},
+		"author/": {
+			"get": {
+				"summary": "Author",
+				"description": "Returns an author that has written content available via this API.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" author"
+				]
+			}
+		},
+		"author/{guid}/articles/": {
+			"get": {
+				"summary": "Author Articles",
+				"description": "Returns articles written by the specified author and matching the given query string.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_mode",
+						"in": "query",
+						"description": "Enables article_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of articles. Value is the name of the predefined article filter list (applicable only when article filtering is enabled via article_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "categories",
+						"in": "query",
+						"description": "Limit items to the categories specified. Value is a space delimited list of dashed category names.  See Category module for more information.",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "get_topics",
+						"in": "query",
+						"description": "Set to true to include associated topics inline with each article. For faster response times, we recommend setting this to false unless topics are explicitly being used.",
+						"type": "string"
+					},
+					{
+						"name": "guid",
+						"in": "path",
+						"description": "The guid for the author.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "has_images",
+						"in": "query",
+						"description": "Return only articles that have associated images (accessible via article/GUID/images). Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "languages",
+						"in": "query",
+						"description": "Limit items to those in the specified language. Value is a 2 letter ISO language code.",
+						"type": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "Search exclusively for fully licensed, full text content. Not available without a contract. Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Limit the media type of the returned items. Value is a space delimited list of media types. See Source module for a list of valid media types.",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"description": "Sort order for returned items. Valid values are date and relevance.",
+						"type": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "List of sources to retrieve items from. Valid sources are specified as a space delimited list of source GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of sources.Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "topics",
+						"in": "query",
+						"description": "List of topics to retrieve items from. Valid topics are specified as a space delimited list of topic GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" author",
+					" articles"
+				]
+			}
+		},
+		"author/{guid}/topics/": {
+			"get": {
+				"summary": "Author Topics",
+				"description": "Gets a list of topics related to an author.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "guid",
+						"in": "path",
+						"description": "The guid for the author.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "topics",
+						"in": "query",
+						"description": "List of topics to retrieve items from. Valid topics are specified as a space delimited list of topic GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "topic_classifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic classification. Value is a space delimited list of topic classifications.",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "topic_subclassifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic sub-classification. Value is a space delimited list of topic sub-classifications.",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" author",
+					" topics"
+				]
+			}
+		},
+		"categories/": {
+			"get": {
+				"summary": "Categories",
+				"description": "Search for categories",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "autosuggest",
+						"in": "query",
+						"description": "If true, partial matches will be returned, i.e. the query pol will match the category politics. This is intended for use in autosuggest dropdowns.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"description": "The query string to find categories matching.",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" categories"
+				]
+			}
+		},
+		"category/dashed-name/sources/": {
+			"get": {
+				"summary": "Category Sources",
+				"description": "Gets a list of sources that write most frequently about the category specified by the dashed name",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Space delimited list of media types to retreive articles from. See source module for a complete list of valid media types. Examples are mainstream and blog.",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "List of sources to retrieve items from. Valid sources are specified as a space delimited list of source GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of sources.Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					" news",
+					" category",
+					" sources"
+				]
+			}
+		},
+		"category/dashed-name/topics/": {
+			"get": {
+				"summary": "Category Topics",
+				"description": "Gets a list of topics within the category specified by the dashed name.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "topic_classifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic classification. Value is a space delimited list of topic classifications.",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "topic_subclassifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic sub-classification. Value is a space delimited list of topic sub-classifications.",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" categories",
+					" topics"
+				]
+			}
+		},
+		"category/{category-name]/stories/": {
+			"get": {
+				"summary": "Category Stories",
+				"description": "Find the top news stories related to a given category. A story is a collection of similar articles.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_mode",
+						"in": "query",
+						"description": "Enables article_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of articles. Value is the name of the predefined article filter list (applicable only when article filtering is enabled via article_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "cluster_size",
+						"in": "query",
+						"description": "Number of articles returned for each story",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "get_topics",
+						"in": "query",
+						"description": "Set to true to include associated topics inline with each article. For faster response times, we recommend setting this to false unless topics are explicitly being used.",
+						"type": "string"
+					},
+					{
+						"name": "has_images",
+						"in": "query",
+						"description": "Return only articles that have associated images (accessible via article/GUID/images). Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "languages",
+						"in": "query",
+						"description": "Limit items to those with the specified language. Value is a 2 letter ISO.",
+						"type": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "Search exclusively for fully licensed, full text content. Not available without a contract. Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Limit the media type of the returned items. Value is a space delimited list of media types. See Source module for a list of valid media types.",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "List of sources to retrieve items from. Valid sources are specified as a space delimited list of source GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Restricts the query to a predefined list of sources. Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" stories",
+					" categories"
+				]
+			}
+		},
+		"category/{dashed-name}/articles/": {
+			"get": {
+				"summary": "Category Articles",
+				"description": "Search for articles within the category specified by dashed name.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_mode",
+						"in": "query",
+						"description": "Enables article_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of articles. Value is the name of the predefined article filter list (applicable only when article filtering is enabled via article_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "get_topics",
+						"in": "query",
+						"description": "Set to true to include associated topics inline with each article. For faster response times, we recommend setting this to false unless topics are explicitly being used.",
+						"type": "string"
+					},
+					{
+						"name": "has_images",
+						"in": "query",
+						"description": "Return only articles that have associated images (accessible via article/GUID/images). Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "languages",
+						"in": "query",
+						"description": "Limit items to those with the specified language. Value is a 2 letter ISO.",
+						"type": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "Search exclusively for fully licensed, full text content. Not available without a contract. Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Limit the media type of the returned items. Value is a space delimited list of media types. See Source module for a list of valid media types.",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"description": "Sort order for returned items. Valid values are date and relevance.",
+						"type": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "List of sources to retrieve items from. Valid sources are specified as a space delimited list of source GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Restricts the query to a predefined list of sources. Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" articles categories"
+				]
+			}
+		},
+		"category/{dashed-name}/images/": {
+			"get": {
+				"summary": "Category Images",
+				"description": "Gets images related to the specified category.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "safe_search",
+						"in": "query",
+						"description": "Returns only images marked as safe when set to true.",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" categories",
+					" images"
+				]
+			}
+		},
+		"image/{guid}/": {
+			"get": {
+				"summary": "Image",
+				"description": "Returns the image specified by the given GUID.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "guid",
+						"in": "path",
+						"description": "The guid for the image.",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" images"
+				]
+			}
+		},
+		"images/": {
+			"get": {
+				"summary": "Search Images",
+				"description": "Returns images matched by the query string",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"description": "Query string you want to search for.",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" images"
+				]
+			}
+		},
+		"source/": {
+			"get": {
+				"summary": "Source",
+				"description": "Returns the source represented by the specified GUID.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "GUID",
+						"in": "path",
+						"description": "GUID representing news source",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" sources"
+				]
+			}
+		},
+		"source/{GUID}/articles/": {
+			"get": {
+				"summary": "Source Articles",
+				"description": "Returns a list of articles provided by the specified source",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "article_filter_mode",
+						"in": "query",
+						"description": "Enables article_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "article_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of articles. Value is the name of the predefined article filter list (applicable only when article filtering is enabled via article_filter_mode).",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "categories",
+						"in": "query",
+						"description": "Limit items to the categories specified. Value is a space delimited list of dashed category names. See Category module for more information.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "get_topics",
+						"in": "query",
+						"description": "Set to true to include associated topics inline with each article. For faster response times, we recommend setting this to false unless topics are explicitly being used.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "has_images",
+						"in": "query",
+						"description": "Return only articles that have associated images (accessible via article/GUID/images). Valid values are True or False",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "languages",
+						"in": "query",
+						"description": "Limit items to those in the specified language. Value is a 2 letter ISO language code.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "Search exclusively for fully licensed, full text content. Not available without a contract. Valid values are True or False.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Limit the media type of the returned items. Value is a space delimited list of media types. See Source module for a list of valid media types.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"description": "Sort order for returned items. Valid values are date and relevance.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topics",
+						"in": "query",
+						"description": "List of topics to retrieve items from. Valid topics are specified as a space delimited list of topic GUIDs.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" sources"
+				]
+			}
+		},
+		"source/{GUID}/topics/": {
+			"get": {
+				"summary": "Source Topics",
+				"description": "Returns a list of topics related to the source specified by the given GUID.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topics",
+						"in": "query",
+						"description": "List of topics to retrieve items from. Valid topics are specified as a space delimited list of topic GUIDs.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_classifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic classification. Value is a space delimited list of topic classifications.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_subclassifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic sub-classification. Value is a space delimited list of topic sub-classifications.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" sources",
+					" topics"
+				]
+			}
+		},
+		"sources/": {
+			"get": {
+				"summary": "Sources",
+				"description": "Search sources by name. Returns a list of sources objects",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "autosuggest",
+						"in": "query",
+						"description": "If true, partial matches will be returned starting from 3 characters, i.e. the query Bar will match the topic Barack Obama. This is intended for use in autosuggest dropdowns.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "If true, return only licensed sources with fully licensed content. If false, return only sources with aggregated content. If left out, return all sources you have access to.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Limit the media type of the returned items. Value is a space delimited list of media types. See Source module for a list of valid media types.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"description": "Query string to search on",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "List of sources to retrieve items from. Valid sources are specified as a space delimited list of source GUIDs.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of sources.Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" sources"
+				]
+			}
+		},
+		"stories/": {
+			"get": {
+				"summary": "Stories",
+				"description": "Returns the top stories related to the specified query. A story is a group of similar articles. By default, stories are sorted by a combination of recency and importance. If the from_date and/or to_date parameters are specified, stories are sorted by importance only.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "article_filter_mode",
+						"in": "query",
+						"description": "Enables article_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "article_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of articles. Value is the name of the predefined article filter list (applicable only when article filtering is enabled via article_filter_mode).",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "boolean_operator",
+						"in": "query",
+						"description": "Indicates the boolean operation to use on search keywords that do not have explicit whitelist (+) or blacklist (-) operators on them. The value can either be and or or.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "categories",
+						"in": "query",
+						"description": "Limit items to the categories specified. Value is a space delimited list of dashed category names. See Category module for more information.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "cluster_size",
+						"in": "query",
+						"description": "Number of articles returned for each story",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "exact",
+						"in": "query",
+						"description": "If this parameter is not specified, then stemming is applied, so that for example the query term ship matches articles containing shipping, and vice versa. Specifying exact=true turns stemming off.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of publication date range for which items are searched. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "get_topics",
+						"in": "query",
+						"description": "Set to true to include associated topics inline with each article. For faster response times, we recommend setting this to false unless topics are explicitly being used.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "has_images",
+						"in": "query",
+						"description": "Sort order for returned items. Valid values are date and relevance.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "languages",
+						"in": "query",
+						"description": "Limit items to those in the specified language. Value is a 2 letter ISO language code.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "Search exclusively for fully licensed, full text content. Not available without a contract. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "links",
+						"in": "query",
+						"description": "Value is a space delimited list of article links. Articles returned must match one of links provided.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "max_length",
+						"in": "query",
+						"description": "Returns only articles with at most this many words. For example, max_length=200",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Limit the media type of the returned items. Value is a space delimited list of media types. See Source module for a list of valid media types.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "min_length",
+						"in": "query",
+						"description": "Returns only articles with at least this many words. For example, min_length=100",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "mm",
+						"in": "query",
+						"description": "Minimum Match: specifies how many of the non whitelist/blacklist keywords must match for an article to be included in the results. Can be an integer (e.g., 1) or a percentage (e.g., 50%). The default value requires that all words match.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "modified_since",
+						"in": "query",
+						"description": "Get only articles that have been modified since the supplied date. An articles modified date is the same as its creation date if it hasnt been modified. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"description": "Specifies the set of words and phrases to search for. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "query_fields",
+						"in": "query",
+						"description": "Specifies which field to search when searching for articles. ",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "safe_search",
+						"in": "query",
+						"description": "Removes articles containing offensive words from search result; when set to true.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "sort",
+						"in": "query",
+						"description": "Sort order for returned items. Valid values are date, relevance, and modified_at.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "Limit items to the sources specified. Value is a space delimited list of source guids.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of sources.Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topics",
+						"in": "query",
+						"description": "Value is a space delimited list of topic guids. Articles returned must contain at least one of the topics provided.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of publication date range for which items are searched. ",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" stories",
+					" collections"
+				]
+			}
+		},
+		"topic/{guide{/images/": {
+			"get": {
+				"summary": "Topic Images",
+				"description": "Returns images related to the specified topic.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "guid",
+						"in": "path",
+						"description": "The topic guid.",
+						"type": "string",
+						"format": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topics",
+					" images"
+				]
+			}
+		},
+		"topic/{guid}/": {
+			"get": {
+				"summary": "Topic",
+				"description": "Return the topic specified by the given GUID. ",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topics"
+				]
+			}
+		},
+		"topic/{guid}/sources/": {
+			"get": {
+				"summary": "Topic Sources",
+				"description": "The guid for the topic.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. I.e. a pagesize of 10 and offest of 10 will return items 11-20. Used for paginating api queries.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "List of sources to retrieve items from. Valid sources are specified as a space delimited list of source GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of sources.Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "Topic Sources",
+						"in": "path",
+						"description": "The guid for the topic.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topics",
+					" sources"
+				]
+			}
+		},
+		"topic/{guid}/topics/": {
+			"get": {
+				"summary": "Related Topics",
+				"description": "Returns a list of topics related to the topic specified.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "guid",
+						"in": "query",
+						"description": "The guid for the topic.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. I.e. a pagesize of 10 and offest of 10 will return items 11-20. Used for paginating api queries.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "topics",
+						"in": "query",
+						"description": "List of topics to retrieve items from. Valid topics are specified as a space delimited list of topic GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "topic_classifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic classification. Value is a space delimited list of topic classifications.",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "topic_subclassifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic sub-classification. Value is a space delimited list of topic sub-classifications.",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topics"
+				]
+			}
+		},
+		"topic/{guid}/tweets/": {
+			"get": {
+				"summary": "Related Tweets",
+				"description": "Returns a list of real-time tweets related to the specified topic.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "guid",
+						"in": "path",
+						"description": "The guid for the topic.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of tweets to skip before beginning the result set. I.e. a pagesize of 10 and offest of 10 will return articles 11-20. Useful for paginating api queries.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of tweets to return.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" related",
+					" tweets",
+					" twitter"
+				]
+			}
+		},
+		"topic/{guid}/videos/": {
+			"get": {
+				"summary": "Topic Videos",
+				"description": "Returns a list of videos related to the specified topic.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "categories",
+						"in": "query",
+						"description": "Limit videos to the categories specified. Values are a space delimited list of dashed category names.",
+						"type": "string"
+					},
+					{
+						"name": "guid",
+						"in": "path",
+						"description": "The guid for the topic.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of videos to skip before beginning the result set. I.e. a pagesize of 10 and offset of 10 will return videos 11-20. Useful for paginating api queries.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of videos to return.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topics",
+					" videos"
+				]
+			}
+		},
+		"topic/{topic_guid}/stories/": {
+			"get": {
+				"summary": "Topic Stories",
+				"description": "Find the top stories that are happening for a given topic. A story is a collection of similar articles.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_mode",
+						"in": "query",
+						"description": "Enables article_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "article_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of articles. Value is the name of the predefined article filter list (applicable only when article filtering is enabled via article_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "categories",
+						"in": "query",
+						"description": "Limit items to the categories specified. Value is a space delimited list of dashed category names.  See Category module for more information.",
+						"type": "string"
+					},
+					{
+						"name": "cluster_size",
+						"in": "query",
+						"description": "Number of articles returned for each story",
+						"type": "string"
+					},
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "get_topics",
+						"in": "query",
+						"description": "Set to true to include associated topics inline with each article. For faster response times, we recommend setting this to false unless topics are explicitly being used.",
+						"type": "string"
+					},
+					{
+						"name": "has_images",
+						"in": "query",
+						"description": "Return only articles that have associated images (accessible via article/GUID/images). Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "languages",
+						"in": "query",
+						"description": "Limit items to those in the specified language. Value is a 2 letter ISO language code.",
+						"type": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "Search exclusively for fully licensed, full text content. Not available without a contract. Valid values are True or False.",
+						"type": "string"
+					},
+					{
+						"name": "media_types",
+						"in": "query",
+						"description": "Limit the media type of the returned items. Value is a space delimited list of media types. See Source module for a list of valid media types.",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. I.e. a pagesize of 10 and offest of 10 will return items 11-20. Used for paginating api queries.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "sources",
+						"in": "query",
+						"description": "List of sources to retrieve items from. Valid sources are specified as a space delimited list of source GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "source_countries",
+						"in": "query",
+						"description": "Search against only sources from the specified countries. Value is a space delimited list of 2 character ISO 3166-1 country codes.",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_mode",
+						"in": "query",
+						"description": "Enables source_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "source_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of sources.Value is the name of the predefined source filter list (applicable only when source filtering is enabled via source_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "topic_guid",
+						"in": "path",
+						"description": "The topic guid.",
+						"type": "string",
+						"format": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topic",
+					" stories"
+				]
+			}
+		},
+		"topics/": {
+			"get": {
+				"summary": "Search Topics",
+				"description": "Search for a specific topics.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "exact",
+						"in": "query",
+						"description": "If true, the topic name must match the query exactly. If false, partial matches are returned.",
+						"type": "string"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"description": "The query string to find topics for.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topics"
+				]
+			}
+		},
+		"topics/extract/": {
+			"get": {
+				"summary": "Extract Related Topics",
+				"description": "Returns a list of topics extracted from the input query.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"description": "The string to extract topics from",
+						"type": "string"
+					},
+					{
+						"name": "topics",
+						"in": "query",
+						"description": "List of topics to retrieve items from. Valid topics are specified as a space delimited list of topic GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "topic_classifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic classification. Value is a space delimited list of topic classifications.",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "topic_subclassifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic sub-classification. Value is a space delimited list of topic sub-classifications.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topics",
+					" related",
+					" extract"
+				]
+			}
+		},
+		"topics/related/": {
+			"get": {
+				"summary": "Related Topics",
+				"description": "Given some search criteria, returns a list of topics related to those criteria.",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "access_key",
+						"in": "query",
+						"description": "Unique API access key",
+						"type": "string"
+					},
+					{
+						"name": "from_date, to_date",
+						"in": "query",
+						"description": "Find topics that were trending (written about more than usual) during the specified date range. For example, from_date=-1DAY finds topics that have been trending over the past day.",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of topics to skip before beginning the result set. I.e. a pagesize of 10 and offest of 10 will return topics 11-20. Useful for paginating api queries.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of topics to return.",
+						"type": "string"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"description": "Find topics related to these keywords.",
+						"type": "string"
+					},
+					{
+						"name": "topics",
+						"in": "query",
+						"description": "List of topics to retrieve items from. Valid topics are specified as a space delimited list of topic GUIDs.",
+						"type": "string"
+					},
+					{
+						"name": "topic_classifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic classification. Value is a space delimited list of topic classifications.",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_mode",
+						"in": "query",
+						"description": "Enables topic_filter_name and indicates filtering type. Allowed values are whitelist or blacklist",
+						"type": "string"
+					},
+					{
+						"name": "topic_filter_name",
+						"in": "query",
+						"description": "Limit items to a predefined list of topics. Value is the name of the predefined topic filter list (applicable only when topic filtering is enabled via topic_filter_mode).",
+						"type": "string"
+					},
+					{
+						"name": "topic_subclassifications",
+						"in": "query",
+						"description": "Limit results to those with the specified topic sub-classification. Value is a space delimited list of topic sub-classifications.",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" topics",
+					" related"
+				]
+			}
+		},
+		"videos/": {
+			"get": {
+				"summary": "Videos",
+				"description": "Returns videos matching the given query string",
+				"operationId": "",
+				"parameters": [
+					{
+						"name": "from_date",
+						"in": "query",
+						"description": "Beginning of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					},
+					{
+						"name": "licensed",
+						"in": "query",
+						"description": "Return only licensed videos. Only valid value is true. When not included, all videos are returned.",
+						"type": "string"
+					},
+					{
+						"name": "maxduration",
+						"in": "query",
+						"description": "Maximum duration for searched videos (in milliseconds)",
+						"type": "string"
+					},
+					{
+						"name": "minduration",
+						"in": "query",
+						"description": "Minimum duration for searched videos (in milliseconds)",
+						"type": "string"
+					},
+					{
+						"name": "offset",
+						"in": "query",
+						"description": "Number of items to skip before beginning the result set. For example, a pagesize of 10 and an offset of 10 will return items 11-20.",
+						"type": "string"
+					},
+					{
+						"name": "pagesize",
+						"in": "query",
+						"description": "Number of items to return.",
+						"type": "string"
+					},
+					{
+						"name": "query",
+						"in": "query",
+						"description": "Query that you want to search on.",
+						"type": "string"
+					},
+					{
+						"name": "to_date",
+						"in": "query",
+						"description": "End of date range for which items are searched. Format: yyyy-mm-dd [hh:mm:ss]",
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"tags": [
+					"news",
+					" videos"
+				]
+			}
+		}
+	},
+	"definitions": {
+	}
+}
