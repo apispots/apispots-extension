@@ -96,7 +96,7 @@ swagger.ed.SwaggerParser = (function() {
 				async.map(paths, function(path, cb) {
 					
 					// fetch the URL contents
-					getResourceAtUrl(path, function(err, response) {
+					_private.getResourceAtUrl(path, function(err, response) {
 						if (err)
 							cb(err);
 						else
