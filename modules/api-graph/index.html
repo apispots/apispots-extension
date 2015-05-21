@@ -14,7 +14,7 @@
 <script src="../../libs/swagger-converter/browser.min.js"></script>
 
 <!-- Swagger parser -->
-<script src="../../libs/swagger-parser/swagger-parser.js"></script>
+<script src="../../libs/swagger-parser/swagger-parser.min.js"></script>
 
 <!-- VisJS -->
 <link href='../../libs/vis/vis.min.css' rel='stylesheet'>
@@ -35,7 +35,7 @@
 <script src="graph.js"></script>
 
 <!-- Inject the local Swagger spec sample -->
-<script src="test/specs/newscred-article-api.json"></script>
+<script src="test/specs/expedia-swagger.json"></script>
 
 </head>
 
@@ -64,7 +64,8 @@
 			 * parse the Swagger definition
 			 */
 			var opts = {
-				validateSchema : false // disable schema validation
+				validateSchema : false,
+ 				resolve$Refs: false
 			};
 			
 			swagger.parser.parse(spec, opts, function(err, api) {

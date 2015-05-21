@@ -116,7 +116,7 @@ function detectContentType() {
 		var body = document.body;
 		
 		// get the outer text of the page body
-		var content = body.outerText;
+		var content = body.textContent;
 		
 		/*
 		 * First check for Swagger content

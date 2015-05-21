@@ -41,7 +41,8 @@ swagger.ed.SwaggerParser = (function() {
 			_private.getResourceAtUrl(url, function(err, content) {
 				
 				var opts = {
-					validateSchema : false
+					validateSchema : false,
+					resolve$Refs : false
 				};
 				
 				/*
