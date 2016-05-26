@@ -24,42 +24,42 @@
 <script src="catalog.js"></script>
 
 <!-- Inject the local spec sample -->
-<script src="test/specs/apis.json"></script>
+<script src="test/specs/sample.json"></script>
 
 </head>
 
 <body>
 
-	
+
 	<script type="text/javascript">
-		
+
 	/**
 	 * Initialization
 	 */
 
 	$(onLoad);
-	
+
 	/*
-	 * Render the graph  
+	 * Render the graph
 	 */
 	function onLoad() {
-		
+
 		try
 		{
 			if (typeof spec == 'undefined')
 				return console.error( 'An API catalog definition has not been injected...Please check your settings.' );
-		
+
 			var opts = {
-				resPath: './'	
+				resPath: './'
 			};
-			
+
 			// visualize the catalog
 			swagger.ed.Catalog.draw( spec, opts );
-			
+
 			swagger.ed.Catalog.on( 'onCatalogLinkDetails', function(e, data){
 				console.log(data);
 			});
-			
+
 			swagger.ed.Catalog.on( 'onSwaggerLinkDetails', function(e, data){
 				console.log(data);
 			});
@@ -69,7 +69,7 @@
 			console.error(e);
 		}
 	};
-	
+
 	</script>
 
 </body>

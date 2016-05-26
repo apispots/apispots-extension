@@ -35,31 +35,31 @@
 <script src="graph.js"></script>
 
 <!-- Inject the local Swagger spec sample -->
-<script src="test/specs/expedia-swagger.json"></script>
+<script src="test/specs/petstore.json"></script>
 
 </head>
 
 <body>
 
-	
+
 	<script type="text/javascript">
-		
+
 	/**
 	 * Initialization
 	 */
 
 	$(onLoad);
-	
+
 	/*
-	 * Render the graph  
+	 * Render the graph
 	 */
 	function onLoad() {
-		
+
 		try
 		{
 			if (typeof spec == 'undefined')
 				return console.error( 'A Swagger definition has not been injected...Please check your settings.' );
-			
+
 			/*
 			 * parse the Swagger definition
 			 */
@@ -67,17 +67,17 @@
 				validateSchema : false,
  				resolve$Refs: false
 			};
-			
+
 			swagger.parser.parse(spec, opts, function(err, api) {
-	
+
 				if (err)
 					return console.error(err);
-	
+
 				// create a new instance of the graph
 				var opts = {
-					height: $(window).height()	
+					height: $(window).height()
 				};
-				
+
 				// load the API into the visualizer
  				swagger.ed.Graph.draw( api, opts );
 			});
@@ -87,7 +87,7 @@
 			console.error(e);
 		}
 	};
-	
+
 	</script>
 
 </body>
