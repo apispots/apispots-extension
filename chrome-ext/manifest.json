@@ -4,10 +4,10 @@
 	"name": "swagger.ed",
 	"short_name": "swagger.ed",
 	"description": "Visualization tool for Swagger powered APIs.",
-	"version": "1.0.0",
+	"version": "1.0.1",
 
 	"author": "Chris Spiliotopoulos",
-	"homepage_url": "https://github.com/chefArchitect",
+	"homepage_url": "http://apispots.com/projects/swaggered",
 
 	"icons": {
 		"128": "res/swagger-128.png",
