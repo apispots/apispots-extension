@@ -2,36 +2,36 @@
  * Grabs the page content, detect if it contains a Swagger API definition and
  * tries to parse it.
  */
-var parseSwaggerDefinition = function (url, content) {
+var parseSwaggerDefinition = function(url, content) {
 
-	// default message - invalid content
-	var msg = {
-		name: 'onInvalidContent'
-	};
+  // default message - invalid content
+  var msg = {
+    name: 'onInvalidContent'
+  };
 
-	try {
+  try {
 
-		/*
-		 * try to parse the Swagger definition
-		 */
-		swagger.ed.SwaggerParser.parse(url, content, function (err, api) {
-			if (err)
-				return chrome.runtime.sendMessage(undefined, msg, undefined);
+    /*
+     * try to parse the Swagger definition
+     */
+    swagger.ed.SwaggerParser.parse(url, content, function(err, api) {
+      if (err)
+        return chrome.runtime.sendMessage(undefined, msg, undefined);
 
-			msg = {
-				name: 'onSwaggerDefinition',
-				api: api
-			};
+      msg = {
+        name: 'onSwaggerDefinition',
+        api: api
+      };
 
-			chrome.runtime.sendMessage(undefined, msg, undefined);
+      chrome.runtime.sendMessage(undefined, msg, undefined);
 
-		});
+    });
 
-	} catch (e) {
-		chrome.runtime.sendMessage(undefined, msg, undefined);
-	}
+  } catch (e) {
+    chrome.runtime.sendMessage(undefined, msg, undefined);
+  }
 
-	return null;
+  return null;
 };
 
 /**
@@ -40,29 +40,21 @@ var parseSwaggerDefinition = function (url, content) {
  * @param content
  *          The page content
  */
-function checkIfSwaggerContent (content) {
-	try {
+function checkIfSwaggerContent(content) {
+  try {
 
-		/*
-		 * Is this a valid YAML or JSON document?
-		 */
-		var json = jsyaml.load(content);
+    /*
+     * Does it have a 'swagger' or 'swaggerVersion' attribute
+     */
 
-		/*
-		 * Does it have a 'swagger' or 'swaggerVersion' attribute
-		 */
+    // check for the 'swaggerVersion' attribute
+    if ((typeof content.swaggerVersion == 'undefined') &&
+      (typeof content.swagger == 'undefined'))
+      throw 'Not a Swagger document';
 
-		// check for the 'swaggerVersion' attribute
-		if ((typeof json.swaggerVersion == 'undefined')
-			&& (typeof json.swagger == 'undefined'))
-			throw 'Not a Swagger document';
+  } catch (e) {}
 
-		// return the Swagger document
-		return json;
-
-	} catch (e) {}
-
-	return null;
+  return null;
 }
 
 /**
@@ -71,93 +63,109 @@ function checkIfSwaggerContent (content) {
  * @param content
  *          The page content
  */
-function checkIfApisCatalogContent (content) {
-	try {
+function checkIfApisCatalogContent(content) {
+  try {
 
-		/*
-		 * Is this a valid YAML or JSON document?
-		 */
-		var json = jsyaml.load(content);
+    /*
+     * Is this a valid YAML or JSON document?
+     */
+    var json = jsyaml.load(content);
 
-		/*
-		 * Does it have a 'swagger' or 'swaggerVersion' attribute
-		 */
+    /*
+     * Does it have a 'swagger' or 'swaggerVersion' attribute
+     */
 
-		// check for the 'swaggerVersion' attribute
-		if ((typeof json.SpecificationVersion == 'undefined')
-			&& (typeof json.apis == 'undefined'))
-			throw 'Not an APIs catalog  document';
+    // check for the 'swaggerVersion' attribute
+    if ((typeof json.SpecificationVersion == 'undefined') &&
+      (typeof json.apis == 'undefined'))
+      throw 'Not an APIs catalog  document';
 
-		// return the catalog document
-		return json;
+    // return the catalog document
+    return json;
 
-	} catch (e) {}
+  } catch (e) {}
 
-	return null;
+  return null;
 }
 
 /**
  * Scans the page and tries to detect if it contains a compatible content type.
  */
-function detectContentType () {
-	try {
+function detectContentType() {
+  try {
 
 		// only allow the following
-		// content types:
-		// - appplication/json
-		// - text/yaml
-		var contentType = document.contentType;
+    // content types:
+    var VALID_MIME_TYPES = [
+      'text/plain',
+      'application/json',
+      'text/yaml',
+      'application/vnd.github+json',
+      'application/vnd.github.v3+json',
+      'application/vnd.github.v3.raw+json',
+      'application/vnd.github.v3.text+json',
+      'application/vnd.github.v3.html+json',
+      'application/vnd.github.v3.full+json'
+    ];
 
-		if ((contentType !== 'application/json') &&
-			(contentType !== 'text/yaml')) {
-			return;
-		}
+		// get the document's content type
+    var contentType = document.contentType;
 
-		// get the document body
-		var body = document.body;
+    if (VALID_MIME_TYPES.indexOf(contentType) === -1) {
+      return;
+    }
 
-		// get the outer text of the page body
-		var content = body.textContent;
+    // get the document body
+    var body = document.body;
 
-		/*
-		 * First check for Swagger content
-		 */
-		var data = checkIfSwaggerContent(content);
+    // get the outer text of the page body
+    var content = body.textContent;
 
-		/*
-		 * If the page contains a Swagger API document, try to parse it
-		 */
-		if (data)
-			return parseSwaggerDefinition(document.URL, data);
+    /*
+     * Is this a valid YAML or JSON document?
+     */
+    content = jsyaml.load(content);
 
-		/*
-		 * Next check for APIs.json content
-		 */
-		data = checkIfApisCatalogContent(content);
 
-		if (data) {
-			var msg = {
-				name: 'onApiCatalogDefinition',
-				catalog: data
-			};
+    /*
+     * First check for Swagger content
+     */
+    checkIfSwaggerContent(content);
 
-			/*
-			 * broadcast the message
-			 */
-			chrome.runtime.sendMessage(undefined, msg, undefined);
-		}
+    /*
+     * If the page contains a Swagger API document, try to parse it
+     */
+    if (content)
+      return parseSwaggerDefinition(document.URL, content);
 
-	} catch (e) {
-		console.error(e);
-	}
+    /*
+     * Next check for APIs.json content
+     */
+    content = checkIfApisCatalogContent(content);
+
+    if (content) {
+      var msg = {
+        name: 'onApiCatalogDefinition',
+        catalog: content
+      };
+
+      /*
+       * broadcast the message
+       */
+      chrome.runtime.sendMessage(undefined, msg, undefined);
+    }
+
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 // The background page is asking us to find an address on the page.
 if (window == top) {
 
-	/*
-	 * detect the content type of the page
-	 */
-	detectContentType();
+  /*
+   * detect the content type of the page
+   */
+  detectContentType();
 
 }
