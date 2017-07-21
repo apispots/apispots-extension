@@ -7,7 +7,7 @@
 	"version": "1.2.1",
 
 	"author": "Chris Spilio",
-	"homepage_url": "http://spilio.github.io/apispots/projects/swaggered/",
+	"homepage_url": "https://apispots.github.io/projects/swaggered",
 
 	"icons": {
 		"128": "res/swagger-128.png",
