@@ -4,7 +4,7 @@
 	"name": "swagger.ed",
 	"short_name": "swagger.ed",
 	"description": "Visualization tool for Swagger powered APIs.",
-	"version": "1.2.1",
+	"version": "1.2.2",
 
 	"author": "Chris Spilio",
 	"homepage_url": "https://apispots.github.io/projects/swaggered",
