@@ -1,0 +1,29 @@
+<div class="ui fixed menu">
+  <div class="ui container">
+    <div class="header item">
+        {{#if catalog.image}}
+          <img class="logo" src="{{catalog.image}}">
+        {{else}}
+          <img src="https://s3.amazonaws.com/kinlane-productions/bw-icons/bw-stacks.png">
+        {{/if}}
+
+        {{catalog.name}}
+      </div>
+    <a class="item" href="/pages/openapis.html">
+          Back to Open APIs
+        </a>
+
+    {{#if catalog.categories}}
+      <div class="ui simple item">
+        <select class="ui search dropdown">
+            <option value="">Pick a category</option>
+            <option value="unknown">No category</option>
+            {{#each catalog.categories}}
+            <option value="{{.}}">{{.}}</option>
+            {{/each}}
+          </select>
+      </div>
+    {{/if}}
+
+  </div>
+</div>

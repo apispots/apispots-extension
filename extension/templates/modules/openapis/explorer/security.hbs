@@ -1,0 +1,82 @@
+<h1 class="ui dividing header">Security Definitions</h1>
+
+{{#if definitions}}
+  <div class="ui special cards security definitions">
+
+    {{#each definitions}}
+      <div class="ui card">
+        <div class="content">
+          <span class="ui label basic blue right floated">{{type}}</span>
+          <div class="header">{{@key}}</div>
+          <div class="description">
+            {{#if description}}
+              {{#markdown}}{{description}}{{/markdown}}
+            {{else}}
+              <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+            {{/if}}
+          </div>
+
+          <h4>Properties</h4>
+          <table class="ui very basic compact table">
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>
+                  {{#if name}}<span class="ui label basic blue">{{name}}</span>{{/if}}
+                </td>
+              </tr>
+              <tr>
+                <td>in</td>
+                <td>
+                  {{#if in}}<span class="ui label basic blue">{{in}}</span>{{/if}}
+                </td>
+              </tr>
+              <tr>
+                <td>flow</i></td>
+                <td>
+                  {{#if flow}}<span class="ui label basic blue">{{flow}}</span>{{/if}}
+                </td>
+              </tr>
+              <tr>
+                <td>authorizationUrl</td>
+                <td>
+                  {{#if authorizationUrl}}<a href="{{authorizationUrl}}" target="_blank"><i class="ui icon external"></i></a>{{/if}}
+                </td>
+              </tr>
+              <tr>
+                <td>tokenUrl</td>
+                <td>
+                  {{#if tokenUrl}}<a href="{{tokenUrl}}" target="_blank"><i class="ui icon external"></i></a>{{/if}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>Scopes</h4>
+          {{#if scopes}}
+          <div class="ui relaxed divided list">
+            {{#each scopes}}
+            <div class="item">
+              <div class="content">
+                <a class="header scope">{{@key}}</a>
+                <div class="description">{{.}}</div>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+            <img class="ui wireframe image" src="../../../../assets/images/common/paragraph.png">
+          {{/if}}
+
+        </div>
+
+      </div>
+
+    {{/each}}
+
+
+
+  </div>
+{{else}}
+  <img class="ui wireframe image" src="../../../../assets/images/common/paragraph.png">
+{{/if}}

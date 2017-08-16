@@ -1,0 +1,16 @@
+{
+    "name": "apispots",
+    "license": "MPL 2.0",
+    "title": "API Spots",
+    "description": "APIs for humans",
+    "author": "Chris Spiliotopoulos",
+    "version": "0.0.1",
+    "fullName": "API Spots",
+    "main": "lib/browser/firefox/background.js",
+    "icon64": "data/assets/logos/logo-64.png",
+    "icon": "data/assets/logos/logo-16.png",
+    "engines": {
+      "firefox": ">=38.0a1",
+      "fennec": ">=38.0a1"
+    }
+}

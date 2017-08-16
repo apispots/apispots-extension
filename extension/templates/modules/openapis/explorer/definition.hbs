@@ -1,0 +1,71 @@
+<div class="ui modal">
+  <i class="close icon"></i>
+  <div class="header">
+    {{id}}
+  </div>
+  <div class="content">
+
+    <h4>Description</h4>
+    {{#if definition.description}}
+      <div class="description">
+      {{#markdown}}{{definition.description}}{{/markdown}}
+      </div>
+    {{else}}
+      <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+    {{/if}}
+
+    <h4>Properties</h4>
+    {{#if definition.properties}}
+    <table class="ui fixed table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Required</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each definition.properties}}
+          <tr class="{{#if required}}positive{{/if}}">
+            <td>
+              {{@key}}
+            </td>
+            <td>
+              {{#if type}}
+                <span class="ui label basic blue">{{type}}</span>
+              {{/if}}
+            </td>
+            <td>
+              {{#if $$ref}}
+              <button class="ui right labeled icon button mini view definition" data-id="{{type}}">
+                <i class="right arrow icon"></i>
+                View
+              </button>
+              {{else}}
+                {{#markdown}}{{description}}{{/markdown}}
+              {{/if}}
+            </td>
+            <td>
+              {{#if required}}
+              <i class="icon check green"></i>
+              {{/if}}
+            </td>
+          </tr>
+        {{/each}}
+
+      </tbody>
+    </table>
+    {{else}}
+      <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+    {{/if}}
+
+
+  </div>
+  <div class="actions">
+    <div class="ui positive right labeled icon button">
+      Ok
+      <i class="checkmark icon"></i>
+    </div>
+  </div>
+</div>

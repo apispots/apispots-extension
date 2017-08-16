@@ -1,0 +1,200 @@
+<div class="ui large modal path">
+  <i class="close icon"></i>
+  <div class="header">
+    {{path}}
+  </div>
+  <div class="content">
+
+    <div class="ui pointing secondary menu">
+      {{#each definition}}
+      <a class="item {{#eq @index 0}}active{{/eq}}" data-tab="{{@key}}">
+        {{#verb @key}}{{/verb}}
+        <span>{{@key}}</span>
+      </a>
+      {{/each}}
+    </div>
+
+    {{#each definition}}
+
+      <div class="ui tab {{#eq @index 0}}active{{/eq}}" data-tab="{{@key}}">
+
+        <h3>Summary</h3>
+        {{#if summary}}
+        <div class="description">
+          {{#markdown}}{{summary}}{{/markdown}}
+        </div>
+        {{else}}
+          <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+        {{/if}}
+
+        <h3>Description</h3>
+        {{#if description}}
+        <div class="description">
+          {{#markdown}}{{description}}{{/markdown}}
+        </div>
+        {{else}}
+          <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+        {{/if}}
+
+        {{#if externalDocs}}
+          <h3>External docs <a href="{{externalDocs.url}}" target="_blank"><i class="external icon small"></i></a></h3>
+          <p>{{#markdown}}{{externalDocs.description}}{{/markdown}}</p>
+        {{/if}}
+
+        {{#if security}}
+        <h3>Security</h3>
+          {{#each security}}
+          <div>
+            <span class="ui basic blue label">{{definition}}</span>
+            {{#each scopes}}
+            <a class="ui image label">
+              <i class="ui icon lock"></i>
+              {{this}}
+            </a>
+            {{/each}}
+          </div>
+          {{/each}}
+        {{/if}}
+
+        {{#if parameters}}
+        <h3>Parameters</h3>
+        <table class="ui fixed table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Required</th>
+              <th>In</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Format</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each parameters}}
+              <tr class="{{#if required}}positive{{/if}}">
+                <td>
+                  {{name}}
+                </td>
+                <td>
+                  {{#if required}}
+                  <i class="icon check green"></i>
+                  {{/if}}
+                </td>
+                <td>
+                  {{#if in}}
+                      <span class="ui basic label blue centered">{{in}}</span>
+                  {{/if}}
+                </td>
+                <td>
+                  {{#if type}}
+                  <span class="ui basic label blue centered">{{type}}</span>
+                  {{else}}
+                  <span class="ui basic label blue centered">{{schema}}</span>
+                  {{/if}}
+                </td>
+                <td>
+                  {{#if schema}}
+                  <button class="ui right labeled icon button mini view definition" data-id="{{schema}}">
+                    <i class="right arrow icon"></i>
+                    {{schema}}
+                  </button>
+                  {{else}}
+                    {{#markdown}}{{description}}{{/markdown}}
+                  {{/if}}
+                </td>
+                <td>
+                  {{#if format}}
+                  {{format}}
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+
+          </tbody>
+        </table>
+        {{/if}}
+
+        <div class="ui grid vertical segment">
+          <div class="six wide column">
+            <h4>Consumes</h3>
+            {{#if consumes}}
+              {{#each consumes}}
+              <div class="ui label">
+                {{this}}
+              </div>
+              {{/each}}
+            {{else}}
+              <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+            {{/if}}
+          </div>
+          <div class="six wide column">
+            <h4>Produces</h3>
+            {{#if produces}}
+              {{#each produces}}
+              <div class="ui label">
+                {{this}}
+              </div>
+              {{/each}}
+            {{else}}
+              <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+            {{/if}}
+          </div>
+        </div>
+
+
+        {{#if responses}}
+        <h3>Responses</h3>
+        <table class="ui fixed table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Schema</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each responses}}
+              <tr class="">
+                <td>
+                  {{code}}
+                </td>
+                <td>
+                  {{#markdown}}{{description}}{{/markdown}}
+                </td>
+                <td>
+                  {{#if type}}
+                  <span class="ui basic label blue centered">{{type}}</span>
+                  {{/if}}
+                </td>
+                <td>
+                  {{#if schema}}
+                  <button class="ui right labeled icon button mini view definition" data-id="{{schema}}">
+                    <i class="right arrow icon"></i>
+                    {{schema}}
+                  </button>
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+
+          </tbody>
+        </table>
+        {{/if}}
+
+
+
+
+      </div>
+
+    {{/each}}
+
+
+  </div>
+  <div class="actions">
+    <div class="ui positive right labeled icon button">
+      Ok
+      <i class="checkmark icon"></i>
+    </div>
+  </div>
+</div>

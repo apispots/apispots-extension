@@ -1,0 +1,30 @@
+<h1 class="ui dividing header">Data Definitions</h1>
+
+{{#if definitions}}
+<div class="ui special cards">
+
+  {{#each definitions}}
+  <div class="ui card definition">
+      <div class="content">
+        <div class="header">{{@key}}</div>
+        <div class="meta">
+
+        </div>
+        <div class="description">
+          {{#if description}}
+            {{#markdown}}{{description}}{{/markdown}}
+          {{else}}
+            <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+          {{/if}}
+        </div>
+      </div>
+      <div class="ui bottom attached button" data-id="{{@key}}">
+        View
+      </div>
+    </div>
+  {{/each}}
+
+</div>
+{{else}}
+  <img class="ui wireframe image" src="../../../../assets/images/common/paragraph.png">
+{{/if}}

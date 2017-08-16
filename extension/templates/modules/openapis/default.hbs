@@ -1,0 +1,61 @@
+<div class="ui inverted vertical masthead center aligned segment">
+
+  <div class="ui container">
+    <div class="ui large secondary inverted pointing menu">
+      <a class="toc item">
+        <i class="sidebar icon"></i>
+      </a>
+      <a class="item" href="/pages/home.html">API Spots</a>
+      <a class="active item" href="/pages/openapis.html">Open APIs</a>
+    </div>
+  </div>
+
+  <div class="ui text container">
+    <h1 class="ui inverted header">
+      Open APIs
+    </h1>
+    <h2>Visualize and interact with Open API definitions</h2>
+    <a class="ui huge inverted button" href="#section-openapis">Get started</a>
+  </div>
+
+</div>
+
+<div class="ui vertical stripe intro segment" id="section-openapis">
+  <div class="ui stackable very relaxed center aligned grid container">
+    <div class="row">
+      <div class="twelve wide column">
+        <h1 class="ui header">An open description format for API services</h1>
+        <p>
+          APIs form the connecting glue between modern applications. Nearly every application uses APIs to connect with corporate data sources, third party data services or other applications. Creating an open description format for API services that is vendor
+          neutral, portable and open is critical to accelerating the vision of a truly connected world.
+        </p>
+        <a class="ui large button" href="https://www.openapis.org/" target="_blank">Read more</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="ui alternate stripe vertical segment" id="section-load-by-url">
+  <div class="ui center aligned grid container">
+    <div class="column">
+      <h3 class="ui header">
+      Enter the URL of an Open API definition
+      </h3>
+      <form class="ui form" method="get" id="form-openapi">
+        <div class="field">
+          <div class="ui icon input huge">
+            <input type="url" id="input-url-definition" name="openapi"
+              placeholder="http://petstore.swagger.io/v2/swagger.json"
+              value="http://petstore.swagger.io/v2/swagger.json">
+            <i class="inverted circular search link icon" id="icon-load-definition"></i>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+{{> modules/openapis/catalogs.hbs}}

@@ -1,0 +1,21 @@
+<div class="ui large header">{{catalog.name}}</div>
+<p>{{catalog.description}}</p>
+
+{{#if catalog.tags}}
+<div class="ui labels">
+  {{#each catalog.tags}}
+  <div class="ui label">
+    {{.}}
+  </div>
+  {{/each}}
+</div>
+{{/if}}
+
+{{#if catalog.x-common}}
+<div class="ui large header">Links</div>
+<div class="ui labels">
+  {{#each catalog.x-common}}
+    <a class="ui blue basic label" href="{{url}}" target="_blank">{{type}}</a>
+  {{/each}}
+</div>
+{{/if}}

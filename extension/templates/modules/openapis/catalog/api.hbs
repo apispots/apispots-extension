@@ -1,0 +1,31 @@
+
+<div class="ui card api definition hidden" href="#" data-spec="{{spec}}" data-categories="{{categories}}">
+  <div class="ui inverted dimmer transition hidden  active">
+    <div class="ui text loader">Loading</div>
+  </div>
+  <div class="content">
+    <div class="header">{{name}}</div>
+
+    <div class="meta">
+      {{#each categories}}
+      <span class="category ui blue basic label mini">{{.}}</span>
+      {{/each}}
+    </div>
+
+  </div>
+  <div class="extra content">
+    <a href="http://{{provider}}" target="_blank" class="ui basic image label">
+      {{#if image}}
+        <img src="{{image}}">
+      {{else}}
+        <img src="../../../../assets/images/logos/logo-32.png">
+      {{/if}}
+      {{provider}}
+    </a>
+  </div>
+  {{#if spec}}
+  <a href="/pages/openapis.html?spec={{spec}}" class="ui bottom attached button">
+      View Definition
+  </a>
+  {{/if}}
+</div>

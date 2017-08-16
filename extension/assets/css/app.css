@@ -1,0 +1,35 @@
+/*******************************
+        Application
+*******************************/
+
+.ui.modal>.content {
+  font-size: 14px!important;
+}
+
+.article {
+  min-height: 600px;
+}
+
+.main.container>p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+/*******************************
+  Master headers backgrounds
+*******************************/
+
+.masthead {
+  background-repeat: no-repeat!important;
+  background-size: cover!important;
+}
+
+#home .masthead {
+  background-image: url("/assets/backgrounds/stars.jpg")!important;
+  background-size: auto;
+}
+
+#openapis .masthead {
+  background-image: url("/assets/images/openapis/logo.png")!important;
+}

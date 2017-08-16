@@ -1,0 +1,236 @@
+{
+  "name": "API Evangelist",
+  "description": "This is an inventory of APIs available as part of the API Evangelist network.",
+  "image": "https://s3.amazonaws.com/kinlane-productions/api-evangelist/t-shirts/KL_InApiWeTrust-1000.png",
+  "tags": [
+    "application programming interface",
+    "API",
+    "News",
+    "Analysis"
+  ],
+  "created": "2014-04-07",
+  "modified": "2014-07-09",
+  "url": "http://apievangelist.com/apis.json",
+  "specificationVersion": "0.14",
+  "apis": [
+    {
+      "name": "Analysis",
+      "description": "Provides access to blog posts and analysis across the API Evangelist network.",
+      "image": "https://s3.amazonaws.com/kinlane-productions/api-evangelist/t-shirts/KL_InApiWeTrust-1000.png",
+      "humanURL": "http://developer.apievangelist.com",
+      "baseURL": "http://api.apievangelist.com/definitions/Analysis",
+      "tags": [
+        "blog",
+        "industry",
+        "analysis",
+        "new",
+        "API",
+        "Application Programming Interface"
+      ],
+      "properties": [
+        {
+          "type": "X-signup",
+          "url": "https://apievangelist.3scale.net/"
+        },
+        {
+          "type": "Swagger",
+          "url": "http://api.apievangelist.com/definitions/Analysis"
+        },
+        {
+          "type": "X-blog",
+          "url": "http://developer.apievangelist.com/blog/"
+        },
+        {
+          "type": "X-apicommonsmanifest",
+          "url": "https://raw.githubusercontent.com/kinlane/analysis-api/master/api-commons-manifest.json"
+        }
+      ],
+      "contact": [
+        {
+          "FN": "API Evangliest",
+          "email": "info@apievangelist.com",
+          "X-twitter": "apievangelist"
+        }
+      ]
+    },
+    {
+      "name": "APIs",
+      "description": "Provides access to APIs that are being tracked across the API Evangelist network.",
+      "image": "https://s3.amazonaws.com/kinlane-productions/api-evangelist/t-shirts/KL_InApiWeTrust-1000.png",
+      "humanURL": "http://developer.apievangelist.com",
+      "baseURL": "http://api.apievangelist.com/definitions/APIs",
+      "tags": [
+        "application programming interface",
+        "API"
+      ],
+      "properties": [
+        {
+          "type": "X-signup",
+          "url": "https://apievangelist.3scale.net/"
+        },
+        {
+          "type": "Swagger",
+          "url": "http://api.apievangelist.com/definitions/APIs"
+        },
+        {
+          "type": "X-blog",
+          "url": "http://developer.apievangelist.com/blog/"
+        },
+        {
+          "type": "X-apicommonsmanifest",
+          "url": "https://raw.githubusercontent.com/kinlane/api-api/master/api-commons-manifest.json"
+        }
+      ],
+      "contact": [
+        {
+          "FN": "API Evangliest",
+          "email": "info@apievangelist.com",
+          "X-twitter": "apievangelist"
+        }
+      ]
+    },
+    {
+      "name": "Building Blocks",
+      "description": "Provides access to building blocks of the API industry tracked on as part of the API Evangelist network.",
+      "image": "https://s3.amazonaws.com/kinlane-productions/api-evangelist/t-shirts/KL_InApiWeTrust-1000.png",
+      "humanURL": "http://developer.apievangelist.com",
+      "baseURL": "http://api.apievangelist.com/definitions/BuildingBlocks",
+      "tags": [
+        "application programming interface",
+        "API",
+        "features",
+        "building blocks"
+      ],
+      "properties": [
+        {
+          "type": "X-signup",
+          "url": "https://apievangelist.3scale.net/"
+        },
+        {
+          "type": "Swagger",
+          "url": "http://api.apievangelist.com/definitions/BuildingBlocks"
+        },
+        {
+          "type": "X-blog",
+          "url": "http://developer.apievangelist.com/blog/"
+        },
+        {
+          "type": "X-apicommonsmanifest",
+          "url": "https://raw.githubusercontent.com/kinlane/building-blocks-api/master/api-commons-manifest.json"
+        }
+      ],
+      "contact": [
+        {
+          "FN": "API Evangliest",
+          "email": "info@apievangelist.com",
+          "X-twitter": "apievangelist"
+        }
+      ]
+    },
+    {
+      "name": "Curated",
+      "description": "Provides access to curated links from the API Evangelist network industry monitoring.",
+      "image": "https://s3.amazonaws.com/kinlane-productions/api-evangelist/t-shirts/KL_InApiWeTrust-1000.png",
+      "humanURL": "http://developer.apievangelist.com",
+      "baseURL": "http://api.apievangelist.com/definitions/Curated",
+      "tags": [
+        "news",
+        "artices",
+        "links",
+        "API"
+      ],
+      "properties": [
+        {
+          "type": "X-signup",
+          "url": "https://apievangelist.3scale.net/"
+        },
+        {
+          "type": "Swagger",
+          "url": "http://api.apievangelist.com/definitions/Curated"
+        },
+        {
+          "type": "X-blog",
+          "url": "http://developer.apievangelist.com/blog/"
+        },
+        {
+          "type": "X-apicommonsmanifest",
+          "url": "https://raw.githubusercontent.com/kinlane/curated-api/master/api-commons-manifest.json"
+        }
+      ],
+      "contact": [
+        {
+          "FN": "API Evangliest",
+          "email": "info@apievangelist.com",
+          "X-twitter": "apievangelist"
+        }
+      ]
+    },
+    {
+      "name": "Tools",
+      "description": "Provides access to tools that are being tracked on as part of the API Evangelist network.",
+      "image": "https://s3.amazonaws.com/kinlane-productions/api-evangelist/t-shirts/KL_InApiWeTrust-1000.png",
+      "humanURL": "http://developer.apievangelist.com",
+      "baseURL": "http://api.apievangelist.com/definitions/Tools",
+      "tags": [
+        "API",
+        "Application Programming Interface",
+        "Tools"
+      ],
+      "properties": [
+        {
+          "type": "X-signup",
+          "url": "https://apievangelist.3scale.net/"
+        },
+        {
+          "type": "Swagger",
+          "url": "http://api.apievangelist.com/definitions/Tools"
+        },
+        {
+          "type": "X-blog",
+          "url": "http://developer.apievangelist.com/blog/"
+        },
+        {
+          "type": "X-apicommonsmanifest",
+          "url": "https://raw.githubusercontent.com/kinlane/tools-api/master/api-commons-manifest.json"
+        }
+      ],
+      "contact": [
+        {
+          "FN": "API Evangliest",
+          "email": "info@apievangelist.com",
+          "X-twitter": "apievangelist"
+        }
+      ]
+    }
+  ],
+  "include": [
+    {
+      "name": "API Evangelist - Products",
+      "url": "http://products.apievangelist.com/apis.json"
+    },
+    {
+      "name": "API Evangelist - Screen Capture",
+      "url": "http://screen-capture.apievangelist.com/apis.json"
+    },
+    {
+      "name": "API Evangelist - Image Manipulation",
+      "url": "http://image.manipulation.apievangelist.com/apis.json"
+    },
+    {
+      "name": "API Evangelist - API Ideas",
+      "url": "http://ideas.apievangelist.com/apis.json"
+    },
+    {
+      "name": "API Commons",
+      "url": "http://apicommons.org/apis.json"
+    }
+  ],
+  "maintainers": [
+    {
+      "FN": "Kin",
+      "X-twitter": "apievangelist",
+      "email": "kin@email.com",
+      "vCard":"http://staging.apis.io/vCards/testVcard.vcf"
+    }
+  ]
+}

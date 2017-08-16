@@ -1,0 +1,28 @@
+<!-- Following Menu -->
+<div class="ui large top fixed hidden menu">
+  <div class="ui container">
+    <a class="item" href="/pages/home.html">API Spots</a>
+    <a class="active item" href="/pages/openapis.html">Open APIs</a>
+  </div>
+</div>
+
+<!-- Sidebar Menu -->
+<div class="ui vertical inverted sidebar menu left">
+  <a class="item" href="/pages/home.html">API Spots</a>
+  <a class="active item" href="/pages/openapis.html">Open APIs</a>
+</div>
+
+
+<!-- Page Contents -->
+<div class="pusher">
+
+  {{#if loading}}
+    {{> modules/openapis/loading.hbs}}
+  {{else}}
+    {{> modules/openapis/default.hbs}}
+  {{/if}}
+
+
+  {{> common/footer}}
+
+</div>

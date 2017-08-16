@@ -1,0 +1,94 @@
+extends:
+  airbnb
+
+env:
+  es6: true
+  node: false
+  mocha: true
+  browser: true
+  jquery: true
+
+globals:
+  chrome: true
+  swal: true
+  postal: true
+  tabs: true
+
+parserOptions:
+  sourceType: module
+
+rules:
+  quotes:
+    - error
+    - single
+    - avoid-escape
+  comma-style:
+    - off
+    - first
+  comma-dangle:
+    - off
+    - never
+  no-empty:
+    - error
+    - allowEmptyCatch: true
+  no-use-before-define:
+    - off
+    - nofunc
+  one-var:
+    - off
+    - var: always
+      let: always
+      const: always
+  eqeqeq:
+    - warn
+    - smart
+  no-unused-vars:
+    - error
+  no-param-reassign:
+    - off
+  no-cond-assign:
+    - error
+    - except-parens
+  arrow-parens:
+    - off
+    - as-needed
+  class-methods-use-this:
+    - off
+  object-curly-spacing:
+    - off
+  padded-blocks:
+    - off
+  no-underscore-dangle:
+    - off
+  space-infix-ops:
+    - off
+  no-restricted-syntax:
+    - off
+  no-throw-literal:
+    - off
+  no-console:
+    - off
+  operator-assignment:
+    - off
+  one-var-declaration-per-line:
+    - off
+  no-continue:
+    - off
+  no-shadow:
+    - off
+  func-names:
+    - off
+  no-prototype-builtins:
+    - off
+  space-before-function-paren:
+    - off
+  import/prefer-default-export:
+    - off
+  import/newline-after-import:
+    - off
+  import/no-dynamic-require:
+    - off
+  no-unused-expressions:
+    - off
+  jsx-a11y/href-no-hash:
+    - off

@@ -1,0 +1,61 @@
+/*******************************
+        Open API Explorer
+*******************************/
+
+.card.definition .header {
+  word-break: break-all;
+}
+
+.card.definition .description {
+  max-height: 100px;
+  overflow: hidden;
+}
+
+.security.definitions .scope {
+  word-wrap: break-word;
+}
+
+/*******************************
+        Path Modal
+*******************************/
+.modal.path .menu .item .verb {
+  margin-right: 5px;
+}
+
+.modal.path .menu .item span {
+  text-transform: uppercase;
+}
+
+/*******************************
+        Operations Tree
+*******************************/
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+
+.node text {
+  font: 18px!important;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
+
+.axis path {
+  display: none;
+}
+
+.axis line {
+  stroke-opacity: 0.3;
+  shape-rendering: crispEdges;
+}
+
+.view {
+  fill: url(#gradient);
+  stroke: #000;
+}

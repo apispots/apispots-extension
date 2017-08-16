@@ -1,0 +1,47 @@
+
+{{>modules/openapis/catalog/menu}}
+
+<div class="pusher">
+
+  <div id="content" class="main text container wide">
+
+    {{> modules/openapis/catalog/general}}
+
+    {{#if catalog.apis}}
+    <div class="ui large header">APIs</div>
+    <div class="ui special cards apis">
+
+      {{#each catalog.apis}}
+        {{> modules/openapis/catalog/api}}
+      {{/each}}
+
+    </div>
+    {{/if}}
+
+    {{#if catalog.include}}
+    <h2>Collections</h2>
+    <div class="ui relaxed divided list catalogs collections">
+
+      {{#each catalog.include}}
+      <div class="item collection">
+        <i class="large sitemap middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="/pages/openapis.html?catalogUrl={{url}}">{{name}}</a>
+          <div class="description">{{url}}</div>
+        </div>
+      </div>
+      {{/each}}
+
+    </div>
+    {{/if}}
+
+    {{> modules/openapis/catalog/maintainers}}
+
+
+  </div>
+
+  <div class="ui black inverted vertical footer segment">
+    {{>common/footer}}
+  </div>
+
+</div>

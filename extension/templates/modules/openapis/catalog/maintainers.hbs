@@ -1,0 +1,33 @@
+{{#if maintainers}}
+<h2>Maintainers</h2>
+<div class="ui cards">
+
+  {{#each maintainers}}
+  <div class="card">
+    <div class="content">
+      <div class="header">{{FN}}</div>
+      <div class="ui labels">
+        {{#each this}}
+
+          {{#eq @key "email"}}
+            <a href="mailto:{{.}}" target="_blank"><i class="ui icon large mail"></i></a>
+          {{/eq}}
+          {{#eq @key "x-twitter"}}
+            <a href="http://twitter.com/{{.}}" target="_blank"><i class="ui icon large twitter"></i></a>
+          {{/eq}}
+          {{#eq @key "url"}}
+            <a href="{{.}}" target="_blank"><i class="ui icon large home"></i></a>
+          {{/eq}}
+          {{#eq @key "x-github"}}
+            <a href="http://github.com/{{.}}" target="_blank"><i class="ui icon large github"></i></a>
+          {{/eq}}
+
+        {{/each}}
+      </div>
+
+    </div>
+  </div>
+  {{/each}}
+
+</div>
+{{/if}}

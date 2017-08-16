@@ -1,0 +1,106 @@
+
+
+<div class="ui vertical stripe segment">
+
+  <h3 class="ui horizontal header divider">
+    <a href="#">Open APIs Catalogs</a>
+  </h3>
+
+  <div class="ui middle aligned stackable grid container">
+
+    <div class="row">
+      <div class="eight wide column">
+        <h3 class="ui header">Wikipedia for WEB APIs</h3>
+        <blockquote>
+          Our goal is to create a machine-readable Wikipedia for REST APIs with the following principals:
+          <ul>
+            <li>Open source, community driven project</li>
+            <li>Only publicly available APIs (free or paid)</li>
+            <li>Anyone can add or change an API, not only API owners</li>
+            <li>All data can be accessed through a REST API</li>
+          </ul>
+        </blockquote>
+        <a class="ui button primary" href="/pages/openapis.html?providerId=apis.guru" >
+          <i class="search icon"></i> Browse catalog
+        </a>
+        <a class="ui button" href="https://apis.guru/openapi-directory/" target="_blank">
+          <i class="home icon"></i> Website
+        </a>
+        <a class="ui button" href="https://github.com/APIs-guru/openapi-directory" target="_blank">
+          <i class="github icon"></i> Github
+        </a>
+      </div>
+      <div class="six wide right floated column">
+        <img src="https://apis.guru/branding/logo_vertical.svg" class="ui medium rounded image">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="eight wide column">
+        <h3 class="ui header">The API Stack by the API Evangelist</h3>
+        <blockquote>
+          I am Kin Lane, the API Evangelist...
+          <p>
+            This is my online domain where I work to understand the world of the
+            Application Programming Interfaces, also known as APIs.
+            This new way of sharing data using the web is touching almost
+            every aspect of our increasingly digital lives,
+            providing access to the bits and bytes that make our
+            personal and professional worlds go round.
+          </p>
+        </blockquote>
+        <a class="ui button primary" href="/pages/openapis.html?providerId=apistack">
+          <i class="search icon"></i> Browse catalog
+        </a>
+        <a class="ui button" href="http://theapistack.com/" target="_blank">
+          <i class="home icon"></i> Website
+        </a>
+        <a class="ui button" href="https://github.com/api-stack/api-stack" target="_blank">
+          <i class="github icon"></i> Github
+        </a>
+      </div>
+      <div class="six wide right floated column">
+        <img src="http://apievangelist.com/images/kin-lane-api-evangelist-cartoon.png" class="ui medium rounded image">
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="ui vertical stripe intro segment">
+  <div class="ui stackable very relaxed center aligned grid container">
+    <div class="row">
+      <div class="twelve wide column">
+        <h1 class="ui header">APIs.json catalogs support</h1>
+        <p>
+          APIs.json is a machine readable approach that API providers can use to
+          describe their API operations, similar to how web sites are described using sitemap.xml.
+        </p>
+        <a class="ui large button" href="http://apisjson.org/" target="_blank">Read more</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="ui alternate stripe vertical segment" id="section-load-catalog-by-url">
+  <div class="ui center aligned grid container">
+    <div class="column">
+      <h3 class="ui header">
+      Enter the URL of an APIs.json catalog
+      </h3>
+      <form class="ui form" method="get" id="form-apisjson-catalog">
+        <div class="field">
+          <div class="ui icon input huge">
+            <input type="url" id="input-url-catalog" name="openapi"
+              placeholder="Enter the catalog URL"
+              value="">
+            <i class="inverted circular external link icon" id="icon-open-catalog"></i>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+</div>
