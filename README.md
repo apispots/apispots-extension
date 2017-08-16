@@ -1,4 +1,4 @@
-# swagger.ed
-API tools with swag
+# API Spots
+APIs for Humans
 
-[Project Website](http://spilio.github.io/apispots/projects/swaggered/)
+[Project Website](https://apispots.github.io)
