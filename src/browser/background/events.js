@@ -54,8 +54,6 @@ export default (function() {
   const _onOpenInTab = function(data) {
     try {
 
-      console.log('open in tab', data);
-
       const query = {
         active: true,
         currentWindow: true
@@ -66,11 +64,9 @@ export default (function() {
           return;
         }
 
-        const tab = tabs[0];
-
         chrome.tabs.create({
           active: true,
-          url: 'pages/home.html'
+          url: 'pages/openapis.html'
         });
 
       });

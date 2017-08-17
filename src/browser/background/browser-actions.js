@@ -29,9 +29,8 @@ export default (function() {
 
         chrome.tabs.create({
           active: true,
-          url: 'pages/home.html'
+          url: 'pages/openapis.html'
         });
-
       });
 
     } catch (e) {

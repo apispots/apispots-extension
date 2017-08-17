@@ -9,7 +9,6 @@ let webpackConfig = {
 
   entry: {
     base: './common/base.js',
-    home: './modules/home/index.js',
     openapis: './modules/openapis/index.js',
     background: './browser/background/index.js',
     content: './browser/content/index.js'
