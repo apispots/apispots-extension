@@ -1,5 +1,5 @@
 /**
- * OpenAPI content detector.
+ * Swagger content detector.
  *
  * @author Chris Spiliotopoulos
  */
@@ -50,7 +50,7 @@ export default (function() {
         // check for the 'swaggerVersion' attribute
         if ((typeof content.swaggerVersion === 'undefined') &&
           (typeof content.swagger === 'undefined')) {
-          throw new Error('Not an Open API document');
+          throw new Error('Not a Swagger document');
         }
 
         // get the title

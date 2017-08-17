@@ -3,11 +3,13 @@
  * @type {[type]}
  */
 
-import ScannerOpenApi from './scanner-openapi';
+import ScannerSwagger from './scanner-swagger-definition';
+import ScannerOpenApi from './scanner-openapi-definition';
 import ScannerCatalogApisJson from './scanner-catalog-apisjson';
 
 // list of supported content scanners
 const SCANNERS = [
+  ScannerSwagger,
   ScannerOpenApi,
   ScannerCatalogApisJson
 ];
