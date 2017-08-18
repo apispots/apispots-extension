@@ -3,6 +3,7 @@
  * @return {[type]} [description]
  */
 import * as _ from 'lodash';
+import postal from 'postal';
 
 import graph from './graph';
 import '../../../extension/templates/modules/openapis/explorer/module.css';

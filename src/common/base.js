@@ -1,3 +1,4 @@
+import 'postal';
 
 import 'semantic-ui-css/semantic.min';
 import 'semantic-ui-css/semantic.min.css';

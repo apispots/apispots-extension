@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import postal from 'postal';
 
 import '../../common/base';
 import ApiDefinition from '../../lib/openapi/api-definition';

@@ -4,6 +4,7 @@
  */
 import _ from 'lodash';
 import * as vis from 'vis';
+import postal from 'postal';
 
 import GraphUtils from '../../lib/utils/utils-graph';
 
