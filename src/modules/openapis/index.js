@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import postal from 'postal';
+import swal from 'sweetalert2';
 
 import '../../common/base';
 import ApiDefinition from '../../lib/openapi/api-definition';
