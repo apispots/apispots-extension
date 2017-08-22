@@ -2,10 +2,12 @@
  * Content script main.
  * @type {[type]}
  */
+import async from 'async';
 
 import ScannerSwagger from './scanner-swagger-definition';
 import ScannerOpenApi from './scanner-openapi-definition';
 import ScannerCatalogApisJson from './scanner-catalog-apisjson';
+import Storage from '../../lib/common/browser-storage';
 
 // list of supported content scanners
 const SCANNERS = [
@@ -36,10 +38,33 @@ Promise.all(promises)
 
     if (resolved.length > 0) {
 
+      // one scanner has detected compatible content
+
+      // get the first resolved message
       const message = resolved[0].message;
 
-      // publish the action message to the runtime
-      chrome.runtime.sendMessage(undefined, message, undefined);
+      async.waterfall([
+
+        (cb) => {
+          // if the URL is for a local file,
+          // store its contents in local storage
+          const url = document.URL;
+          const content = document.body.textContent;
+          const items = {};
+          items[url] = content;
+          if (url.startsWith('file://')) {
+            Storage.local.set(items, cb);
+          } else {
+            cb();
+          }
+        }
+
+      ], () => {
+
+        // publish the action message to the runtime
+        chrome.runtime.sendMessage(undefined, message, undefined);
+      });
+
     }
   })
   .catch((err) => {

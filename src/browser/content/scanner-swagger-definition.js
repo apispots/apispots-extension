@@ -67,6 +67,7 @@ export default (function() {
 
         // return the message
         resolve(message);
+
       } catch (e) {
         reject(e);
       }

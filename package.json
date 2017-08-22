@@ -54,6 +54,7 @@
     "lodash.clonedeep": "^4.5.0",
     "nconf": "^0.8.4",
     "postal": "^2.0.5",
+    "pouchdb-browser": "^6.3.4",
     "request": "^2.81.0",
     "semantic-ui-css": "^2.2.12",
     "strformat": "0.0.7",

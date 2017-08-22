@@ -5,7 +5,10 @@
  */
 import Swagger from 'swagger-client';
 import _ from 'lodash';
+import async from 'async';
+import jsyaml from 'js-yaml';
 
+import Storage from '../common/browser-storage';
 import GraphUtils from '../utils/utils-graph';
 
 export default class ApiDefinition {
@@ -47,24 +50,58 @@ export default class ApiDefinition {
           throw new Error('Either a URI or a valid Swagger spec should be provided');
         }
 
-        // try to resolve the API definition
-        // using either a URI or a spec
-        new Swagger({
-          url,
-          spec
-        })
-          .then((openapi) => {
-            const api = new ApiDefinition(openapi);
+        async.waterfall([
 
-            if (_.isEmpty(api.spec)) {
-              reject(new Error('Invalid Open API specification'));
+          (cb) => {
+            // if the URL is for local file
+            // check if the content is available
+            // in local storage
+            if ((typeof url !== 'undefined') &&
+                (url.startsWith('file://'))) {
+              spec = Storage.local.get([url], (data) => {
+                if (!_.isEmpty(data)) {
+                  spec = data[url];
+                  url = undefined;
+                  cb();
+                }
+              });
             } else {
-              // return the API instance
-              resolve(api);
+              cb();
             }
-          }, (err) => {
-            reject(new Error(err.message));
-          });
+          }
+
+        ], (e) => {
+
+          if (e) {
+            reject(e);
+          } else {
+
+            // if spec is provided as a string,
+            // convert it to an object
+            if (typeof spec === 'string') {
+              spec = jsyaml.load(spec);
+            }
+
+            // try to resolve the API definition
+            // using either a URI or a spec
+            new Swagger({
+              url,
+              spec
+            })
+              .then((openapi) => {
+                const api = new ApiDefinition(openapi);
+
+                if (_.isEmpty(api.spec)) {
+                  reject(new Error('Invalid Open API specification'));
+                } else {
+                  // return the API instance
+                  resolve(api);
+                }
+              }, (err) => {
+                reject(new Error(err.message));
+              });
+          }
+        });
 
       } catch (e) {
         reject(e);
