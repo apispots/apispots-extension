@@ -12,7 +12,7 @@ import chaiAsPromised from 'chai-as-promised';
 
 import Swagger from 'swagger-client';
 import ApiDefinition from '../../../src/lib/openapi/api-definition';
-import spec from './data/petstore.json';
+import spec from '../../data/swagger.json';
 
 chai.should();
 const expect = chai.expect;
@@ -34,11 +34,12 @@ context('OpenAPI definition', () => {
     ApiDefinition.load({spec})
       .then((api) => {
         _api = api;
-      });
+      })
+      .catch((e) => { throw e; });
   });
 
   context('load()', () => {
-    it('should be rejected if no URI or valid spec is provided', () => {
+    it.only('should be rejected if no URI or valid spec is provided', () => {
       const promise = ApiDefinition.load();
       return promise.should.be.rejectedWith('Either a URI or a valid Swagger spec should be provided');
     });
@@ -110,7 +111,7 @@ context('OpenAPI definition', () => {
       expect(fn).to.throw('Undefined path');
     });
 
-    it.only('should return the path item definition of Id is valid', () => {
+    it('should return the path item definition of Id is valid', () => {
       const path = _api.path('/pet');
       path.should.be.an('object');
       path.should.have.keys(['post', 'put']);

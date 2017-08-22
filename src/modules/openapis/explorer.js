@@ -161,6 +161,12 @@ export default (function() {
         definitions: spec.definitions
       };
 
+      _.each(spec.definitions, (o) => {
+        _.each(o.required, (key) => {
+          o.properties[key].required = true;
+        });
+      });
+
       const html = tplDefinitions(data);
       $('#content').html(html);
 

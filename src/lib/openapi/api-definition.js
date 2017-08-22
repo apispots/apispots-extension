@@ -54,7 +54,6 @@ export default class ApiDefinition {
           spec
         })
           .then((openapi) => {
-
             const api = new ApiDefinition(openapi);
 
             if (_.isEmpty(api.spec)) {
@@ -72,6 +71,14 @@ export default class ApiDefinition {
       }
     });
 
+  }
+
+  /**
+   * Returns the Open API client instance.
+   * @return {[type]} [description]
+   */
+  get client() {
+    return this.openapi;
   }
 
   /**
