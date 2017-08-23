@@ -3,7 +3,7 @@ extends:
 
 env:
   es6: true
-  node: false
+  node: true
   mocha: true
   browser: true
   jquery: true

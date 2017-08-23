@@ -1,0 +1,19 @@
+ # Basic data story definition
+title: A basic data story
+description: This is a very basic data story
+spec: http://petstore.swagger.io/v2/swagger.json
+parts:
+  - description: Find some available pets
+    operationId: updatePet
+    input:
+      parameters:
+        body:
+          id: 123456789
+          name: jack
+          photoUrls:
+            - https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjN4NjwrURmqdR9yadjlVnDK5FMZJ3OA2CgNwaNHGPxLltx5gg6mhpXqU
+  - description: Find some available pets
+    operationId: getPetById
+    input:
+      parameters:
+        petId: 123456789

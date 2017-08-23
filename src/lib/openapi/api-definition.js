@@ -143,6 +143,32 @@ export default class ApiDefinition {
   }
 
   /**
+   * Returns an API operation
+   * by Id.
+   * @param  {[type]} id [description]
+   * @return {[type]}    [description]
+   */
+  getOperation(id) {
+    if (_.isEmpty(id)) {
+      return null;
+    }
+
+    let operation = null;
+
+    _.each(this.spec.paths, (entry, path) => {
+      _.each(entry, (op, verb) => {
+        if (op.operationId === id) {
+          operation = op;
+          operation.path = path;
+          operation.verb = verb;
+        }
+      });
+    });
+
+    return operation;
+  }
+
+  /**
    * Returns a sorted list of
    * API paths.
    * @return {[type]} [description]

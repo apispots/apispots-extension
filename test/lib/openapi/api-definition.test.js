@@ -12,7 +12,7 @@ import chaiAsPromised from 'chai-as-promised';
 
 import Swagger from 'swagger-client';
 import ApiDefinition from '../../../src/lib/openapi/api-definition';
-import spec from '../../data/swagger.json';
+import spec from './data/petstore.json';
 
 chai.should();
 const expect = chai.expect;
@@ -38,8 +38,9 @@ context('OpenAPI definition', () => {
       .catch((e) => { throw e; });
   });
 
+
   context('load()', () => {
-    it.only('should be rejected if no URI or valid spec is provided', () => {
+    it('should be rejected if no URI or valid spec is provided', () => {
       const promise = ApiDefinition.load();
       return promise.should.be.rejectedWith('Either a URI or a valid Swagger spec should be provided');
     });
@@ -74,7 +75,8 @@ context('OpenAPI definition', () => {
       ]);
     });
 
-    it('should be rejected if an invalid spec URL is provided', () => {
+    it('should be rejected if an invalid spec URL is provided', function() {
+      this.timeout(5000);
       const promise = ApiDefinition.load({url: 'http://petstore.swagger.io/v2/swagger.jso'});
       return promise.should.be.rejectedWith('Not Found');
     });
@@ -128,6 +130,16 @@ context('OpenAPI definition', () => {
       tree.children[0].children[0].path.should.equal('/pet/findByStatus');
     });
 
+  });
+
+
+  context('getOperation()', () => {
+    it('should return an operation definition by Id', () => {
+      const op =_api.getOperation('findPetsByStatus');
+      expect(op).not.to.be.empty;
+      expect(op.path).to.equal('/pet/findByStatus');
+      expect(op.verb).to.equal('get');
+    });
   });
 
 });
