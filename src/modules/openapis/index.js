@@ -7,6 +7,7 @@ import ApiDefinition from '../../lib/openapi/api-definition';
 import ApiCatalogService from '../../lib/openapi/catalog-service';
 import Explorer from './explorer';
 import Catalog from './catalog';
+import '../stories/story-maker';
 
 import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
 

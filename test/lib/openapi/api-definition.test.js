@@ -76,11 +76,19 @@ context('OpenAPI definition', () => {
     });
 
     it('should be rejected if an invalid spec URL is provided', function() {
-      this.timeout(5000);
+      this.timeout(10000);
       const promise = ApiDefinition.load({url: 'http://petstore.swagger.io/v2/swagger.jso'});
       return promise.should.be.rejectedWith('Not Found');
     });
 
+  });
+
+  context('title()', () => {
+    it('should return the API title', () => {
+      const title = _api.title;
+      expect(title).to.not.be.null;
+      expect(title).to.equal('Swagger Petstore');
+    });
   });
 
   context('paths()', () => {
@@ -139,6 +147,25 @@ context('OpenAPI definition', () => {
       expect(op).not.to.be.empty;
       expect(op.path).to.equal('/pet/findByStatus');
       expect(op.verb).to.equal('get');
+    });
+  });
+
+  context('operations()', () => {
+    it('should return a collection of all API operations', () => {
+      const operations =_api.operations;
+      expect(operations).not.to.be.empty;
+      expect(operations).to.be.an('array');
+      expect(operations).to.have.length(20);
+      expect(operations[0]).to.have.property('path');
+      expect(operations[0]).to.have.property('verb');
+    });
+  });
+
+  context('operationsBySummary()', () => {
+    it.only('should return a compact list of operations by summary', () => {
+      const operations =_api.operationsBySummary;
+      expect(operations).not.to.be.empty;
+      console.log(operations);
     });
   });
 

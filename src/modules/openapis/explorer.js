@@ -17,6 +17,7 @@ import tplOperations from '../../../extension/templates/modules/openapis/explore
 import tplOperation from '../../../extension/templates/modules/openapis/explorer/operation.hbs';
 import tplPaths from '../../../extension/templates/modules/openapis/explorer/paths.hbs';
 import tplGraph from '../../../extension/templates/modules/openapis/explorer/graph.hbs';
+import tplStories from '../../../extension/templates/modules/openapis/explorer/stories.hbs';
 
 export default (function() {
 
@@ -24,7 +25,6 @@ export default (function() {
    * Private
    */
   let _api = null;
-
 
   /**
    * Renders the provided Open API
@@ -105,6 +105,8 @@ export default (function() {
       _renderSecurity();
     } else if (section === 'operations') {
       _renderOperations();
+    } else if (section === 'stories') {
+      _renderStories();
     }
 
     // change the hashbang
@@ -405,9 +407,6 @@ export default (function() {
 
           return obj;
         });
-
-        console.log(o.responses);
-
       });
 
       const html = tplOperation(data);
@@ -450,6 +449,39 @@ export default (function() {
 
     // render the operations modal
     _renderOperationsModal(data.path);
+  };
+
+
+  /**
+   * Renders the data stories section.
+   * @return {[type]} [description]
+   */
+  const _renderStories = function() {
+    try {
+
+      const data = {};
+
+      const html = tplStories(data);
+      $('#content').html(html);
+
+      // bind listeners
+      $('.ui.dropdown').dropdown();
+
+      $('.item[data-id="new-story"]').on('click', () => {
+
+        postal.publish({
+          channel: 'stories',
+          topic: 'createStory',
+          data: {
+            api: _api
+          }
+        });
+      });
+
+
+    } catch (e) {
+      console.error(`Failed to render Data stories section - ${e}`);
+    }
   };
 
 

@@ -1,6 +1,10 @@
 /*******************************
         Application
 *******************************/
+body {
+  font-size: 16px;
+}
+
 
 .ui.modal>.content {
   font-size: 14px!important;
@@ -10,8 +14,12 @@
   min-height: 600px;
 }
 
+.main.container {
+  /*padding: 4em 0em 2em;*/
+}
+
+
 .main.container>p {
-  font-size: 16px;
   line-height: 1.5;
   color: rgba(0, 0, 0, 0.8);
 }
