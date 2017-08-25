@@ -16,13 +16,15 @@ export default class DataStory {
    */
   constructor({definition}={}) {
 
-    // set the definition instance
-    if (typeof definition === 'undefined') {
-      throw new Error('Invalid story definition');
+    // parse any provided definition
+    if (typeof definition !== 'undefined') {
+      this._definition = jsyaml.safeLoad(definition);
+    } else {
+      // instantiate with empty object
+      this._definition = {
+        parts: []
+      };
     }
-
-    // parse the YAML definition
-    this._definition = jsyaml.safeLoad(definition);
   }
 
   /**
@@ -57,6 +59,14 @@ export default class DataStory {
     }
 
     return this._definition.spec;
+  }
+
+  /**
+   * Dumps the story in YAML format.
+   * @return {[type]} [description]
+   */
+  toYAML() {
+    return jsyaml.safeDump(this._definition);
   }
 
 }

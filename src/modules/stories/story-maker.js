@@ -5,33 +5,33 @@
 import _ from 'lodash';
 import postal from 'postal';
 
+import DataStory from '../../lib/stories/data-story';
+
 import tplModal from '../../../extension/templates/modules/stories/story-maker.hbs';
-import tplFormOutline from '../../../extension/templates/modules/stories/form-outline.hbs';
-import tplFormInput from '../../../extension/templates/modules/stories/form-input.hbs';
+import tplStepOutline from '../../../extension/templates/modules/stories/step-outline.hbs';
+import tplStepInput from '../../../extension/templates/modules/stories/step-input.hbs';
 
 export default (function() {
 
   /*
    * Private
    */
-  const forms = {
-    outline: tplFormOutline,
-    input: tplFormInput
+  const steps = {
+    outline: tplStepOutline,
+    input: tplStepInput
   };
 
   // the API definition instance
   let _api = null;
 
-  // the story definition
-  const _story = {
-    parts: []
-  };
+  // the data story instance
+  let _story = new DataStory();
 
   // the modal instance
   let $modal;
 
-  // the current form Id
-  let _formId;
+  // the current step Id
+  let _stepId;
 
   /**
    * Called when a story needs to be
@@ -57,14 +57,14 @@ export default (function() {
       onVisible: () => {
         // select the first step
         _onStepSelected('outline');
+
+        $modal.modal('refresh');
       },
       onHidden: () => {
         // clear local data
-        _formId = null;
+        _resetData();
       }
     }).modal('show');
-
-    $modal.modal('refresh');
 
     $('.modal .steps .step').on('click', (e) => {
       // get the selected form Id
@@ -79,26 +79,29 @@ export default (function() {
    * @param  {[type]} e [description]
    * @return {[type]}   [description]
    */
-  const _onStepSelected = function(formId) {
+  const _onStepSelected = function(stepId) {
 
-    if (_formId === formId) {
+    if (_stepId === stepId) {
       return;
     }
 
     try {
 
       // validate the existing form
-      if (_formId) {
-        _validateForm(formId);
+      if (_stepId) {
+        _validateStep(_stepId);
       }
 
-      const $step = $(`.modal .step[data-form="${formId}"]`);
+      // remember the current step Id
+      _stepId = stepId;
+
+      const $step = $(`.modal .step[data-form="${stepId}"]`);
 
       $('.modal .steps .step').removeClass('active');
       $step.addClass('active');
 
       // get the selected form template
-      const tpl = forms[formId];
+      const tpl = steps[stepId];
 
       // create the model
       const model = {
@@ -107,21 +110,21 @@ export default (function() {
       };
 
       // render the form template
-      const $cnt = $('.modal #selected-form');
+      const $cnt = $('.modal #step-contents');
       const html = tpl(model);
       $cnt.html(html);
 
       // bind the listeners
       _bindFormListeners();
+
+      // bind validators
       _bindFormValidators();
 
-      // resize the modal
-      $modal.modal('refresh');
+      // populate the step with data
+      _populateStepWithData(stepId);
 
-      // remember the current form Id
-      _formId = formId;
     } catch (e) {
-      console.error(e);
+      // silent
     }
   };
 
@@ -132,39 +135,35 @@ export default (function() {
    */
   const _bindFormListeners = function() {
 
-    const $cnt = $('.modal #selected-form');
-
-    // steps
-    $('.ui.dropdown', $cnt).dropdown();
-
     // outline form
     $('[name="title"]', 'form[data-form="outline"]')
       .on('change', (e) => {
         // set the title
-        _story.title = $.trim($(e.currentTarget).val());
+        _story.definition.title = $.trim($(e.currentTarget).val());
       });
 
     $('[name="description"]', 'form[data-form="outline"]')
       .on('change', (e) => {
         // set the description
-        _story.description = $.trim($(e.currentTarget).val());
+        _story.definition.description = $.trim($(e.currentTarget).val());
       });
 
     $('[name="operation"]', 'form[data-form="outline"]')
-      .on('change', (e) => {
-        // get the selected operation
-        const operationId = $(e.currentTarget).val();
+      .dropdown({
+        onChange: (value) => {
+          // get the selected operation
+          const operationId = value;
 
-        // add one part only
-        const part = {};
-        if (_story.parts.length === 0) {
-          _story.parts.push(part);
+          // add one part only
+          const part = {};
+          if (_story.parts.length === 0) {
+            _story.parts.push(part);
+          }
+
+          _story.parts[0].operationId = operationId;
         }
-
-        part.operationId = operationId;
       });
   };
-
 
   /**
    * Binds the form validators
@@ -206,16 +205,55 @@ export default (function() {
 
   /**
    * Gathers the data entered in
-   * all forms.
+   * all steps.
    * @return {[type]} [description]
    */
-  const _validateForm = function(formId) {
+  const _validateStep = function(stepId) {
 
-    const valid = $(`form[data-form="${formId}"]`)
-      .form('is valid');
+    // step: outline
+    if (stepId === 'outline') {
+
+      const $form = $(`form[data-form="${stepId}"]`);
+      $form.form('validate form');
+      const res = $form.form('is valid');
+
+      $modal.modal('refresh');
+
+      if ((!res) ||
+        ((typeof res !== 'boolean') && (!res[res.length-1]))) {
+        throw new Error('Invalid step input');
+      }
+    }
 
 
   };
+
+
+  /**
+   * Populates the given step form
+   * with already stored data.
+   * @param  {[type]} stepId [description]
+   * @return {[type]}        [description]
+   */
+  const _populateStepWithData = function(stepId) {
+
+    if (stepId === 'outline') {
+      // title
+      $('[name="title"]', 'form[data-form="outline"]').val(_story.definition.title);
+
+      // description
+      $('[name="description"]', 'form[data-form="outline"]').val(_story.definition.description);
+
+      // operation
+      console.log(_story.parts[0].operationId);
+      if (typeof _story.parts[0] !== 'undefined') {
+        $('[name="operation"]', 'form[data-form="outline"]').dropdown('set selected', _story.parts[0].operationId);
+      }
+    }
+
+
+  };
+
 
   /**
    * Saves the story definition.
@@ -223,8 +261,19 @@ export default (function() {
    */
   const _onSaveStory = function() {
 
-    console.log('save story', _story);
+    console.log('save story', _story.toYAML());
   };
+
+
+  /**
+   * Resets local data.
+   * @return {[type]} [description]
+   */
+  const _resetData = function() {
+    _stepId = null;
+    _story = new DataStory();
+  };
+
 
   // event bindings
   postal.subscribe({
