@@ -1,43 +1,37 @@
 <h4>Dataset</h4>
 
-<div class="ui form equal width">
-
 {{#each parameters}}
 
   {{#if this.schema}}
 
-  <div class="ui segment">
-    <span class="ui basic blue label">{{type}}</span>
-  </div>
+    <div data-type="definition" data-schema="{{type}}"></div>
 
   {{else}}
 
-    <div class="eight wide field" data-tooltip="{{description}}" data-position="right center">
-      <label>{{name}}</label>
+    <div class="ui form equal width">
 
-      {{#eq fieldType "select"}}
-        <select class="ui dropdown parameter" name="{{name}}" {{#if selectMultiple}}multiple=""{{/if}}>
-          <option value=""></option>
-          {{#each fieldValues}}
-            <option value="{{this}}" {{#eq defaultValue this}}selected{{/eq}}>{{this}}</option>
-          {{/each}}
-        </select>
-      {{/eq}}
+      <div class="eight wide field" {{#if description}}data-tooltip="{{description}}"{{/if}} data-position="right center">
+        <label>{{name}}</label>
 
-      {{#eq fieldType "input"}}
-        <input class="ui input parameter" type="text" placeholder="{{description}}" name="{{name}}">
-      {{/eq}}
+        {{#eq fieldType "select"}}
+          <select class="ui dropdown parameter" name="{{name}}" {{#if selectMultiple}}multiple=""{{/if}}>
+            <option value=""></option>
+            {{#each fieldValues}}
+              <option value="{{this}}" {{#eq defaultValue this}}selected{{/eq}}>{{this}}</option>
+            {{/each}}
+          </select>
+        {{/eq}}
 
+        {{#eq fieldType "input"}}
+          <input class="ui input parameter" type="{{inputType}}" placeholder="{{description}}" name="{{name}}"
+            data-format="{{format}}">
+        {{/eq}}
 
+      </div>
 
     </div>
 
   {{/if}}
 
 
-
-
 {{/each}}
-
-
-</div>

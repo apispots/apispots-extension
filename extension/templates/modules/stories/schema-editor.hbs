@@ -1,0 +1,58 @@
+<div class="accordion">
+  <div class="title">
+    <i class="dropdown icon"></i>
+    {{type}}
+  </div>
+  <div class="content">
+
+    {{! params form goes here }}
+    <div class="ui form equal width">
+
+      {{#each definition.properties}}
+
+        {{#if schema}}
+
+        {{! embedded definition go here }}
+
+        {{else}}
+
+          <div class="eight wide field" {{#if description}}data-tooltip="{{description}}"{{/if}} data-position="right center">
+            <label>{{name}}</label>
+
+            {{#eq fieldType "select"}}
+              <select class="ui dropdown parameter search selection" name="{{name}}"
+                {{#if selectMultiple}}multiple=""{{/if}}
+                {{#if fieldAllowAdditions}}data-allowAdditions="true"{{/if}}>
+                <option value=""></option>
+                {{#each fieldValues}}
+                  <option value="{{this}}" {{#eq defaultValue this}}selected{{/eq}}>{{this}}</option>
+                {{/each}}
+              </select>
+            {{/eq}}
+
+            {{#eq fieldType "input"}}
+              <input class="ui input parameter" type="{{inputType}}" placeholder="{{description}}" name="{{name}}"
+                data-format="{{format}}">
+            {{/eq}}
+
+            {{#eq fieldType "textarea"}}
+              <textarea rows="2" name="description" {{#if description}}data-tooltip="{{description}}"{{/if}}
+                placeholder="{{description}}" name="{{name}}" data-format="{{format}}"></textarea>
+            {{/eq}}
+
+          </div>
+
+        {{/if}}
+
+
+      {{/each}}
+
+    </div>
+
+
+
+
+
+  </div>
+
+</div>

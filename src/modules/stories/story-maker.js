@@ -4,12 +4,15 @@
  */
 import _ from 'lodash';
 import postal from 'postal';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 import DataStory from '../../lib/stories/data-story';
 
 import tplModal from '../../../extension/templates/modules/stories/story-maker.hbs';
 import tplStepOutline from '../../../extension/templates/modules/stories/step-outline.hbs';
 import tplStepInput from '../../../extension/templates/modules/stories/step-input.hbs';
+import tplSchemaEditor from '../../../extension/templates/modules/stories/schema-editor.hbs';
 
 export default (function() {
 
@@ -237,7 +240,7 @@ export default (function() {
   const _onInputStep = function() {
 
     // get the selected operation
-    const opId = 'findPetsByStatus'; // _story.parts[0].operationId;
+    const opId = 'addPet'; // _story.parts[0].operationId;
 
     // get the operation definition
     const operation = _.cloneDeep(_api.getOperation(opId));
@@ -250,28 +253,8 @@ export default (function() {
         o.type = type;
       }
 
-      // decide on the field type
-      if (o.type === 'array') {
-
-        // this should be a dropdown
-        o.fieldType = 'select';
-        o.fieldValues = o.items.enum;
-        o.defaultValue = o.items.default;
-
-        if (o.collectionFormat === 'multi') {
-          o.selectMultiple = true;
-        }
-      } else if (o.type === 'boolean') {
-        o.fieldType = 'select';
-        o.fieldValues = ['true', 'false'];
-      } else if (o.type === 'file') {
-
-        console.log('File is not supported yet');
-      } else {
-
-        // otherwise use an input
-        o.fieldType = 'input';
-      }
+      // enrich with field info
+      _enrichWithFieldInfo(o);
 
     });
 
@@ -281,18 +264,94 @@ export default (function() {
       parameters: operation.parameters
     };
 
-    console.log(operation.parameters);
-
     // render the form template
     const $cnt = $('.modal #step-contents');
     const html = tplStepInput(model);
     $cnt.html(html);
 
-    // initialize dropdowns
-    $('.ui.dropdown', $cnt).dropdown();
+    // initialize calendars
+    flatpickr('.ui.input[data-format="date"]', {});
+    flatpickr('.ui.input[data-format="dateTime"]', {
+      enableTime: true
+    });
 
     // bind the dataset validators
     _bindDatasetValidators(operation.parameters);
+
+    // manage schema definitions
+    _bindSchemaManager();
+
+    // initialize dropdowns
+    _.each($('.ui.dropdown', $cnt), (el) => {
+
+      const $el = $(el);
+      const opts = {};
+
+      if ($el.attr('data-allowAdditions')) {
+        opts.allowAdditions = true;
+      }
+
+      // create the dropdown
+      $el.dropdown(opts);
+    });
+  };
+
+
+  /**
+   * Enriches a property model with
+   * the appropriate field info.
+   * @param  {[type]} property [description]
+   * @return {[type]}          [description]
+   */
+  const _enrichWithFieldInfo = function(property) {
+
+    try {
+
+      // decide on the field type
+      if (property.type === 'array') {
+
+        // this should be a dropdown
+        property.fieldType = 'select';
+
+        // if an enum is defined, field should
+        // be a dropdown
+        if (typeof property.items.enum !== 'undefined') {
+          property.fieldValues = property.items.enum;
+          property.fieldDefaultValue = property.items.default;
+        } else {
+          // use a tag bar that allows additions
+          property.fieldAllowAdditions = true;
+          property.selectMultiple = true;
+
+        }
+
+        // is multi selection allowed?
+        if (property.collectionFormat === 'multi') {
+          property.selectMultiple = true;
+        }
+      } else if (property.type === 'boolean') {
+        // boolean dropdown
+        property.fieldType = 'select';
+        property.fieldValues = ['true', 'false'];
+      } else if (property.type === 'file') {
+
+        console.log('File is not supported yet');
+      } else {
+
+        // otherwise use an input
+        property.fieldType = 'input';
+
+        // set the type of input field
+        if (property.format === 'password') {
+          property.inputType = 'password';
+        } else {
+          property.inputType = 'text';
+        }
+      }
+
+    } catch (e) {
+      console.error('Failed to enrich with field info', e);
+    }
   };
 
 
@@ -317,7 +376,7 @@ export default (function() {
       const name = o.name;
 
       // get the field instance
-      const $field = $(`.modal .parameter[name="${name}"]`);
+      // const $field = $(`.modal .parameter[name="${name}"]`);
 
       // add an entry to the map
       const entry = {
@@ -326,66 +385,168 @@ export default (function() {
       };
       opts.fields[name] = entry;
 
-      // add the rules
-      console.log(o);
+      /*
+       * add the rules
+       */
 
       // required
-      if (o.required) {
+      if ((o.required) && (!o.allowEmptyValue)) {
         entry.rules.push({
-          type: 'empty',
-          prompt: 'This field is required'
+          type: 'empty'
         });
       }
 
-      switch (o.format) {
-        case 'integer':
-          entry.rules.push({
-            type: 'integer',
-            prompt: 'Value should be an integer'
-          });
-          break;
-        case 'float':
-        case 'double':
-          entry.rules.push({
-            type: 'decimal',
-            prompt: 'Value should be a decimal'
-          });
-          break;
-        default:
-          break;
+      // integer
+      if (o.type === 'integer') {
+        entry.rules.push({
+          type: 'integer'
+        });
+      }
+
+      // double / float
+      if ((o.format === 'float') ||
+        (o.format === 'double')) {
+        entry.rules.push({
+          type: 'decimal'
+        });
       }
 
       // min length
       if (typeof o.minLength !== 'undefined') {
         entry.rules.push({
-          type: `minLength[${o.minLength}]`,
-          prompt: `Value length should be >= ${o.minLength} characters`
+          type: `minLength[${o.minLength}]`
         });
       }
 
       // max length
       if (typeof o.maxLength !== 'undefined') {
         entry.rules.push({
-          type: `maxLength[${o.maxLength}]`,
-          prompt: `Value length should be <= ${o.maxLength} characters`
+          type: `maxLength[${o.maxLength}]`
         });
       }
+
 
       // pattern
       if (typeof o.pattern !== 'undefined') {
         entry.rules.push({
-          type: 'regExp',
-          value: o.pattern,
-          prompt: `Value should conform to pattern ${o.pattern}`
+          type: `regExp[${o.pattern}]`
         });
       }
 
     });
 
-    console.log($('.modal .form'));
-
     // bind the validators
     $('.modal .form').form(opts);
+
+  };
+
+
+  /**
+   * [description]
+   * @return {[type]} [description]
+   */
+  const _bindSchemaManager = function() {
+
+    // find all schema inputs
+    const $input = $('.modal div[data-type="definition"]');
+
+    if ($input.length > 0) {
+
+      // get the definition type
+      const type = $input.attr('data-schema');
+
+      // get the type definition and clone it
+      const definition = _.cloneDeep(_api.getDefinition(type));
+
+      /**
+       * Definition properties traversal function.
+       * @param  {[type]} definition [description]
+       * @return {[type]}            [description]
+       */
+      const traverse = function(node, func) {
+
+        try {
+          // call the func
+          if (typeof func === 'function') {
+            func(node);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+
+        _.each(node.properties, (o, key) => {
+
+          o.name = key;
+          o.parent = node;
+
+          traverse(o, func);
+        });
+      };
+
+      // traverse the definition to enrich
+      // the properties
+      traverse(definition, (prop) => {
+
+        if (prop.type === 'object') {
+          // enrich the model with the object type
+          const type = prop.$$ref.replace('#/definitions/', '');
+          prop.schema = type;
+        }
+
+        // check if required
+        if ((!_.isEmpty(prop.parent)) && (prop.parent.type === 'object')) {
+          if ((!_.isEmpty(prop.parent.required)) &&
+              (prop.parent.required.indexOf(prop.name) > -1)) {
+            prop.required = true;
+          }
+        }
+
+        // enrich with field info
+        _enrichWithFieldInfo(prop);
+      });
+
+      // traverse the definition to
+      // build the input template
+      traverse(definition, (prop) => {
+
+        if (prop.type === 'object') {
+
+          const model = {
+            type: prop.schema,
+            definition: prop
+          };
+
+          const html = tplSchemaEditor(model);
+
+          if (typeof prop.parent === 'undefined') {
+            // set as root
+            $input.html(html);
+            $('.accordion', $input).addClass('ui styled');
+            $('.accordion', $input).attr('data-type', prop.schema);
+          } else {
+            // append to the parent model
+            const $parent = $(`.accordion[data-type="${prop.parent.schema}"]`, $input);
+            $('.content', $parent).append(html);
+          }
+        }
+      });
+
+
+      // initialize accordions
+      $('.ui.accordion').accordion({
+        onOpen: () => {
+          // refresh the modal
+          $modal.modal('refresh');
+        },
+        onClose: () => {
+          // refresh the modal
+          $modal.modal('refresh');
+        }
+      });
+
+      // refresh the modal
+      $modal.modal('refresh');
+    }
 
   };
 
