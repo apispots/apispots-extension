@@ -55,7 +55,7 @@ export default (function() {
       duration: 100,
       onVisible: () => {
         // select the first step
-        _onStepSelected('input');
+        _onStepSelected('outline');
 
         $modal.modal('refresh');
       },
@@ -133,6 +133,14 @@ export default (function() {
         ((typeof res !== 'boolean') && (!res[res.length - 1]))) {
         throw new Error('Invalid step input');
       }
+
+      // gather data
+      _story.definition.title = $.trim($('.form .field [name="title"]').val());
+      _story.definition.description = $.trim($('.form .field [name="description"]').val());
+      if (_story.parts.length === 0) {
+        _story.parts.push({});
+      }
+      _story.parts[0].operationId = $('.form .field [name="operation"]').val();
     }
 
 
@@ -201,35 +209,6 @@ export default (function() {
         }
       });
 
-
-    // form listeners
-    $('[name="title"]', 'form[data-form="outline"]')
-      .on('change', (e) => {
-        // set the title
-        _story.definition.title = $.trim($(e.currentTarget).val());
-      });
-
-    $('[name="description"]', 'form[data-form="outline"]')
-      .on('change', (e) => {
-        // set the description
-        _story.definition.description = $.trim($(e.currentTarget).val());
-      });
-
-    $('[name="operation"]', 'form[data-form="outline"]')
-      .dropdown({
-        onChange: (value) => {
-          // get the selected operation
-          const operationId = value;
-
-          // add one part only
-          const part = {};
-          if (_story.parts.length === 0) {
-            _story.parts.push(part);
-          }
-
-          _story.parts[0].operationId = operationId;
-        }
-      });
   };
 
 
@@ -240,7 +219,7 @@ export default (function() {
   const _onInputStep = function() {
 
     // get the selected operation
-    const opId = 'addPet'; // _story.parts[0].operationId;
+    const opId = _story.parts[0].operationId;
 
     // get the operation definition
     const operation = _.cloneDeep(_api.getOperation(opId));
@@ -487,7 +466,7 @@ export default (function() {
       // the properties
       traverse(definition, (prop) => {
 
-        if (prop.type === 'object') {
+        if ((prop.type === 'object') || (typeof prop.$$ref !== 'undefined')) {
           // enrich the model with the object type
           const type = prop.$$ref.replace('#/definitions/', '');
           prop.schema = type;
@@ -509,7 +488,7 @@ export default (function() {
       // build the input template
       traverse(definition, (prop) => {
 
-        if (prop.type === 'object') {
+        if ((prop.type === 'object') || (typeof prop.$$ref !== 'undefined')) {
 
           const model = {
             type: prop.schema,

@@ -41,3 +41,11 @@ body {
 #openapis .masthead {
   background-image: url("/assets/images/openapis/logo.png")!important;
 }
+
+
+/*******************************
+  Story maker
+*******************************/
+.modal .schema.input {
+  margin-top: 20px;
+}
