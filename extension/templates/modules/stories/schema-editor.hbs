@@ -21,6 +21,8 @@
 
             {{#eq fieldType "select"}}
               <select class="ui dropdown parameter search selection" name="{{name}}"
+                data-rules="{{rules}}"
+
                 {{#if selectMultiple}}multiple=""{{/if}}
                 {{#if fieldAllowAdditions}}data-allowAdditions="true"{{/if}}>
                 <option value=""></option>
@@ -32,12 +34,16 @@
 
             {{#eq fieldType "input"}}
               <input class="ui input parameter" type="{{inputType}}" placeholder="{{description}}" name="{{name}}"
-                data-format="{{format}}">
+                data-format="{{format}}"
+                data-rules="{{rules}}"
+                >
             {{/eq}}
 
             {{#eq fieldType "textarea"}}
               <textarea rows="2" name="description" {{#if description}}data-tooltip="{{description}}"{{/if}}
-                placeholder="{{description}}" name="{{name}}" data-format="{{format}}"></textarea>
+                placeholder="{{description}}" name="{{name}}" data-format="{{format}}"
+                data-rules="{{rules}}"
+                ></textarea>
             {{/eq}}
 
           </div>

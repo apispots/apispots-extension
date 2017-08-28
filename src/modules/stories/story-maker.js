@@ -254,9 +254,6 @@ export default (function() {
       enableTime: true
     });
 
-    // bind the dataset validators
-    _bindDatasetValidators(operation.parameters);
-
     // manage schema definitions
     _bindSchemaManager();
 
@@ -273,6 +270,9 @@ export default (function() {
       // create the dropdown
       $el.dropdown(opts);
     });
+
+    // bind the dataset validators
+    _bindDatasetValidators();
   };
 
 
@@ -301,7 +301,6 @@ export default (function() {
           // use a tag bar that allows additions
           property.fieldAllowAdditions = true;
           property.selectMultiple = true;
-
         }
 
         // is multi selection allowed?
@@ -312,6 +311,11 @@ export default (function() {
         // boolean dropdown
         property.fieldType = 'select';
         property.fieldValues = ['true', 'false'];
+      } else if (typeof property.enum !== 'undefined') {
+        // enums should use a dropdown with predefined values
+        property.fieldType = 'select';
+        property.fieldValues = property.enum;
+        property.fieldDefaultValue = property.default;
       } else if (property.type === 'file') {
 
         console.log('File is not supported yet');
@@ -328,11 +332,58 @@ export default (function() {
         }
       }
 
+      // add validation rules
+      _addValidationRules(property);
+
     } catch (e) {
       console.error('Failed to enrich with field info', e);
     }
   };
 
+  /**
+   * Adds validation rules on the
+   * property based on definition.
+   * @param  {[type]} o [description]
+   * @return {[type]}   [description]
+   */
+  const _addValidationRules = function(o) {
+
+    o.rules = [];
+
+    // required
+    if ((o.required) && (!o.allowEmptyValue)) {
+      o.rules.push('empty');
+    }
+
+    // integer
+    if (o.type === 'integer') {
+      o.rules.push('integer');
+    }
+
+    // double / float
+    if ((o.format === 'float') ||
+      (o.format === 'double')) {
+      o.rules.push('decimal');
+    }
+
+    // min length
+    if (typeof o.minLength !== 'undefined') {
+      o.rules.push(`minLength[${o.minLength}]`);
+    }
+
+    // max length
+    if (typeof o.maxLength !== 'undefined') {
+      o.rules.push(`maxLength[${o.maxLength}]`);
+    }
+
+    // pattern
+    if (typeof o.pattern !== 'undefined') {
+      o.rules.push(`regExp[${o.pattern}]`);
+    }
+
+    // stringify and escape rules
+    o.rules = _.escape(JSON.stringify(o.rules));
+  };
 
   /**
    * Binds form validators for
@@ -340,82 +391,49 @@ export default (function() {
    * @param  {[type]} parameters [description]
    * @return {[type]}            [description]
    */
-  const _bindDatasetValidators = function(parameters) {
+  const _bindDatasetValidators = function() {
 
-    const opts = {
-      inline: true,
-      on: 'blur',
-      fields: {}
-    };
+    // find all forms
+    const $forms = $('.modal .form');
 
-    // iterate through all params
-    _.each(parameters, (o) => {
+    _.each($forms, (form) => {
+      const $form = $(form);
 
-      // locate the field on the form
-      const name = o.name;
+      // find all fields with 'data-rule'
+      // attributes in this form
+      const $fields = $('[data-rules]', $form);
 
-      // get the field instance
-      // const $field = $(`.modal .parameter[name="${name}"]`);
-
-      // add an entry to the map
-      const entry = {
-        identifier: name,
-        rules: []
+      const opts = {
+        inline: true,
+        on: 'blur',
+        fields: {}
       };
-      opts.fields[name] = entry;
 
-      /*
-       * add the rules
-       */
+      // loop through the fields
+      _.each($fields, (field) => {
+        const $field = $(field);
+        const name = $field.attr('name');
 
-      // required
-      if ((o.required) && (!o.allowEmptyValue)) {
-        entry.rules.push({
-          type: 'empty'
+        // get the rules, unescape and parse
+        let rules = $field.attr('data-rules');
+        rules = JSON.parse(_.unescape(rules));
+
+        opts.fields[name] = {
+          identifier: name,
+          rules: []
+        };
+
+        _.each(rules, (rule) => {
+          opts.fields[name].rules.push({
+            type: rule
+          });
         });
-      }
 
-      // integer
-      if (o.type === 'integer') {
-        entry.rules.push({
-          type: 'integer'
-        });
-      }
+      });
 
-      // double / float
-      if ((o.format === 'float') ||
-        (o.format === 'double')) {
-        entry.rules.push({
-          type: 'decimal'
-        });
-      }
-
-      // min length
-      if (typeof o.minLength !== 'undefined') {
-        entry.rules.push({
-          type: `minLength[${o.minLength}]`
-        });
-      }
-
-      // max length
-      if (typeof o.maxLength !== 'undefined') {
-        entry.rules.push({
-          type: `maxLength[${o.maxLength}]`
-        });
-      }
-
-
-      // pattern
-      if (typeof o.pattern !== 'undefined') {
-        entry.rules.push({
-          type: `regExp[${o.pattern}]`
-        });
-      }
-
+      // bind the validators
+      $form.form(opts);
     });
-
-    // bind the validators
-    $('.modal .form').form(opts);
 
   };
 
@@ -509,7 +527,6 @@ export default (function() {
           }
         }
       });
-
 
       // initialize accordions
       $('.ui.accordion').accordion({

@@ -8,13 +8,15 @@
 
   {{else}}
 
-    <div class="ui form equal width">
+    <div class="ui form equal width" data-schema="{{type}}">
 
       <div class="eight wide field" {{#if description}}data-tooltip="{{description}}"{{/if}} data-position="right center">
         <label>{{name}}</label>
 
         {{#eq fieldType "select"}}
-          <select class="ui dropdown parameter" name="{{name}}" {{#if selectMultiple}}multiple=""{{/if}}>
+          <select class="ui dropdown parameter" name="{{name}}" {{#if selectMultiple}}multiple=""{{/if}}
+          data-rules="{{rules}}"
+          >
             <option value=""></option>
             {{#each fieldValues}}
               <option value="{{this}}" {{#eq defaultValue this}}selected{{/eq}}>{{this}}</option>
@@ -24,7 +26,9 @@
 
         {{#eq fieldType "input"}}
           <input class="ui input parameter" type="{{inputType}}" placeholder="{{description}}" name="{{name}}"
-            data-format="{{format}}">
+            data-format="{{format}}"
+            data-rules="{{rules}}"
+            >
         {{/eq}}
 
       </div>
