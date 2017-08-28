@@ -17,8 +17,8 @@ import tplSchemaEditor from '../../../extension/templates/modules/stories/schema
 export default (function() {
 
   /*
-   * Private
-   */
+     * Private
+     */
 
   // the API definition instance
   let _api = null;
@@ -33,11 +33,11 @@ export default (function() {
   let _stepId;
 
   /**
-   * Called when a story needs to be
-   * created.  Displays a modal.
-   * @param  {[type]} data [description]
-   * @return {[type]}      [description]
-   */
+     * Called when a story needs to be
+     * created.  Displays a modal.
+     * @param  {[type]} data [description]
+     * @return {[type]}      [description]
+     */
   const _onCreateStory = function(data) {
 
     // remember the API definition
@@ -52,10 +52,11 @@ export default (function() {
     $('#btn-save', $modal).on('click', _onSaveStory);
 
     $modal.modal({
+      closable: false,
       duration: 100,
       onVisible: () => {
         // select the first step
-        _onStepSelected('input');
+        _onStepSelected('outline');
 
         $modal.modal('refresh');
       },
@@ -71,13 +72,18 @@ export default (function() {
       _onStepSelected(formId);
     });
 
+    // TODO: REMOVE THIS
+    _story.parts.push({});
+    // _story.parts[0].operationId = 'addPet';
+
+
   };
 
-  /**
-   * User clicked on a step.
-   * @param  {[type]} e [description]
-   * @return {[type]}   [description]
-   */
+    /**
+     * User clicked on a step.
+     * @param  {[type]} e [description]
+     * @return {[type]}   [description]
+     */
   const _onStepSelected = function(stepId) {
 
     if (_stepId === stepId) {
@@ -109,15 +115,16 @@ export default (function() {
 
     } catch (e) {
       // silent
+      console.error(e);
     }
   };
 
 
-  /**
-   * Gathers the data entered in
-   * all steps.
-   * @return {[type]} [description]
-   */
+    /**
+     * Gathers the data entered in
+     * all steps.
+     * @return {[type]} [description]
+     */
   const _validateStep = function() {
 
     // get all forms at this step
@@ -138,7 +145,7 @@ export default (function() {
         $modal.modal('refresh');
 
         if ((!res) ||
-        ((typeof res !== 'boolean') && (!res[res.length - 1]))) {
+            ((typeof res !== 'boolean') && (!res[res.length - 1]))) {
           throw new Error('Invalid step input');
         }
       }
@@ -157,18 +164,16 @@ export default (function() {
     } else if (_stepId === 'input') {
 
       // step: data input
-
+      _gatherInputDataset();
 
     }
-
-
   };
 
 
-  /**
-   * Manage the outline step
-   * @return {[type]} [description]
-   */
+    /**
+     * Manage the outline step
+     * @return {[type]} [description]
+     */
   const _onOutlineStep = function() {
 
     // create the model
@@ -177,14 +182,14 @@ export default (function() {
       operations: _api.operationsBySummary
     };
 
-    // render the form template
+      // render the form template
     const $cnt = $('.modal #step-contents');
     const html = tplStepOutline(model);
     $cnt.html(html);
 
     /*
-     * populate with existing data
-     */
+       * populate with existing data
+       */
 
     // title
     $('[name="title"]', 'form[data-step="outline"]').val(_story.definition.title);
@@ -230,14 +235,14 @@ export default (function() {
   };
 
 
-  /**
-   * Manage the input step
-   * @return {[type]} [description]
-   */
+    /**
+     * Manage the input step
+     * @return {[type]} [description]
+     */
   const _onInputStep = function() {
 
     // get the selected operation
-    const opId = 'addPet';// _story.parts[0].operationId;
+    const opId = _story.parts[0].operationId;
 
     // get the operation definition
     const operation = _.cloneDeep(_api.getOperation(opId));
@@ -260,7 +265,7 @@ export default (function() {
       parameters: operation.parameters
     };
 
-    // render the form template
+      // render the form template
     const $cnt = $('.modal #step-contents');
     const html = tplStepInput(model);
     $cnt.html(html);
@@ -288,17 +293,20 @@ export default (function() {
       $el.dropdown(opts);
     });
 
+    // populate with existing data
+    _populateInputDataset();
+
     // bind the dataset validators
     _bindDatasetValidators();
   };
 
 
-  /**
-   * Enriches a property model with
-   * the appropriate field info.
-   * @param  {[type]} property [description]
-   * @return {[type]}          [description]
-   */
+    /**
+     * Enriches a property model with
+     * the appropriate field info.
+     * @param  {[type]} property [description]
+     * @return {[type]}          [description]
+     */
   const _enrichWithFieldInfo = function(property) {
 
     try {
@@ -357,12 +365,12 @@ export default (function() {
     }
   };
 
-  /**
-   * Adds validation rules on the
-   * property based on definition.
-   * @param  {[type]} o [description]
-   * @return {[type]}   [description]
-   */
+    /**
+     * Adds validation rules on the
+     * property based on definition.
+     * @param  {[type]} o [description]
+     * @return {[type]}   [description]
+     */
   const _addValidationRules = function(o) {
 
     o.rules = [];
@@ -379,7 +387,7 @@ export default (function() {
 
     // double / float
     if ((o.format === 'float') ||
-      (o.format === 'double')) {
+        (o.format === 'double')) {
       o.rules.push('decimal');
     }
 
@@ -402,12 +410,12 @@ export default (function() {
     o.rules = _.escape(JSON.stringify(o.rules));
   };
 
-  /**
-   * Binds form validators for
-   * the input dataset.
-   * @param  {[type]} parameters [description]
-   * @return {[type]}            [description]
-   */
+    /**
+     * Binds form validators for
+     * the input dataset.
+     * @param  {[type]} parameters [description]
+     * @return {[type]}            [description]
+     */
   const _bindDatasetValidators = function() {
 
     // find all forms
@@ -427,7 +435,7 @@ export default (function() {
         fields: {}
       };
 
-      // get the 'included' state of the form
+        // get the 'included' state of the form
       const include = $form.attr('data-include');
 
       // process only forms
@@ -468,12 +476,37 @@ export default (function() {
 
   };
 
+    /**
+     * Definition properties traversal function.
+     * @param  {[type]} definition [description]
+     * @return {[type]}            [description]
+     */
+  const traverse = function(node, func) {
 
-  /**
-   * [description]
-   * @return {[type]} [description]
-   */
-  const _bindSchemaManager = function() {
+    try {
+      // call the func
+      if (typeof func === 'function') {
+        func(node);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    _.each(node.properties, (o, key) => {
+
+      o.name = key;
+      o.parent = node;
+
+      traverse(o, func);
+    });
+  };
+
+
+    /**
+     * [description]
+     * @return {[type]} [description]
+     */
+  const _bindSchemaManager = function(operation) {
 
     // find all schema inputs
     const $input = $('.modal div[data-type="definition"]');
@@ -486,33 +519,8 @@ export default (function() {
       // get the type definition and clone it
       const definition = _.cloneDeep(_api.getDefinition(type));
 
-      /**
-       * Definition properties traversal function.
-       * @param  {[type]} definition [description]
-       * @return {[type]}            [description]
-       */
-      const traverse = function(node, func) {
-
-        try {
-          // call the func
-          if (typeof func === 'function') {
-            func(node);
-          }
-        } catch (e) {
-          console.error(e);
-        }
-
-        _.each(node.properties, (o, key) => {
-
-          o.name = key;
-          o.parent = node;
-
-          traverse(o, func);
-        });
-      };
-
-      // traverse the definition to enrich
-      // the properties
+      // traverse the definition to
+      // enrich the properties
       traverse(definition, (prop) => {
 
         // check if object
@@ -520,6 +528,7 @@ export default (function() {
           // enrich the model with the object type
           const type = prop.$$ref.replace('#/definitions/', '');
           prop.schema = type;
+          prop.property = prop.name;
         }
 
         // check if object model is required
@@ -551,10 +560,14 @@ export default (function() {
           const html = tplSchemaEditor(model);
 
           if (typeof prop.parent === 'undefined') {
+
             // set as root
             $input.html(html);
             $('.accordion', $input).addClass('ui styled');
             $('.accordion', $input).attr('data-type', prop.schema);
+
+            // find the first form and its 'data-property'
+            $('.form', $input).attr('data-property', $input.attr('data-property'));
           } else {
             // append to the parent model
             const $parent = $(`.accordion[data-type="${prop.parent.schema}"]`, $input);
@@ -597,12 +610,12 @@ export default (function() {
 
   };
 
-  /**
-   * Switches the state of all optional
-   * models in the iput step.
-   * @param  {[type]} enabled [description]
-   * @return {[type]}         [description]
-   */
+    /**
+     * Switches the state of all optional
+     * models in the iput step.
+     * @param  {[type]} enabled [description]
+     * @return {[type]}         [description]
+     */
   const _switchStateOfOptionalModels = function(included, $ctx) {
 
     // if a form context is not provided,
@@ -635,23 +648,188 @@ export default (function() {
   };
 
 
-  /**
-   * Saves the story definition.
-   * @return {[type]} [description]
-   */
+    /**
+     * Saves the story definition.
+     * @return {[type]} [description]
+     */
   const _onSaveStory = function() {
 
     console.log('save story', _story.toYAML());
   };
 
 
-  /**
-   * Resets local data.
-   * @return {[type]} [description]
-   */
+    /**
+     * Resets local data.
+     * @return {[type]} [description]
+     */
   const _resetData = function() {
     _stepId = null;
     _story = new DataStory();
+  };
+
+
+    /**
+     * Gathers the input data set.
+     * @return {[type]} [description]
+     */
+  const _gatherInputDataset = function() {
+
+    try {
+
+      // the dataset object
+      let dataset = {};
+
+      // get all forms in the view
+      const $form = $('.modal .form').eq(0);
+
+      /**
+         * Form traversal function.
+         * @param  {[type]} definition [description]
+         * @return {[type]}            [description]
+         */
+      const traverseForm = function($form, parentNode) {
+
+        let node;
+
+        try {
+
+          // is included?
+          const included = $form.attr('data-include');
+
+          // process only forms mark
+          // as included
+          if (included !== 'false') {
+
+            // get the mapped property name
+            const propname = $form.attr('data-property');
+
+            if (typeof propname !== 'undefined') {
+              // set the property on the parent node
+              parentNode[propname] = {};
+              node = parentNode[propname];
+            } else {
+              node = parentNode;
+            }
+
+            // gather all field data
+            const $fields = $('.field', $form);
+
+            // loop through the fields
+            _.each($fields, (field) => {
+
+              // get the field instance
+              const $field = $(field);
+
+              // get the corresponding property name
+              const propname = $field.attr('data-property');
+
+              // get the parameter control
+              const $ctl = $('.parameter', $field);
+
+              // check the control type and
+              // get the field value
+              let value;
+
+              if ($ctl.is('input')) {
+                // input box
+                value = _.trim($ctl.val());
+
+              } else if ($ctl.hasClass('dropdown')) {
+                // select box
+
+                // get the array of values from
+                // the dropdown
+                value = $ctl.dropdown('get value');
+              }
+
+              // if one way or another
+              // value is empty, mark it
+              // as undefined so that it
+              // will not get included in
+              // the data model
+              if (_.isEmpty(value)) {
+                value = undefined;
+              }
+
+              // add the property and value
+              // to the model
+              if (typeof value !== 'undefined') {
+                node[propname] = value;
+              }
+            });
+          }
+
+        } catch (e) {
+          console.error(e);
+        }
+
+        // get all 1st level child forms
+        const $children = $form.parent().find('.form').eq(1);
+
+        // traverse child forms
+        _.each($children, (o) => {
+          traverseForm($(o), node);
+        });
+
+      };
+
+        // traverse the top-level form
+      traverseForm($form, dataset);
+
+      // TODO: This should be changed
+      // temp fix for form traversal mixup
+      // in case of 'body' payload
+      if (typeof dataset.body !== 'undefined') {
+        dataset = {
+          body: dataset.body
+        };
+      }
+
+      /*
+         * set the story input
+         */
+      _story.parts[0].input = {
+        parameters: dataset
+      };
+
+    } catch (e) {
+      console.error('Failed to gather input dataset', e);
+    }
+  };
+
+
+    /**
+     * Populates the input dataset
+     * section with in-memory
+     * data.
+     * @return {[type]} [description]
+     */
+  const _populateInputDataset = function() {
+
+    try {
+
+      if (_.isEmpty(_story.parts[0].input) ||
+        _.isEmpty(_story.parts[0].input.parameters)) {
+        throw new Error('No input dataset defined');
+      }
+
+
+      // get the story input (if exists)
+      const parameters = _story.parts[0].input.parameters;
+
+      console.log(parameters);
+
+
+      if (typeof input !== 'undefined') {
+
+        // get the parameters
+
+      }
+    } catch (e) {
+      // silent
+      console.warn(e);
+    }
+
   };
 
 
@@ -666,8 +844,8 @@ export default (function() {
   return {
 
     /*
-     * Public
-     */
+         * Public
+         */
 
 
   };

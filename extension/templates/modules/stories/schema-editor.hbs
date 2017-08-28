@@ -18,7 +18,10 @@
       {{#if definition.optional}}
         data-optional="true"
         data-include="false"
-      {{/if}} >
+      {{/if}}
+
+      data-property="{{definition.name}}"
+      >
 
       {{#each definition.properties}}
 
@@ -30,7 +33,9 @@
 
           <div class="eight wide field {{#if required}}required{{/if}}"
             {{#if description}}data-tooltip="{{description}}"{{/if}}
-            data-position="right center">
+            data-position="right center"
+            data-property="{{name}}"
+            >
 
             <label>{{name}}</label>
 

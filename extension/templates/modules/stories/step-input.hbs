@@ -1,16 +1,22 @@
 <h4>Dataset</h4>
 
-{{#each parameters}}
+<div class="ui form equal width" data-schema="{{type}}" data-root>
 
-  {{#if this.schema}}
+  {{#each parameters}}
 
-    <div class="schema input" data-type="definition" data-schema="{{type}}"></div>
+    {{#if this.schema}}
 
-  {{else}}
+      <div class="schema input" data-type="definition"
+        data-schema="{{type}}"
+        data-property="{{name}}"></div>
 
-    <div class="ui form equal width" data-schema="{{type}}">
+    {{else}}
 
-      <div class="eight wide field" {{#if description}}data-tooltip="{{description}}"{{/if}} data-position="right center">
+      <div class="eight wide field"
+        {{#if description}}data-tooltip="{{description}}"{{/if}}
+        data-position="right center"
+        data-property="{{name}}"
+        >
         <label>{{name}}</label>
 
         {{#eq fieldType "select"}}
@@ -33,9 +39,9 @@
 
       </div>
 
-    </div>
 
-  {{/if}}
+    {{/if}}
 
+  {{/each}}
 
-{{/each}}
+</div>
