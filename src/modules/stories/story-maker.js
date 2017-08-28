@@ -55,7 +55,7 @@ export default (function() {
       duration: 100,
       onVisible: () => {
         // select the first step
-        _onStepSelected('outline');
+        _onStepSelected('input');
 
         $modal.modal('refresh');
       },
@@ -67,7 +67,7 @@ export default (function() {
 
     $('.modal .steps .step').on('click', (e) => {
       // get the selected form Id
-      const formId = $(e.currentTarget).attr('data-form');
+      const formId = $(e.currentTarget).attr('data-step');
       _onStepSelected(formId);
     });
 
@@ -94,7 +94,7 @@ export default (function() {
       // change step
       _stepId = stepId;
 
-      const $step = $(`.modal .step[data-form="${stepId}"]`);
+      const $step = $(`.modal .step[data-step="${stepId}"]`);
 
       $('.modal .steps .step').removeClass('active');
       $step.addClass('active');
@@ -118,21 +118,34 @@ export default (function() {
    * all steps.
    * @return {[type]} [description]
    */
-  const _validateStep = function(stepId) {
+  const _validateStep = function() {
+
+    // get all forms at this step
+    const $forms = $('.modal .form');
+
+    // validate each form in turn
+    _.each($forms, (form) => {
+      const $form = $(form);
+
+      const included = $form.attr('data-include');
+
+      // validate only included forms
+      if (included !== 'false') {
+
+        $form.form('validate form');
+        const res = $form.form('is valid');
+
+        $modal.modal('refresh');
+
+        if ((!res) ||
+        ((typeof res !== 'boolean') && (!res[res.length - 1]))) {
+          throw new Error('Invalid step input');
+        }
+      }
+    });
 
     // step: outline
     if (_stepId === 'outline') {
-
-      const $form = $(`form[data-form="${stepId}"]`);
-      $form.form('validate form');
-      const res = $form.form('is valid');
-
-      $modal.modal('refresh');
-
-      if ((!res) ||
-        ((typeof res !== 'boolean') && (!res[res.length - 1]))) {
-        throw new Error('Invalid step input');
-      }
 
       // gather data
       _story.definition.title = $.trim($('.form .field [name="title"]').val());
@@ -141,6 +154,11 @@ export default (function() {
         _story.parts.push({});
       }
       _story.parts[0].operationId = $('.form .field [name="operation"]').val();
+    } else if (_stepId === 'input') {
+
+      // step: data input
+
+
     }
 
 
@@ -169,18 +187,18 @@ export default (function() {
      */
 
     // title
-    $('[name="title"]', 'form[data-form="outline"]').val(_story.definition.title);
+    $('[name="title"]', 'form[data-step="outline"]').val(_story.definition.title);
 
     // description
-    $('[name="description"]', 'form[data-form="outline"]').val(_story.definition.description);
+    $('[name="description"]', 'form[data-step="outline"]').val(_story.definition.description);
 
     // operation
     if (typeof _story.parts[0] !== 'undefined') {
-      $('[name="operation"]', 'form[data-form="outline"]').dropdown('set selected', _story.parts[0].operationId);
+      $('[name="operation"]', 'form[data-step="outline"]').dropdown('set selected', _story.parts[0].operationId);
     }
 
     // form validators
-    $('.modal form[data-form="outline"]')
+    $('.modal form[data-step="outline"]')
       .form({
         inline: true,
         on: 'blur',
@@ -219,7 +237,7 @@ export default (function() {
   const _onInputStep = function() {
 
     // get the selected operation
-    const opId = _story.parts[0].operationId;
+    const opId = 'addPet';// _story.parts[0].operationId;
 
     // get the operation definition
     const operation = _.cloneDeep(_api.getOperation(opId));
@@ -234,7 +252,6 @@ export default (function() {
 
       // enrich with field info
       _enrichWithFieldInfo(o);
-
     });
 
     // create the model
@@ -249,8 +266,8 @@ export default (function() {
     $cnt.html(html);
 
     // initialize calendars
-    flatpickr('.ui.input[data-format="date"]', {});
-    flatpickr('.ui.input[data-format="dateTime"]', {
+    flatpickr('.ui.input[data-stepat="date"]', {});
+    flatpickr('.ui.input[data-stepat="dateTime"]', {
       enableTime: true
     });
 
@@ -396,6 +413,7 @@ export default (function() {
     // find all forms
     const $forms = $('.modal .form');
 
+    // process each form
     _.each($forms, (form) => {
       const $form = $(form);
 
@@ -409,27 +427,40 @@ export default (function() {
         fields: {}
       };
 
-      // loop through the fields
-      _.each($fields, (field) => {
-        const $field = $(field);
-        const name = $field.attr('name');
+      // get the 'included' state of the form
+      const include = $form.attr('data-include');
 
-        // get the rules, unescape and parse
-        let rules = $field.attr('data-rules');
-        rules = JSON.parse(_.unescape(rules));
+      // process only forms
+      // included in the payload
+      if (include !== 'false') {
 
-        opts.fields[name] = {
-          identifier: name,
-          rules: []
-        };
+        // loop through the fields
+        _.each($fields, (field) => {
+          const $field = $(field);
+          const name = $field.attr('name');
 
-        _.each(rules, (rule) => {
-          opts.fields[name].rules.push({
-            type: rule
+          // get the rules, unescape and parse
+          let rules = $field.attr('data-rules');
+          rules = JSON.parse(_.unescape(rules));
+
+          opts.fields[name] = {
+            identifier: name,
+            rules: []
+          };
+
+          // if the 'empty' rule is not
+          // present, make the validation optional
+          if (rules.indexOf('empty') === -1) {
+            opts.fields[name].optional = true;
+          }
+
+          _.each(rules, (rule) => {
+            opts.fields[name].rules.push({
+              type: rule
+            });
           });
         });
-
-      });
+      }
 
       // bind the validators
       $form.form(opts);
@@ -484,17 +515,21 @@ export default (function() {
       // the properties
       traverse(definition, (prop) => {
 
+        // check if object
         if ((prop.type === 'object') || (typeof prop.$$ref !== 'undefined')) {
           // enrich the model with the object type
           const type = prop.$$ref.replace('#/definitions/', '');
           prop.schema = type;
         }
 
-        // check if required
+        // check if object model is required
         if ((!_.isEmpty(prop.parent)) && (prop.parent.type === 'object')) {
           if ((!_.isEmpty(prop.parent.required)) &&
               (prop.parent.required.indexOf(prop.name) > -1)) {
+            prop.optional = false;
             prop.required = true;
+          } else {
+            prop.optional = true;
           }
         }
 
@@ -540,9 +575,62 @@ export default (function() {
         }
       });
 
+      // bind model togglers
+      $('.ui.checkbox[data-toggle="include"]')
+        .checkbox({
+          onChange() {
+            const $el = $(this);
+            const enabled = $el.parent().checkbox('is checked');
+            const $form = $el.closest('.content.model').find('.form');
+
+            // switch the state of the model form
+            _switchStateOfOptionalModels(enabled, $form);
+          }
+        });
+
+      // disable all optional models by default
+      _switchStateOfOptionalModels(false);
+
       // refresh the modal
       $modal.modal('refresh');
     }
+
+  };
+
+  /**
+   * Switches the state of all optional
+   * models in the iput step.
+   * @param  {[type]} enabled [description]
+   * @return {[type]}         [description]
+   */
+  const _switchStateOfOptionalModels = function(included, $ctx) {
+
+    // if a form context is not provided,
+    // find all optional forms
+    if (typeof $ctx === 'undefined') {
+      $ctx = $('.form[data-optional="true"]');
+    }
+
+    // go through each optional form
+    _.each($ctx, (form) => {
+      const $form = $(form);
+      const $fields = $('.field', $form);
+      _.each($fields, (field) => {
+        const $field = $(field);
+
+        if (included) {
+          $field.removeClass('disabled');
+        } else {
+          $field.addClass('disabled');
+        }
+      });
+
+      // set the attribute flag
+      $form.attr('data-include', included);
+    });
+
+    // re-bind all validators
+    _bindDatasetValidators();
 
   };
 

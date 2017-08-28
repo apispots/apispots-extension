@@ -3,10 +3,22 @@
     <i class="dropdown icon"></i>
     {{type}}
   </div>
-  <div class="content">
+  <div class="content model">
+
+    {{#if definition.optional}}
+      <div class="ui toggle checkbox segment" data-toggle="include">
+        <input type="checkbox">
+        <label>Include in dataset?</label>
+      </div>
+
+    {{/if}}
 
     {{! params form goes here }}
-    <div class="ui form equal width">
+    <div class="ui form equal width"
+      {{#if definition.optional}}
+        data-optional="true"
+        data-include="false"
+      {{/if}} >
 
       {{#each definition.properties}}
 
@@ -16,7 +28,10 @@
 
         {{else}}
 
-          <div class="eight wide field" {{#if description}}data-tooltip="{{description}}"{{/if}} data-position="right center">
+          <div class="eight wide field {{#if required}}required{{/if}}"
+            {{#if description}}data-tooltip="{{description}}"{{/if}}
+            data-position="right center">
+
             <label>{{name}}</label>
 
             {{#eq fieldType "select"}}
