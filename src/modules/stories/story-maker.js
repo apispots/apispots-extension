@@ -8,23 +8,25 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 import DataStory from '../../lib/stories/data-story';
+import StoryPlayer from '../../lib/stories/story-player';
 
 import tplModal from '../../../extension/templates/modules/stories/story-maker.hbs';
 import tplStepOutline from '../../../extension/templates/modules/stories/step-outline.hbs';
 import tplStepInput from '../../../extension/templates/modules/stories/step-input.hbs';
+import tplStepPlay from '../../../extension/templates/modules/stories/step-play.hbs';
 import tplSchemaEditor from '../../../extension/templates/modules/stories/schema-editor.hbs';
 
 export default (function() {
 
   /*
-     * Private
-     */
+   * Private
+   */
 
   // the API definition instance
   let _api = null;
 
   // the data story instance
-  let _story = new DataStory();
+  let _story;
 
   // the modal instance
   let $modal;
@@ -33,15 +35,18 @@ export default (function() {
   let _stepId;
 
   /**
-     * Called when a story needs to be
-     * created.  Displays a modal.
-     * @param  {[type]} data [description]
-     * @return {[type]}      [description]
-     */
+   * Called when a story needs to be
+   * created.  Displays a modal.
+   * @param  {[type]} data [description]
+   * @return {[type]}      [description]
+   */
   const _onCreateStory = function(data) {
 
     // remember the API definition
     _api = data.api;
+
+    // create a new data story
+    _story = new DataStory();
 
     const model = {};
 
@@ -79,11 +84,11 @@ export default (function() {
 
   };
 
-    /**
-     * User clicked on a step.
-     * @param  {[type]} e [description]
-     * @return {[type]}   [description]
-     */
+  /**
+   * User clicked on a step.
+   * @param  {[type]} e [description]
+   * @return {[type]}   [description]
+   */
   const _onStepSelected = function(stepId) {
 
     if (_stepId === stepId) {
@@ -110,8 +115,9 @@ export default (function() {
         _onOutlineStep();
       } else if (_stepId === 'input') {
         _onInputStep();
+      } else if (_stepId === 'play') {
+        _onPlayStep();
       }
-
 
     } catch (e) {
       // silent
@@ -120,11 +126,11 @@ export default (function() {
   };
 
 
-    /**
-     * Gathers the data entered in
-     * all steps.
-     * @return {[type]} [description]
-     */
+  /**
+   * Gathers the data entered in
+   * all steps.
+   * @return {[type]} [description]
+   */
   const _validateStep = function() {
 
     // get all forms at this step
@@ -145,35 +151,52 @@ export default (function() {
         $modal.modal('refresh');
 
         if ((!res) ||
-            ((typeof res !== 'boolean') && (!res[res.length - 1]))) {
+          ((typeof res !== 'boolean') && (!res[res.length - 1]))) {
           throw new Error('Invalid step input');
         }
       }
     });
 
-    // step: outline
+    // gather step data
     if (_stepId === 'outline') {
+      // step: outline
+      _gatherOutlineData();
+    } else if (_stepId === 'input') {
+      // step: data input
+      _gatherInputDataset();
+    }
+
+
+  };
+
+  /**
+   * Gathers the outline step data.
+   * @return {[type]} [description]
+   */
+  const _gatherOutlineData = function() {
+    try {
 
       // gather data
+      _story.definition.spec = _api.specUrl;
       _story.definition.title = $.trim($('.form .field [name="title"]').val());
       _story.definition.description = $.trim($('.form .field [name="description"]').val());
+
       if (_story.parts.length === 0) {
         _story.parts.push({});
       }
+
       _story.parts[0].operationId = $('.form .field [name="operation"]').val();
-    } else if (_stepId === 'input') {
 
-      // step: data input
-      _gatherInputDataset();
-
+    } catch (e) {
+      console.error(e);
     }
   };
 
 
-    /**
-     * Manage the outline step
-     * @return {[type]} [description]
-     */
+  /**
+   * Manage the outline step
+   * @return {[type]} [description]
+   */
   const _onOutlineStep = function() {
 
     // create the model
@@ -182,14 +205,14 @@ export default (function() {
       operations: _api.operationsBySummary
     };
 
-      // render the form template
+    // render the form template
     const $cnt = $('.modal #step-contents');
     const html = tplStepOutline(model);
     $cnt.html(html);
 
     /*
-       * populate with existing data
-       */
+     * populate with existing data
+     */
 
     // title
     $('[name="title"]', 'form[data-step="outline"]').val(_story.definition.title);
@@ -235,10 +258,10 @@ export default (function() {
   };
 
 
-    /**
-     * Manage the input step
-     * @return {[type]} [description]
-     */
+  /**
+   * Manage the input step
+   * @return {[type]} [description]
+   */
   const _onInputStep = function() {
 
     // get the selected operation
@@ -265,7 +288,7 @@ export default (function() {
       parameters: operation.parameters
     };
 
-      // render the form template
+    // render the form template
     const $cnt = $('.modal #step-contents');
     const html = tplStepInput(model);
     $cnt.html(html);
@@ -300,13 +323,45 @@ export default (function() {
     _bindDatasetValidators();
   };
 
+  /**
+   * Manage the outline step
+   * @return {[type]} [description]
+   */
+  const _onPlayStep = function() {
 
-    /**
-     * Enriches a property model with
-     * the appropriate field info.
-     * @param  {[type]} property [description]
-     * @return {[type]}          [description]
-     */
+    // get the selected operation
+    const opId = _story.parts[0].operationId;
+
+    // get the operation definition
+    const operation = _.cloneDeep(_api.getOperation(opId));
+
+    const safeVerbs = ['get', 'head', 'options'];
+
+    // create the model
+    const model = {
+      story: _story,
+      part: _story.parts[0],
+      operation,
+      isSafe: _.includes(safeVerbs, operation.verb)
+    };
+
+    // render the form template
+    const $cnt = $('.modal #step-contents');
+    const html = tplStepPlay(model);
+    $cnt.html(html);
+
+    // bind listeners
+    $('.modal button[data-action="play-story"]').on('click', _onPlayStory);
+
+  };
+
+
+  /**
+   * Enriches a property model with
+   * the appropriate field info.
+   * @param  {[type]} property [description]
+   * @return {[type]}          [description]
+   */
   const _enrichWithFieldInfo = function(property) {
 
     try {
@@ -342,8 +397,8 @@ export default (function() {
         property.fieldValues = property.enum;
         property.fieldDefaultValue = property.default;
       } else if (property.type === 'file') {
+        property.fieldType = 'file';
 
-        console.log('File is not supported yet');
       } else {
 
         // otherwise use an input
@@ -365,12 +420,12 @@ export default (function() {
     }
   };
 
-    /**
-     * Adds validation rules on the
-     * property based on definition.
-     * @param  {[type]} o [description]
-     * @return {[type]}   [description]
-     */
+  /**
+   * Adds validation rules on the
+   * property based on definition.
+   * @param  {[type]} o [description]
+   * @return {[type]}   [description]
+   */
   const _addValidationRules = function(o) {
 
     o.rules = [];
@@ -387,7 +442,7 @@ export default (function() {
 
     // double / float
     if ((o.format === 'float') ||
-        (o.format === 'double')) {
+      (o.format === 'double')) {
       o.rules.push('decimal');
     }
 
@@ -410,12 +465,12 @@ export default (function() {
     o.rules = _.escape(JSON.stringify(o.rules));
   };
 
-    /**
-     * Binds form validators for
-     * the input dataset.
-     * @param  {[type]} parameters [description]
-     * @return {[type]}            [description]
-     */
+  /**
+   * Binds form validators for
+   * the input dataset.
+   * @param  {[type]} parameters [description]
+   * @return {[type]}            [description]
+   */
   const _bindDatasetValidators = function() {
 
     // find all forms
@@ -435,7 +490,7 @@ export default (function() {
         fields: {}
       };
 
-        // get the 'included' state of the form
+      // get the 'included' state of the form
       const include = $form.attr('data-include');
 
       // process only forms
@@ -476,11 +531,11 @@ export default (function() {
 
   };
 
-    /**
-     * Definition properties traversal function.
-     * @param  {[type]} definition [description]
-     * @return {[type]}            [description]
-     */
+  /**
+   * Definition properties traversal function.
+   * @param  {[type]} definition [description]
+   * @return {[type]}            [description]
+   */
   const traverse = function(node, func) {
 
     try {
@@ -502,11 +557,11 @@ export default (function() {
   };
 
 
-    /**
-     * [description]
-     * @return {[type]} [description]
-     */
-  const _bindSchemaManager = function(operation) {
+  /**
+   * [description]
+   * @return {[type]} [description]
+   */
+  const _bindSchemaManager = function() {
 
     // find all schema inputs
     const $input = $('.modal div[data-type="definition"]');
@@ -534,7 +589,7 @@ export default (function() {
         // check if object model is required
         if ((!_.isEmpty(prop.parent)) && (prop.parent.type === 'object')) {
           if ((!_.isEmpty(prop.parent.required)) &&
-              (prop.parent.required.indexOf(prop.name) > -1)) {
+            (prop.parent.required.indexOf(prop.name) > -1)) {
             prop.optional = false;
             prop.required = true;
           } else {
@@ -610,12 +665,12 @@ export default (function() {
 
   };
 
-    /**
-     * Switches the state of all optional
-     * models in the iput step.
-     * @param  {[type]} enabled [description]
-     * @return {[type]}         [description]
-     */
+  /**
+   * Switches the state of all optional
+   * models in the iput step.
+   * @param  {[type]} enabled [description]
+   * @return {[type]}         [description]
+   */
   const _switchStateOfOptionalModels = function(included, $ctx) {
 
     // if a form context is not provided,
@@ -640,6 +695,9 @@ export default (function() {
 
       // set the attribute flag
       $form.attr('data-include', included);
+
+      // switch on / off the toggle
+      $form.parent().find('.checkbox.toggle').eq(0).checkbox(included ? 'check' : 'uncheck');
     });
 
     // re-bind all validators
@@ -648,30 +706,24 @@ export default (function() {
   };
 
 
-    /**
-     * Saves the story definition.
-     * @return {[type]} [description]
-     */
-  const _onSaveStory = function() {
-
-    console.log('save story', _story.toYAML());
-  };
-
-
-    /**
-     * Resets local data.
-     * @return {[type]} [description]
-     */
+  /**
+   * Resets local data.
+   * @return {[type]} [description]
+   */
   const _resetData = function() {
     _stepId = null;
-    _story = new DataStory();
+    _story = null;
+
+    // destroy the modal instance
+    $modal.remove();
+    $modal = null;
   };
 
 
-    /**
-     * Gathers the input data set.
-     * @return {[type]} [description]
-     */
+  /**
+   * Gathers the input data set.
+   * @return {[type]} [description]
+   */
   const _gatherInputDataset = function() {
 
     try {
@@ -683,10 +735,10 @@ export default (function() {
       const $form = $('.modal .form').eq(0);
 
       /**
-         * Form traversal function.
-         * @param  {[type]} definition [description]
-         * @return {[type]}            [description]
-         */
+       * Form traversal function.
+       * @param  {[type]} definition [description]
+       * @return {[type]}            [description]
+       */
       const traverseForm = function($form, parentNode) {
 
         let node;
@@ -773,7 +825,7 @@ export default (function() {
 
       };
 
-        // traverse the top-level form
+      // traverse the top-level form
       traverseForm($form, dataset);
 
       // TODO: This should be changed
@@ -786,8 +838,8 @@ export default (function() {
       }
 
       /*
-         * set the story input
-         */
+       * set the story input
+       */
       _story.parts[0].input = {
         parameters: dataset
       };
@@ -798,38 +850,180 @@ export default (function() {
   };
 
 
-    /**
-     * Populates the input dataset
-     * section with in-memory
-     * data.
-     * @return {[type]} [description]
-     */
+  /**
+   * Populates the input dataset
+   * section with in-memory
+   * data.
+   * @return {[type]} [description]
+   */
   const _populateInputDataset = function() {
 
     try {
 
       if (_.isEmpty(_story.parts[0].input) ||
         _.isEmpty(_story.parts[0].input.parameters)) {
-        throw new Error('No input dataset defined');
+        return;
       }
-
 
       // get the story input (if exists)
-      const parameters = _story.parts[0].input.parameters;
+      const dataset = _story.parts[0].input.parameters;
 
-      console.log(parameters);
+      console.log(dataset);
+
+      // get all forms in the view
+      const $form = $('.modal .form').eq(0);
+
+      /**
+       * Form traversal function.
+       * @param  {[type]} definition [description]
+       * @return {[type]}            [description]
+       */
+      const traverseForm = function($form, parentNode) {
+
+        let node;
+
+        try {
+
+          // get the data-property of this form
+          const propertyname = $form.attr('data-property');
+
+          if (typeof propertyname !== 'undefined') {
+
+            // get the corresponding node
+            // from the dataset
+            node = parentNode[propertyname];
+
+            if (_.isEmpty(node)) {
+              return;
+            }
+
+            // get all parameter fields
+            const $fields = $('.field', $form);
+
+            // flag indicating whether at
+            // least one field in the form
+            // has been used
+            let atLeastOneUsed = false;
+
+            // loop through the fields
+            _.each($fields, (field) => {
+
+              // get the field instance
+              const $field = $(field);
+
+              // get the corresponding property name
+              const propname = $field.attr('data-property');
+
+              // get the property value
+              // from the data node
+              const value = node[propname];
+
+              // process fields with values only
+              if (typeof value !== 'undefined') {
+
+                // a field is used
+                atLeastOneUsed = true;
+
+                // get the parameter control
+                const $ctl = $('.parameter', $field);
+
+                if ($ctl.is('input')) {
+                  // input box
+                  $ctl.val(value);
+
+                } else if ($ctl.hasClass('dropdown')) {
+                  // select box
+
+                  let values;
+                  const allowAdditions = (typeof $ctl.attr('data-allowAdditions') !== 'undefined');
+
+                  if (_.isArray(value)) {
+                    // if this is an array of values,
+                    // populate the dropdown and
+                    // mark all as selected
+                    values = _.map(value, (o) => ({
+                      name: o,
+                      value: o,
+                      selected: true
+                    }));
+
+                    $ctl.dropdown('change values', values);
+                  } else if (_.isString(value)) {
+
+                    $ctl.dropdown('set selected', value);
+                  }
 
 
-      if (typeof input !== 'undefined') {
+                }
+              }
+            });
 
-        // get the parameters
+            // if the form is optional and
+            // at least one field has been
+            // used, mark it as included
+            if (atLeastOneUsed) {
+              _switchStateOfOptionalModels(true, $form);
+            }
 
-      }
+          } else {
+            node = parentNode;
+          }
+
+        } catch (e) {
+          console.error(e);
+        }
+
+        // get all 1st level child forms
+        const $children = $form.parent().find('.form').eq(1);
+
+        // traverse child forms
+        _.each($children, (o) => {
+          traverseForm($(o), node);
+        });
+
+      };
+
+      // traverse the top-level form
+      traverseForm($form, dataset);
+
+
     } catch (e) {
       // silent
       console.warn(e);
     }
 
+  };
+
+
+  /**
+   * Saves the story definition.
+   * @return {[type]} [description]
+   */
+  const _onSaveStory = function() {
+
+    // validate the current step
+    _validateStep();
+
+    console.log('save story', _story.toYAML());
+  };
+
+
+  /**
+   * Plays the current data story.
+   * @return {[type]} [description]
+   */
+  const _onPlayStory = function() {
+
+    console.log('playing story', _story);
+
+    StoryPlayer.play(_story)
+      .then((res) => {
+        console.log('story successfully executed');
+        console.log(res);
+      })
+      .catch(e => {
+        console.log('story failed to execute', e);
+      });
   };
 
 
@@ -844,8 +1038,8 @@ export default (function() {
   return {
 
     /*
-         * Public
-         */
+     * Public
+     */
 
 
   };

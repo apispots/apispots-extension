@@ -7,16 +7,16 @@
 
   <div class="field required">
     <label>Story title</label>
-    <input type="text" name="title" maxlength="80" placeholder="Enter a title for this story">
+    <input class="ui text parameter" type="text" name="title" maxlength="80" placeholder="Enter a title for this story">
   </div>
   <div class="field required">
     <label>Description</label>
-    <textarea rows="2" name="description" maxlength="160" placeholder="Write a short description"></textarea>
+    <textarea class="parameter" rows="2" name="description" maxlength="160" placeholder="Write a short description"></textarea>
   </div>
 
   <div class="field required">
     <label>Based on operation</label>
-    <select class="ui search dropdown" name="operation">
+    <select class="ui search dropdown parameter" name="operation">
       <option value="">Select an operation</option>
       {{#each operations}}
         <option value="{{id}}" title="{{description}}">{{summary}}</option>

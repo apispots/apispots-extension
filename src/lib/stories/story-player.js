@@ -76,7 +76,7 @@ export default (function() {
                   .then((res) => {
 
                     // part played
-                    done();
+                    done(null, res);
                   })
                   .catch(done);
 
@@ -90,7 +90,7 @@ export default (function() {
             });
           }
 
-        ], (e) => {
+        ], (e, results) => {
 
           if (e) {
             reject(e);
@@ -147,8 +147,7 @@ export default (function() {
         parameters: part.input.parameters
       })
         .then((res) => {
-          console.log(part.description, res.statusText, res.data);
-          resolve();
+          resolve(res);
         })
         .catch(reject);
 
