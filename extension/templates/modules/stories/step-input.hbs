@@ -37,6 +37,16 @@
             >
         {{/eq}}
 
+        {{#eq fieldType "file"}}
+          <div class="ui visible warning message">
+            <div class="header">
+              Sorry... unsupported feature :(
+            </div>
+            <p>
+              The file upload feature is not supported yet.
+            </p>
+          </div>
+        {{/eq}}
       </div>
 
 
