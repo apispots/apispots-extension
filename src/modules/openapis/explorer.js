@@ -160,14 +160,19 @@ export default (function() {
       const spec = _api.spec;
 
       const data = {
-        definitions: spec.definitions
+        definitions: []
       };
 
-      _.each(spec.definitions, (o) => {
-        _.each(o.required, (key) => {
-          o.properties[key].required = true;
-        });
-      });
+      const definitions = _
+        .chain(_.cloneDeep(spec.definitions))
+        .map((o, key) => {
+          o.name = key;
+          return o;
+        })
+        .sortBy('name')
+        .value();
+
+      data.definitions = definitions;
 
       const html = tplDefinitions(data);
       $('#content').html(html);
@@ -213,14 +218,30 @@ export default (function() {
     // get the definition instance
     const definition = _.cloneDeep(_api.getDefinition(id));
 
-    _.each(definition.properties, (o) => {
-      // check if the prop is a ref
-      if (typeof o.$$ref !== 'undefined') {
-        // enrich the model with the reference Id
-        const id = o.$$ref.replace('#/definitions/', '');
-        o.type = id;
-      }
-    });
+    if (_.isEmpty(definition.properties)) {
+      delete definition.properties;
+    } else {
+      _.each(definition.properties, (o) => {
+
+        // check if the prop is a ref
+        if (typeof o.$$ref !== 'undefined') {
+          // enrich the model with the reference Id
+          const id = o.$$ref.replace('#/definitions/', '');
+          o.type = id;
+        }
+
+        // process array of definitions
+        if (o.type === 'array') {
+          if ((!_.isEmpty(o.items)) &&
+               (!_.isEmpty(o.items.$$ref))) {
+            const id = o.items.$$ref.replace('#/definitions/', '');
+            o.items.type = id;
+          }
+        }
+
+        console.log(o);
+      });
+    }
 
     const data = {
       id,

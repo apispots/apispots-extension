@@ -1,4 +1,4 @@
-<div class="ui modal">
+<div class="ui large long scrolling modal">
   <i class="close icon"></i>
   <div class="header">
     {{id}}
@@ -21,6 +21,7 @@
         <tr>
           <th>Name</th>
           <th>Type</th>
+          <th>Definition</th>
           <th>Description</th>
           <th>Required</th>
         </tr>
@@ -38,13 +39,27 @@
             </td>
             <td>
               {{#if $$ref}}
-              <button class="ui right labeled icon button mini view definition" data-id="{{type}}">
-                <i class="right arrow icon"></i>
-                {{type}}
-              </button>
-              {{else}}
-                {{#markdown}}{{description}}{{/markdown}}
+                <button class="ui right labeled icon button mini view definition" data-id="{{type}}">
+                  <i class="right arrow icon"></i>
+                  {{type}}
+                </button>
               {{/if}}
+
+              {{#if items}}
+                {{#if items.$$ref}}
+                  <button class="ui right labeled icon button mini view definition" title="{{items.type}}"
+                    data-id="{{items.type}}">
+                    <i class="right arrow icon"></i>
+                    {{items.type}}
+                  </button>
+                {{else}}
+                  <span class="ui label basic blue" title="{{items.type}}">{{items.type}}</span>
+                {{/if}}
+
+              {{/if}}
+            </td>
+            <td>
+              {{#markdown}}{{description}}{{/markdown}}
             </td>
             <td>
               {{#if required}}
