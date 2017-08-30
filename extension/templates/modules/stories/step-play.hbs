@@ -3,23 +3,29 @@
 {{#unless isSafe}}
   <div class="ui visible warning message">
     <div class="header">
-      Please be careful!
+      A word of caution!
     </div>
     <p>
       The type of operation you are about to
       execute might alter data on the service
       side and have unwanted side-effetcs.
-    </p>
-    <p>
       Please double-check your input and make
       sure you know what you are doing.
     </p>
+
   </div>
 {{/unless}}
 
-
-
-<button class="ui right labeled icon button" data-action="play-story">
+<button class="ui fluid primary button" data-action="play-story">
   <i class="play icon"></i>
   Play the story
 </button>
+
+<div class="ui container story-output">
+
+  <div class="ui segments">
+
+  </div>
+
+
+</div>

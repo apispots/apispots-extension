@@ -29,3 +29,52 @@ input and an output all bundled together as one.
     </div>
   </div> -->
 </div>
+
+<div class="ui cards top margin">
+
+  <div class="card small">
+    <div class="blurring dimmable image">
+      <div class="ui dimmer">
+        <div class="content">
+          <div class="center">
+            <div class="ui inverted button" data-action="create-story">Create story</div>
+          </div>
+        </div>
+      </div>
+      <img class="ui image mini" src="../../../../assets/images/stories/story.svg">
+    </div>
+    <div class="content">
+      <a class="ui header">A new data story</a>
+      <div class="meta">
+        <span class="date">Just now</span>
+      </div>
+    </div>
+    <div class="ui bottom attached button" data-action="create-story">
+      <i class="add icon"></i>
+      Create story
+    </div>
+  </div>
+
+  {{#each stories}}
+
+    <div class="ui card">
+      <div class="content">
+        <div class="ui header">{{title}}</div>
+        <div class="meta">
+          <span>2 days ago</span>
+          <a>Animals</a>
+        </div>
+        <div class="description">
+          {{description}}
+        </div>
+      </div>
+      <div class="extra content">
+
+      </div>
+    </div>
+
+  {{/each}}
+
+
+
+</div>

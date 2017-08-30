@@ -6,14 +6,18 @@ import _ from 'lodash';
 import postal from 'postal';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import shortid from 'shortid';
 
 import DataStory from '../../lib/stories/data-story';
 import StoryPlayer from '../../lib/stories/story-player';
+import StoryVisualizer from './story-visualizer';
+import BrowserStorage from '../../lib/common/browser-storage';
 
 import tplModal from '../../../extension/templates/modules/stories/story-maker.hbs';
 import tplStepOutline from '../../../extension/templates/modules/stories/step-outline.hbs';
 import tplStepInput from '../../../extension/templates/modules/stories/step-input.hbs';
 import tplStepPlay from '../../../extension/templates/modules/stories/step-play.hbs';
+import tplStepVisualize from '../../../extension/templates/modules/stories/step-visualize.hbs';
 import tplSchemaEditor from '../../../extension/templates/modules/stories/schema-editor.hbs';
 
 export default (function() {
@@ -99,7 +103,14 @@ export default (function() {
 
       // validate the previous step
       if (_stepId) {
-        _validateStep(_stepId);
+
+        // except from the move 'Input' back to 'Outline',
+        // in any other case validate the step
+        if ((_stepId === 'input') && (stepId === 'outline')) {
+          // do nothing
+        } else {
+          _validateStep(_stepId);
+        }
       }
 
       // change step
@@ -115,6 +126,8 @@ export default (function() {
         _onOutlineStep();
       } else if (_stepId === 'input') {
         _onInputStep();
+      } else if (_stepId === 'visualize') {
+        _onVisualizeStep();
       } else if (_stepId === 'play') {
         _onPlayStep();
       }
@@ -164,8 +177,10 @@ export default (function() {
     } else if (_stepId === 'input') {
       // step: data input
       _gatherInputDataset();
+    } else if (_stepId === 'visualize') {
+      // step: visualize
+      _gatherVisualizationData();
     }
-
 
   };
 
@@ -324,10 +339,10 @@ export default (function() {
   };
 
   /**
-   * Manage the outline step
+   * Manages the visualization step
    * @return {[type]} [description]
    */
-  const _onPlayStep = function() {
+  const _onVisualizeStep = function() {
 
     // get the selected operation
     const opId = _story.parts[0].operationId;
@@ -335,23 +350,78 @@ export default (function() {
     // get the operation definition
     const operation = _.cloneDeep(_api.getOperation(opId));
 
-    const safeVerbs = ['get', 'head', 'options'];
-
     // create the model
     const model = {
       story: _story,
-      part: _story.parts[0],
-      operation,
-      isSafe: _.includes(safeVerbs, operation.verb)
+      operation
     };
 
-    // render the form template
+    // render the template
     const $cnt = $('.modal #step-contents');
-    const html = tplStepPlay(model);
+    const html = tplStepVisualize(model);
     $cnt.html(html);
 
     // bind listeners
-    $('.modal button[data-action="play-story"]').on('click', _onPlayStory);
+    $('.card .button', $cnt).on('click', (e) => {
+
+      // mark the selected visualization card
+      const $cards = $('.card', $cnt);
+      $cards.removeClass('raised');
+      const $buttons = $('.button', $cards);
+      $buttons.removeClass('green active');
+
+      const $btn = $(e.currentTarget);
+      $btn.addClass('green active');
+      $btn.closest('.card').addClass('raised');
+
+    });
+
+    // set any previously selected type
+    if (!_.isEmpty(_story.parts[0].visualization)) {
+      const type = _story.parts[0].visualization.type;
+      $(`.card .button[data-type="${type}"]`, $cnt).trigger('click');
+    }
+
+  };
+
+  /**
+   * Manage the outline step
+   * @return {[type]} [description]
+   */
+  const _onPlayStep = function() {
+
+    try {
+
+      // get the selected operation
+      const opId = _story.parts[0].operationId;
+
+      // get the operation definition
+      const operation = _.cloneDeep(_api.getOperation(opId));
+
+      const safeVerbs = ['get', 'head', 'options'];
+
+      // create the model
+      const model = {
+        story: _story,
+        part: _story.parts[0],
+        operation
+      };
+
+      if (!_.isEmpty(operation)) {
+        model.isSafe = _.includes(safeVerbs, operation.verb);
+      }
+
+      // render the form template
+      const $cnt = $('.modal #step-contents');
+      const html = tplStepPlay(model);
+      $cnt.html(html);
+
+      // bind listeners
+      $('.modal button[data-action="play-story"]').on('click', _onPlayStory);
+
+    } catch (e) {
+      console.error(e);
+    }
 
   };
 
@@ -868,8 +938,6 @@ export default (function() {
       // get the story input (if exists)
       const dataset = _story.parts[0].input.parameters;
 
-      console.log(dataset);
-
       // get all forms in the view
       const $form = $('.modal .form').eq(0);
 
@@ -897,77 +965,78 @@ export default (function() {
               return;
             }
 
-            // get all parameter fields
-            const $fields = $('.field', $form);
-
-            // flag indicating whether at
-            // least one field in the form
-            // has been used
-            let atLeastOneUsed = false;
-
-            // loop through the fields
-            _.each($fields, (field) => {
-
-              // get the field instance
-              const $field = $(field);
-
-              // get the corresponding property name
-              const propname = $field.attr('data-property');
-
-              // get the property value
-              // from the data node
-              const value = node[propname];
-
-              // process fields with values only
-              if (typeof value !== 'undefined') {
-
-                // a field is used
-                atLeastOneUsed = true;
-
-                // get the parameter control
-                const $ctl = $('.parameter', $field);
-
-                if ($ctl.is('input')) {
-                  // input box
-                  $ctl.val(value);
-
-                } else if ($ctl.hasClass('dropdown')) {
-                  // select box
-
-                  let values;
-                  const allowAdditions = (typeof $ctl.attr('data-allowAdditions') !== 'undefined');
-
-                  if (_.isArray(value)) {
-                    // if this is an array of values,
-                    // populate the dropdown and
-                    // mark all as selected
-                    values = _.map(value, (o) => ({
-                      name: o,
-                      value: o,
-                      selected: true
-                    }));
-
-                    $ctl.dropdown('change values', values);
-                  } else if (_.isString(value)) {
-
-                    $ctl.dropdown('set selected', value);
-                  }
-
-
-                }
-              }
-            });
-
-            // if the form is optional and
-            // at least one field has been
-            // used, mark it as included
-            if (atLeastOneUsed) {
-              _switchStateOfOptionalModels(true, $form);
-            }
-
           } else {
             node = parentNode;
           }
+
+          // get all parameter fields
+          const $fields = $('.field', $form);
+
+          // flag indicating whether at
+          // least one field in the form
+          // has been used
+          let atLeastOneUsed = false;
+
+          // loop through the fields
+          _.each($fields, (field) => {
+
+            // get the field instance
+            const $field = $(field);
+
+            // get the corresponding property name
+            const propname = $field.attr('data-property');
+
+            // get the property value
+            // from the data node
+            const value = node[propname];
+
+            // process fields with values only
+            if (typeof value !== 'undefined') {
+
+              // a field is used
+              atLeastOneUsed = true;
+
+              // get the parameter control
+              const $ctl = $('.parameter', $field);
+
+              if ($ctl.is('input')) {
+                // input box
+                $ctl.val(value);
+
+              } else if ($ctl.hasClass('dropdown')) {
+                // select box
+
+                let values;
+                const allowAdditions = (typeof $ctl.attr('data-allowAdditions') !== 'undefined');
+
+                if (_.isArray(value)) {
+                  // if this is an array of values,
+                  // populate the dropdown and
+                  // mark all as selected
+                  values = _.map(value, (o) => ({
+                    name: o,
+                    value: o,
+                    selected: true
+                  }));
+
+                  $ctl.dropdown('change values', values);
+                } else if (_.isString(value)) {
+
+                  $ctl.dropdown('set selected', value);
+                }
+
+
+              }
+            }
+          });
+
+          // if the form is optional and
+          // at least one field has been
+          // used, mark it as included
+          if (atLeastOneUsed) {
+            _switchStateOfOptionalModels(true, $form);
+          }
+
 
         } catch (e) {
           console.error(e);
@@ -994,6 +1063,24 @@ export default (function() {
 
   };
 
+  /**
+   * Gathers the selected visualization
+   * step data.
+   * @return {[type]} [description]
+   */
+  const _gatherVisualizationData = function() {
+
+    // get the selected visualization type
+    const type = $('#section-visualizations .card .button.active').attr('data-type');
+
+    // save the visualization type
+    // on the part
+    _story.parts[0].visualization = {
+      type
+    };
+
+  };
+
 
   /**
    * Saves the story definition.
@@ -1004,7 +1091,46 @@ export default (function() {
     // validate the current step
     _validateStep();
 
-    console.log('save story', _story.toYAML());
+    // generate a unique Id for this story
+    const storyId = shortid.generate();
+    _story.id = storyId;
+
+    // remove all sections
+    // that should not be serialized
+    _.each(_story.parts, (part) => {
+      delete part.output;
+      delete part.valid;
+    });
+
+    // dump into YAML format
+    // const dump = _story.toYAML();
+
+    // put in local storage
+    const key = `openapis|stories|${_api.specUrl}`;
+
+    // get the entry from local storage
+    BrowserStorage.local.get(key, (items) => {
+
+      let stories = items[key];
+
+      // if no stories have already been stored,
+      // create a new collection
+      if (_.isEmpty(stories)) {
+        stories = [];
+      }
+
+      // push the story into the collection
+      stories.push(_story.definition);
+
+      // replace the entry in the store
+      items = {};
+      items[key] = stories;
+
+      BrowserStorage.local.set(items, () => {
+        // collection updated
+      });
+    });
+
   };
 
 
@@ -1014,15 +1140,23 @@ export default (function() {
    */
   const _onPlayStory = function() {
 
-    console.log('playing story', _story);
+    // switch button to loading state
+    const $btn = $('.modal button[data-action="play-story"]');
+    $btn.addClass('disabled loading');
 
+    // play the story
     StoryPlayer.play(_story)
-      .then((res) => {
-        console.log('story successfully executed');
-        console.log(res);
+      .then(() => {
+
+        // visualize the story
+        StoryVisualizer.visualize(_story);
+
       })
       .catch(e => {
         console.log('story failed to execute', e);
+      })
+      .finally(() => {
+        $btn.removeClass('disabled loading');
       });
   };
 

@@ -4,7 +4,9 @@
  */
 import * as _ from 'lodash';
 import postal from 'postal';
+import asyncWaterfall from 'async/waterfall';
 
+import BrowserStorage from '../../lib/common/browser-storage';
 import graph from './graph';
 import '../../../extension/templates/modules/openapis/explorer/module.css';
 
@@ -480,23 +482,57 @@ export default (function() {
   const _renderStories = function() {
     try {
 
-      const data = {};
+      const model = {};
 
-      const html = tplStories(data);
-      $('#content').html(html);
+      asyncWaterfall([
 
-      // bind listeners
-      $('.ui.dropdown').dropdown();
+        (cb) => {
 
-      $('.item[data-id="new-story"]').on('click', () => {
+          // get the list of stories
+          // created for this API spec
+          const key = `openapis|stories|${_api.specUrl}`;
 
-        postal.publish({
-          channel: 'stories',
-          topic: 'createStory',
-          data: {
-            api: _api
-          }
+          // get the entry from local storage
+          BrowserStorage.local.get(key, (items) => {
+
+            const stories = items[key];
+            model.stories = stories;
+            console.log(stories);
+            cb(null);
+          });
+        },
+
+        (cb) => {
+          const html = tplStories(model);
+          $('#content').html(html);
+
+          cb();
+        }
+
+      ], (e) => {
+
+        if (e) {
+          console.error(e);
+        }
+
+        $('.cards .image').dimmer({
+          on: 'hover'
         });
+
+        // bind listeners
+        $('.ui.dropdown').dropdown();
+
+        $('.item[data-id="new-story"], .button[data-action="create-story"]').on('click', () => {
+
+          postal.publish({
+            channel: 'stories',
+            topic: 'createStory',
+            data: {
+              api: _api
+            }
+          });
+        });
+
       });
 
 

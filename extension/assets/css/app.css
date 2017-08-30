@@ -44,8 +44,35 @@ body {
 
 
 /*******************************
+  Card lists
+*******************************/
+
+.ui.cards.top.margin {
+  margin-top: 20px;
+}
+
+/*******************************
   Story maker
 *******************************/
 .modal .schema.input {
   margin-top: 20px;
+}
+
+#section-visualizations {
+  padding: 20px!important;
+}
+
+.story-output {
+  margin-top: 20px;
+}
+
+.story.part .visualization[data-type=json] {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.story.part .visualization[data-type=table] {
+  max-height: 600px;
+  overflow-y: auto;
+  overflow-x: auto;
 }

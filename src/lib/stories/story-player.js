@@ -4,7 +4,8 @@
  * @author Chris Spiliotopoulos
  */
 import _ from 'lodash';
-import async from 'async';
+import asyncEachSeries from 'async/eachSeries';
+import asyncWaterfall from 'async/waterfall';
 // import axios from 'axios';
 
 import ApiDefinition from '../openapi/api-definition';
@@ -31,7 +32,7 @@ export default (function() {
         }
 
         // pipeline tasks
-        async.waterfall([
+        asyncWaterfall([
 
           (cb) => {
 
@@ -68,23 +69,46 @@ export default (function() {
             });
 
             // go through all valid parts
-            async.eachSeries(valid, (part, done) => {
+            asyncEachSeries(valid, (part, done) => {
               try {
 
                 // play each part in turn
                 _playPart(part, api)
                   .then((res) => {
 
+                    // update the story with
+                    // the output
+                    const output = {
+                      ok: res.ok,
+                      status: res.status,
+                      statusText: res.statusText,
+                      headers: res.headers,
+                      data: res.obj
+                    };
+
+                    // set the part's output section
+                    part.output = output;
+
                     // part played
-                    done(null, res);
+                    done();
                   })
-                  .catch(done);
+                  .catch(e => {
+
+                    const output = {
+                      ok: false,
+                      statusText: e.message
+                    };
+
+                    // set the part's output section
+                    part.output = output;
+                    done();
+                  });
 
               } catch (e) {
                 console.error(e);
               }
-            }, (err) => {
-
+            }, (err, results) => {
+              console.log('results', results);
               // all parts have been played
               cb(err);
             });

@@ -1,0 +1,17 @@
+
+
+<div class="ui segment story part {{#if output.ok}}green{{else}}red{{/if}}">
+
+  {{#if output.ok}}
+    <div>
+      <span class="ui green circular label empty"></span>
+      {{output.statusText}}
+    </div>
+
+    <div class="visualization" data-type="{{type}}"></div>
+  {{else}}
+    <span class="ui red circular label empty"></span>
+    {{output.statusText}}
+  {{/if}}
+
+</div>

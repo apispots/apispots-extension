@@ -28,6 +28,23 @@ export default class DataStory {
   }
 
   /**
+   * Sets the story Id
+   * @param  {[type]} id [description]
+   * @return {[type]}    [description]
+   */
+  set id(id) {
+    this._definition.id = id;
+  }
+
+  /**
+   * Returns the story Id
+   * @return {[type]} [description]
+   */
+  get id() {
+    return this._definition.id;
+  }
+
+  /**
    * Returns the story definition.
    * @return {[type]} [description]
    */
