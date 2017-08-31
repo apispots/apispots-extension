@@ -7,6 +7,8 @@ import postal from 'postal';
 import asyncWaterfall from 'async/waterfall';
 import swal from 'sweetalert2';
 
+import StoryPlayer from '../stories/story-player';
+import StoryManager from '../../lib/stories/story-manager';
 import BrowserStorage from '../../lib/common/browser-storage';
 import graph from './graph';
 import '../../../extension/templates/modules/openapis/explorer/module.css';
@@ -92,7 +94,11 @@ export default (function() {
   const _attachListeners = function() {
 
     // menu sections
-    $('.menu .item[data-section]').on('click', _renderSection);
+    $('.menu .item[data-section]').on('click', (e) => {
+      // get the selected section and render it
+      const section = $(e.currentTarget).attr('data-section');
+      _renderSection(section);
+    });
     $('.menu .item[data-action="bookmark api"]').on('click', _bookmarkApi);
   };
 
@@ -100,8 +106,7 @@ export default (function() {
    * Renders a section.
    * @return {[type]} [description]
    */
-  const _renderSection = function() {
-    const section = $(this).attr('data-section');
+  const _renderSection = function(section) {
 
     if (section === 'general') {
       _renderGeneral();
@@ -123,7 +128,7 @@ export default (function() {
 
     // mark the menu item as active
     $('.menu .item[data-section]').removeClass('active');
-    $(this).addClass('active');
+    $(`.menu .item[data-section="${section}"]`).addClass('active');
 
   };
 
@@ -460,6 +465,26 @@ export default (function() {
 
       // listeners
       $('.modal .view.definition').on('click', _renderDefinition);
+      $('.modal .button[data-action="create story"]').on('click', (e) => {
+
+        // get the target operation Id
+        const operationId = $(e.currentTarget).attr('data-operation');
+
+        // render the data stories section
+        _renderSection('stories');
+
+        postal.publish({
+          channel: 'stories',
+          topic: 'create story',
+          data: {
+            api: _api,
+            operationId
+          }
+        });
+
+      });
+
+
     } catch (e) {
       // silent fail if path is undefined
     }
@@ -492,18 +517,14 @@ export default (function() {
 
         (cb) => {
 
-          // get the list of stories
-          // created for this API spec
-          const key = `openapis|stories|${_api.specUrl}`;
-
-          // get the entry from local storage
-          BrowserStorage.local.get(key, (items) => {
-
-            const stories = items[key];
-            model.stories = stories;
-            console.log(stories);
-            cb(null);
-          });
+          // get all stories associated with this spec
+          StoryManager.getStoriesBySpec(_api.specUrl)
+            .then((stories) => {
+              // add them to the model
+              model.stories = stories;
+              cb();
+            })
+            .catch();
         },
 
         (cb) => {
@@ -526,15 +547,76 @@ export default (function() {
         // bind listeners
         $('.ui.dropdown').dropdown();
 
-        $('.item[data-id="new-story"], .button[data-action="create-story"]').on('click', () => {
+        // create a new story
+        $('.item[data-id="new-story"], .button[data-action="create story"]').on('click', () => {
 
           postal.publish({
             channel: 'stories',
-            topic: 'createStory',
+            topic: 'create story',
             data: {
               api: _api
             }
           });
+        });
+
+        // play a story
+        $('.ui.cards.stories .story button[data-action="play story"]').on('click', (e) => {
+
+          const $el = $(e.currentTarget);
+          const storyId = $el.attr('data-id');
+
+          postal.publish({
+            channel: 'stories',
+            topic: 'play story',
+            data: {
+              api: _api,
+              storyId
+            }
+          });
+        });
+
+        // edit a story
+        $('.ui.cards.stories .story button[data-action="edit story"]').on('click', (e) => {
+
+          const $el = $(e.currentTarget);
+          const storyId = $el.attr('data-id');
+
+          postal.publish({
+            channel: 'stories',
+            topic: 'edit story',
+            data: {
+              api: _api,
+              storyId
+            }
+          });
+        });
+
+        // delete a story
+        $('.ui.cards.stories .story button[data-action="delete story"]').on('click', (e) => {
+
+          const $el = $(e.currentTarget);
+          const storyId = $el.attr('data-id');
+
+          swal({
+            title: 'Are you sure?',
+            text: 'Do you really want to delete the selected data story?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+          }).then(() => {
+
+            // delete the story from local storage
+            StoryManager.delete(_api.specUrl, storyId)
+              .then(() => {
+                // reload
+                _renderStories();
+              });
+          })
+            .catch(() => {
+              // silent
+            });
         });
 
       });
@@ -668,6 +750,14 @@ export default (function() {
     }
   };
 
+  /**
+   * Reloads the API stories section.
+   * @return {[type]} [description]
+   */
+  const _onReloadStories = function() {
+    _renderStories();
+  };
+
 
   // event listeners
   postal.subscribe({
@@ -675,6 +765,14 @@ export default (function() {
     topic: 'openapi.path.operations',
     callback: _onOpenApiPathOperations
   });
+
+  // event bindings
+  postal.subscribe({
+    channel: 'stories',
+    topic: 'reload stories',
+    callback: _onReloadStories
+  });
+
 
   return {
 

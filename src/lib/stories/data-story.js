@@ -18,7 +18,11 @@ export default class DataStory {
 
     // parse any provided definition
     if (typeof definition !== 'undefined') {
-      this._definition = jsyaml.safeLoad(definition);
+      if (typeof definition === 'string') {
+        this._definition = jsyaml.safeLoad(definition);
+      } else if (typeof definition === 'object') {
+        this._definition = definition;
+      }
     } else {
       // instantiate with empty object
       this._definition = {
@@ -76,6 +80,20 @@ export default class DataStory {
     }
 
     return this._definition.spec;
+  }
+
+  /**
+   * Sets the API spec URL
+   * within the story definition.
+   * @param  {[type]} url [description]
+   * @return {[type]}     [description]
+   */
+  set spec(url) {
+    if (!this._definition) {
+      throw new Error('Invalid story definition');
+    }
+
+    this._definition.spec = url;
   }
 
   /**

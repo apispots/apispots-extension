@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 function tableify(obj, columns, parents) {
   const buf = [];
   const type = typeof obj;
@@ -18,18 +20,20 @@ function tableify(obj, columns, parents) {
       buf.push('<table>', '<tbody>');
       cols = [];
 
-      // 2D array is an array of rows
-      obj.forEach((row, ix) => {
-        cols.push(ix);
+      if (!_.isEmpty(obj)) {
+        // 2D array is an array of rows
+        obj.forEach((row, ix) => {
+          cols.push(ix);
 
-        buf.push('<tr>');
+          buf.push('<tr>');
 
-        row.forEach((val) => {
-          buf.push(`<td${getClass(val)}>`, tableify(val, cols, parents), '</td>');
+          row.forEach((val) => {
+            buf.push(`<td${getClass(val)}>`, tableify(val, cols, parents), '</td>');
+          });
+
+          buf.push('</tr>');
         });
-
-        buf.push('</tr>');
-      });
+      }
 
       buf.push('</tbody>', '</table>');
     } else if (typeof obj[0] === 'object') {
@@ -37,37 +41,46 @@ function tableify(obj, columns, parents) {
 
       // loop through every object and get unique keys
       const keys = {};
-      obj.forEach((o) => {
-        if (typeof o === 'object' && !Array.isArray(o)) {
-          Object.keys(o).forEach((k) => {
-            keys[k] = true;
-          });
-        }
-      });
+
+      if (!_.isEmpty(obj)) {
+        obj.forEach((o) => {
+          if (typeof o === 'object' && !Array.isArray(o)) {
+            Object.keys(o).forEach((k) => {
+              keys[k] = true;
+            });
+          }
+        });
+      }
 
       cols = Object.keys(keys);
 
-      cols.forEach((key) => {
-        buf.push(`<th${getClass(obj[0][key])}>`, key, '</th>');
-      });
+      if (!_.isEmpty(cols)) {
+        cols.forEach((key) => {
+          buf.push(`<th${getClass(obj[0][key])}>`, key, '</th>');
+        });
+      }
 
       buf.push('</tr>', '</thead>', '<tbody>');
 
-      obj.forEach((record) => {
-        buf.push('<tr>');
-        buf.push(tableify(record, cols, parents));
-        buf.push('</tr>');
-      });
+      if (!_.isEmpty(obj)) {
+        obj.forEach((record) => {
+          buf.push('<tr>');
+          buf.push(tableify(record, cols, parents));
+          buf.push('</tr>');
+        });
+      }
 
       buf.push('</tbody></table>');
     } else {
       buf.push('<table>', '<tbody>');
       cols = [];
 
-      obj.forEach((val, ix) => {
-        cols.push(ix);
-        buf.push('<tr>', `<td${getClass(val)}>`, tableify(val, cols, parents), '</td>', '</tr>');
-      });
+      if (!_.isEmpty(obj)) {
+        obj.forEach((val, ix) => {
+          cols.push(ix);
+          buf.push('<tr>', `<td${getClass(val)}>`, tableify(val, cols, parents), '</td>', '</tr>');
+        });
+      }
 
       buf.push('</tbody>', '</table>');
     }
@@ -81,7 +94,7 @@ function tableify(obj, columns, parents) {
       });
 
       buf.push('</table>');
-    } else {
+    } else if (!_.isEmpty(columns)) {
       columns.forEach((key) => {
         if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
           buf.push(`<td${getClass(obj[key])}>`, tableify(obj[key], false, parents), '</td>');
@@ -89,6 +102,7 @@ function tableify(obj, columns, parents) {
           buf.push(`<td${getClass(obj[key])}>`, tableify(obj[key], columns, parents), '</td>');
         }
       });
+
     }
   } else {
     buf.push(obj);

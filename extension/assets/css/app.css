@@ -53,6 +53,10 @@ body {
   background-image: url("/assets/images/openapis/logo.png")!important;
 }
 
+/*******************************
+  Open APIs Explorer
+*******************************/
+
 
 /*******************************
   Card lists
@@ -73,7 +77,7 @@ body {
   padding: 20px!important;
 }
 
-.story-output {
+.story.output {
   margin-top: 20px;
 }
 

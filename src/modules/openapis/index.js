@@ -292,7 +292,12 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
 
         // return the bookmarks
         const bookmarks = items[key];
-        resolve(bookmarks);
+
+        const out = _.chain(bookmarks)
+          .orderBy(['title'])
+          .value();
+
+        resolve(out);
       });
 
     });

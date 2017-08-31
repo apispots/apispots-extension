@@ -83,7 +83,8 @@ export default (function() {
                       status: res.status,
                       statusText: res.statusText,
                       headers: res.headers,
-                      data: res.obj
+                      data: res.obj,
+                      text: res.text
                     };
 
                     // set the part's output section
@@ -107,14 +108,14 @@ export default (function() {
               } catch (e) {
                 console.error(e);
               }
-            }, (err, results) => {
-              console.log('results', results);
+            }, (err) => {
+
               // all parts have been played
               cb(err);
             });
           }
 
-        ], (e, results) => {
+        ], (e) => {
 
           if (e) {
             reject(e);

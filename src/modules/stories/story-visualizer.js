@@ -28,8 +28,6 @@ export default (function() {
       throw new Error('Undefined story');
     }
 
-    console.log('visualizing story', story);
-
     // get story parts
     const parts = story.parts;
 
@@ -64,47 +62,60 @@ export default (function() {
       output: part.output,
       type: part.visualization.type
     };
-    console.log(part.output);
+
     const html = tplPartVisualization(model);
     const $html = $(html);
 
     // append the template to the main container
-    const $cnt = $('.story-output .segments');
+    const $cnt = $('.story.output .segments');
     $cnt.append($html);
 
     // get the visualization container
     const $vis = $('.visualization', $cnt);
 
-    // if the dataset is empty, exit now
-    if (_.isEmpty(part.output.data)) {
-      return;
+    if ($vis.length > 0) {
+
+      // if the dataset is empty, exit now
+      if (_.isEmpty(part.output.data)) {
+        return;
+      }
+
+      let clazz;
+
+      // visualize based on the selected type
+      const type = part.visualization.type;
+
+      if (type === 'json') {
+        clazz = new JsonVisualizer();
+      } else if (type === 'table') {
+        clazz = new TableVisualizer();
+      }
+
+      clazz.visualize(part, $vis);
+
+      // get notified when visualization
+      // has been rendered
+      clazz.on('rendered', () => {
+        // refresh the modal
+        $('.modal').modal('refresh');
+      });
+
+      clazz.on('contentChanged', () => {
+        // refresh the modal
+        $('.modal').modal('refresh');
+      });
     }
 
-    let clazz;
+    $('.message .close')
+      .on('click', function() {
+        $(this)
+          .closest('.message')
+          .transition('fade')
+        ;
+      });
 
-    // visualize based on the selected type
-    const type = part.visualization.type;
-
-    if (type === 'json') {
-      clazz = new JsonVisualizer();
-    } else if (type === 'table') {
-      clazz = new TableVisualizer();
-    }
-
-    clazz.visualize(part, $vis);
-
-    // get notified when visualization
-    // has been rendered
-    clazz.on('rendered', () => {
-      // refresh the modal
-      $('.modal').modal('refresh');
-    });
-
-    clazz.on('contentChanged', () => {
-      // refresh the modal
-      $('.modal').modal('refresh');
-    });
-
+    // refresh the modal
+    $('.modal').modal('refresh');
   };
 
 

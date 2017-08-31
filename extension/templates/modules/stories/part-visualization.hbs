@@ -8,7 +8,23 @@
       {{output.statusText}}
     </div>
 
-    <div class="visualization" data-type="{{type}}"></div>
+    {{#if output.data}}
+      <div class="visualization" data-type="{{type}}"></div>
+    {{else}}
+
+    <div class="ui warning message">
+      <i class="close icon"></i>
+      <div class="header">
+        Heads up!
+      </div>
+      The data returned from the service could not be parsed, so 
+      you are seeing the raw response text instead.
+    </div>
+
+      {{output.text}}
+
+    {{/if}}
+
   {{else}}
     <span class="ui red circular label empty"></span>
     {{output.statusText}}

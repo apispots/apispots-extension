@@ -54,6 +54,7 @@
     "js-yaml": "^3.9.1",
     "lodash": "^4.17.4",
     "lodash.clonedeep": "^4.5.0",
+    "moment": "^2.18.1",
     "nconf": "^0.8.4",
     "postal": "^2.0.5",
     "pouchdb-browser": "^6.3.4",

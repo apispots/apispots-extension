@@ -9,47 +9,17 @@ input and an output all bundled together as one.
   <a class="item" data-id='new-story'>
     New story
   </a>
-  <!-- <div class="ui dropdown icon item">
-    Actions
-    <i class="dropdown icon"></i>
-    <div class="menu transition hidden">
-      <div class="item">
-        New story
-      </div>
 
-    </div>
-  </div> -->
-  <!-- <div class="right menu">
-    <div class="ui right aligned category search item">
-      <div class="ui transparent icon input">
-        <input class="prompt" type="text" placeholder="Search stories..." autocomplete="off">
-        <i class="search link icon"></i>
-      </div>
-      <div class="results"></div>
-    </div>
-  </div> -->
 </div>
 
-<div class="ui cards top margin">
+<div class="ui cards stories top margin">
 
   <div class="card small">
-    <div class="blurring dimmable image">
-      <div class="ui dimmer">
-        <div class="content">
-          <div class="center">
-            <div class="ui inverted button" data-action="create-story">Create story</div>
-          </div>
-        </div>
-      </div>
-      <img class="ui image mini" src="../../../../assets/images/stories/story.svg">
-    </div>
     <div class="content">
       <a class="ui header">A new data story</a>
-      <div class="meta">
-        <span class="date">Just now</span>
-      </div>
+      <img class="ui wireframe image" src="../../../../assets/images/common/paragraph.png">
     </div>
-    <div class="ui bottom attached button" data-action="create-story">
+    <div class="ui bottom attached button" data-action="create story">
       <i class="add icon"></i>
       Create story
     </div>
@@ -57,12 +27,13 @@ input and an output all bundled together as one.
 
   {{#each stories}}
 
-    <div class="ui card">
+    <div class="ui card story" data-id="{{id}}">
       <div class="content">
         <div class="ui header">{{title}}</div>
         <div class="meta">
-          <span>2 days ago</span>
-          <a>Animals</a>
+          {{#if tsHuman}}
+            Updated {{tsHuman}} ago
+          {{/if}}
         </div>
         <div class="description">
           {{description}}
@@ -70,6 +41,27 @@ input and an output all bundled together as one.
       </div>
       <div class="extra content">
 
+        <div class="ui three basic buttons">
+          <button class="ui compact button"
+            data-action="play story"
+            data-id="{{id}}">
+            <i class="play green icon"></i>
+            Play
+          </button>
+          <button class="compact ui button"
+            data-action="edit story"
+            data-id="{{id}}">
+            <i class="edit icon"></i>
+            Edit
+          </button>
+          <button class="ui compact icon button"
+            data-action="delete story"
+            data-id="{{id}}">
+            <i class="delete red icon"></i>
+            Delete
+          </button>
+
+        </div>
       </div>
     </div>
 

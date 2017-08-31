@@ -6,12 +6,14 @@ import _ from 'lodash';
 import postal from 'postal';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import shortid from 'shortid';
+import asyncWaterfall from 'async/waterfall';
+import swal from 'sweetalert2';
 
 import DataStory from '../../lib/stories/data-story';
 import StoryPlayer from '../../lib/stories/story-player';
 import StoryVisualizer from './story-visualizer';
 import BrowserStorage from '../../lib/common/browser-storage';
+import StoryManager from '../../lib/stories/story-manager';
 
 import tplModal from '../../../extension/templates/modules/stories/story-maker.hbs';
 import tplStepOutline from '../../../extension/templates/modules/stories/step-outline.hbs';
@@ -38,6 +40,9 @@ export default (function() {
   // the current step Id
   let _stepId;
 
+  // the selected operation
+  let _operationId;
+
   /**
    * Called when a story needs to be
    * created.  Displays a modal.
@@ -48,6 +53,7 @@ export default (function() {
 
     // remember the API definition
     _api = data.api;
+    _operationId = data.operationId;
 
     // create a new data story
     _story = new DataStory();
@@ -83,10 +89,75 @@ export default (function() {
 
     // TODO: REMOVE THIS
     _story.parts.push({});
-    // _story.parts[0].operationId = 'addPet';
-
-
   };
+
+  /**
+   * Called when a story needs to be
+   * edited.
+   * @param  {[type]} data [description]
+   * @return {[type]}      [description]
+   */
+  const _onEditStory = function(data) {
+
+    // remember the API definition
+    _api = data.api;
+
+    // get the story Id
+    const id = data.storyId;
+
+    asyncWaterfall([
+
+      (cb) => {
+
+        // get the story instance
+        StoryManager.getStory(_api.specUrl, id)
+          .then(story => {
+            // set the story instance
+            _story = story;
+
+            cb();
+          })
+          .catch(e => {
+            console.error(e);
+            cb();
+          });
+      }
+
+    ], () => {
+
+      const model = {};
+
+      const html = tplModal(model);
+      $modal = $(html);
+
+      // save button
+      $('#btn-save', $modal).on('click', _onSaveStory);
+
+      $modal.modal({
+        closable: false,
+        duration: 100,
+        onVisible: () => {
+          // select the first step
+          _onStepSelected('outline');
+
+          $modal.modal('refresh');
+        },
+        onHidden: () => {
+          // clear local data
+          _resetData();
+        }
+      }).modal('show');
+
+      // bind listeners
+      $('.modal .steps .step').on('click', (e) => {
+        // get the selected form Id
+        const formId = $(e.currentTarget).attr('data-step');
+        _onStepSelected(formId);
+      });
+
+    });
+  };
+
 
   /**
    * User clicked on a step.
@@ -236,8 +307,12 @@ export default (function() {
     $('[name="description"]', 'form[data-step="outline"]').val(_story.definition.description);
 
     // operation
-    if (typeof _story.parts[0] !== 'undefined') {
-      $('[name="operation"]', 'form[data-step="outline"]').dropdown('set selected', _story.parts[0].operationId);
+    const $select = $('[name="operation"]', 'form[data-step="outline"]');
+
+    if (!_.isEmpty(_story.parts[0])) {
+      $select.dropdown('set selected', _story.parts[0].operationId);
+    } else if (!_.isEmpty(_operationId)) {
+      $select.dropdown('set selected', _operationId);
     }
 
     // form validators
@@ -309,8 +384,8 @@ export default (function() {
     $cnt.html(html);
 
     // initialize calendars
-    flatpickr('.ui.input[data-stepat="date"]', {});
-    flatpickr('.ui.input[data-stepat="dateTime"]', {
+    flatpickr('.ui.input[data-format="date"]', {});
+    flatpickr('.ui.input[data-format="dateTime"],.ui.input[data-format="date-time"]', {
       enableTime: true
     });
 
@@ -1007,7 +1082,7 @@ export default (function() {
                 // select box
 
                 let values;
-                const allowAdditions = (typeof $ctl.attr('data-allowAdditions') !== 'undefined');
+                // const allowAdditions = (typeof $ctl.attr('data-allowAdditions') !== 'undefined');
 
                 if (_.isArray(value)) {
                   // if this is an array of values,
@@ -1055,7 +1130,6 @@ export default (function() {
       // traverse the top-level form
       traverseForm($form, dataset);
 
-
     } catch (e) {
       // silent
       console.warn(e);
@@ -1091,45 +1165,24 @@ export default (function() {
     // validate the current step
     _validateStep();
 
-    // generate a unique Id for this story
-    const storyId = shortid.generate();
-    _story.id = storyId;
-
-    // remove all sections
-    // that should not be serialized
-    _.each(_story.parts, (part) => {
-      delete part.output;
-      delete part.valid;
-    });
-
-    // dump into YAML format
-    // const dump = _story.toYAML();
-
-    // put in local storage
-    const key = `openapis|stories|${_api.specUrl}`;
-
-    // get the entry from local storage
-    BrowserStorage.local.get(key, (items) => {
-
-      let stories = items[key];
-
-      // if no stories have already been stored,
-      // create a new collection
-      if (_.isEmpty(stories)) {
-        stories = [];
-      }
-
-      // push the story into the collection
-      stories.push(_story.definition);
-
-      // replace the entry in the store
-      items = {};
-      items[key] = stories;
-
-      BrowserStorage.local.set(items, () => {
-        // collection updated
+    // save the story definition
+    StoryManager.save(_story)
+      .then(() => {
+        // reload the stories
+        postal.publish({
+          channel: 'stories',
+          topic: 'reload stories'
+        });
+      })
+      .catch(e => {
+        // show an alert
+        swal({
+          title: 'Ooops...',
+          text: `Something went wrong and the story could not be saved [${e.message}]`,
+          type: 'error',
+          timer: 10000
+        });
       });
-    });
 
   };
 
@@ -1164,8 +1217,14 @@ export default (function() {
   // event bindings
   postal.subscribe({
     channel: 'stories',
-    topic: 'createStory',
+    topic: 'create story',
     callback: _onCreateStory
+  });
+
+  postal.subscribe({
+    channel: 'stories',
+    topic: 'edit story',
+    callback: _onEditStory
   });
 
 

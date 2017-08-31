@@ -18,7 +18,15 @@
 
       <div class="ui tab {{#eq @index 0}}active{{/eq}}" data-tab="{{@key}}">
 
+        <h4>Operation Id</h4>
         <span class="ui label basic blue">{{operationId}}</span>
+
+        <button class="ui labeled mini green icon button"
+          data-action="create story"
+          data-operation="{{operationId}}">
+          <i class="play icon"></i>
+          Create data story
+        </button>
 
         <h3>Summary</h3>
         {{#if summary}}
