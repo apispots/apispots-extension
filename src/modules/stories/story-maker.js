@@ -12,7 +12,6 @@ import swal from 'sweetalert2';
 import DataStory from '../../lib/stories/data-story';
 import StoryPlayer from '../../lib/stories/story-player';
 import StoryVisualizer from './story-visualizer';
-import BrowserStorage from '../../lib/common/browser-storage';
 import StoryManager from '../../lib/stories/story-manager';
 
 import tplModal from '../../../extension/templates/modules/stories/story-maker.hbs';

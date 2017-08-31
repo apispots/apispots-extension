@@ -7,7 +7,6 @@ import postal from 'postal';
 import asyncWaterfall from 'async/waterfall';
 import swal from 'sweetalert2';
 
-import StoryPlayer from '../stories/story-player';
 import StoryManager from '../../lib/stories/story-manager';
 import BrowserStorage from '../../lib/common/browser-storage';
 import graph from './graph';
