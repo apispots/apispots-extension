@@ -19,6 +19,38 @@
 
 </div>
 
+{{#if bookmarks}}
+
+<div class="ui vertical stripe intro segment" id="section-bookmarks">
+  <div class="ui stackable relaxed center aligned grid container">
+    <div class="row">
+      <div class="twelve wide column">
+        <h1 class="ui icon header">
+          <i class="bookmark icon blue"></i>
+          Your bookmarked spots
+        </h1>
+
+        <div class="ui segments">
+
+          {{#each bookmarks}}
+          <div class="ui segment  left aligned">
+            <img class="ui avatar image" src="../../../assets/images/openapis/api.png">
+            <a class="header" href="/pages/openapis.html?spec={{specUrl}}">{{title}}</a>
+          </div>
+          {{/each}}
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{{/if}}
+
+
 <div class="ui vertical stripe intro segment" id="section-openapis">
   <div class="ui stackable very relaxed center aligned grid container">
     <div class="row">

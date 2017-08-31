@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import postal from 'postal';
 import swal from 'sweetalert2';
+import asyncWaterfall from 'async/waterfall';
 
 import '../../common/base';
 import ApiDefinition from '../../lib/openapi/api-definition';
@@ -8,6 +9,7 @@ import ApiCatalogService from '../../lib/openapi/catalog-service';
 import Explorer from './explorer';
 import Catalog from './catalog';
 import '../stories/story-maker';
+import BrowserStorage from '../../lib/common/browser-storage';
 
 import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
 
@@ -35,26 +37,49 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
       postal.publish(command);
     } else {
 
-      // render the default view
-      const html = tplBody();
-      $('body').html(html);
+      const model = {};
 
-      // fix menu when passed
-      $('.masthead')
-        .visibility({
-          once: false,
-          onBottomPassed() {
-            $('.fixed.menu').transition('fade in');
-          },
-          onBottomPassedReverse() {
-            $('.fixed.menu').transition('fade out');
-          }
-        });
+      asyncWaterfall([
+        (cb) => {
 
+          // load any bookmaked spots
+          _loadBookmarkedSpots()
+            .then((bookmarks) => {
+              // add them to the model
+              model.bookmarks = bookmarks;
+              cb();
+            })
+            .catch(cb);
+        }
 
-      // bind all event listeners
-      _bindListeners();
-      _bindValidators();
+      ], (e) => {
+
+        if (e) {
+          console.error(e);
+        }
+
+        // render the default view
+        const html = tplBody(model);
+        $('body').html(html);
+
+        // fix menu when passed
+        $('.masthead')
+          .visibility({
+            once: false,
+            onBottomPassed() {
+              $('.fixed.menu').transition('fade in');
+            },
+            onBottomPassedReverse() {
+              $('.fixed.menu').transition('fade out');
+            }
+          });
+
+        // bind all event listeners
+        _bindListeners();
+        _bindValidators();
+
+      });
+
     }
 
   };
@@ -249,6 +274,28 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
           timer: 3000
         });
       });
+  };
+
+  /**
+   * Loads any bookmarked spots.
+   * @return {[type]} [description]
+   */
+  const _loadBookmarkedSpots = function() {
+    return new Promise((resolve) => {
+
+      // get the collection of
+      // bookmarked Open APIs
+      // from local storage
+      const key = 'openapis|bookmarks';
+
+      BrowserStorage.local.get(key, (items) => {
+
+        // return the bookmarks
+        const bookmarks = items[key];
+        resolve(bookmarks);
+      });
+
+    });
   };
 
 

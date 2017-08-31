@@ -5,6 +5,7 @@
 import * as _ from 'lodash';
 import postal from 'postal';
 import asyncWaterfall from 'async/waterfall';
+import swal from 'sweetalert2';
 
 import BrowserStorage from '../../lib/common/browser-storage';
 import graph from './graph';
@@ -73,6 +74,9 @@ export default (function() {
         // render the selected section
         $(`.menu .item[data-section='${section}']`).trigger('click');
 
+        // set the bookmarked status
+        _checkIfBookmarked();
+
         // done
         resolve();
       } catch (e) {
@@ -89,7 +93,7 @@ export default (function() {
 
     // menu sections
     $('.menu .item[data-section]').on('click', _renderSection);
-
+    $('.menu .item[data-action="bookmark api"]').on('click', _bookmarkApi);
   };
 
   /**
@@ -535,9 +539,132 @@ export default (function() {
 
       });
 
-
     } catch (e) {
       console.error(`Failed to render Data stories section - ${e}`);
+    }
+  };
+
+  /**
+   * Bookmarks the current API spot.
+   * @return {[type]} [description]
+   */
+  const _bookmarkApi = function(e) {
+
+    try {
+
+      // get the API details
+      const specUrl = _api.specUrl;
+      const title = _api.title;
+
+      // check current state
+      const $el = $(e.currentTarget);
+
+      // get the collection of
+      // bookmarked Open APIs
+      // from local storage
+      const key = 'openapis|bookmarks';
+      let bookmarked = false;
+
+      BrowserStorage.local.get(key, (items) => {
+
+        let bookmarks = items[key];
+        let bm;
+
+        // look for the item first
+        bm = _.find(bookmarks, {specUrl});
+
+        // if already bookmarked, remove
+        // it from the collection
+        if (!_.isEmpty(bm)) {
+
+          // remove bookmark from the collection
+          _.remove(bookmarks, (o) => o.specUrl === specUrl);
+
+        } else {
+
+          // add bookmark to the collection
+          if (_.isEmpty(bookmarks)) {
+            bookmarks = [];
+          }
+
+          bm = {
+            specUrl,
+            title
+          };
+
+          bookmarks.push(bm);
+          bookmarked = true;
+        }
+
+        // update the entry in local storage
+        items = {};
+        items[key] = bookmarks;
+
+        BrowserStorage.local.set(items, () => {
+
+          if (bookmarked) {
+            $el.attr('data-bookmarked', '');
+            $el.find('i.bookmark.icon').addClass('pink');
+
+            // show an alert
+            swal({
+              title: 'Open API spot bookmarked!',
+              text: 'You have created a bookmark for this API spot. Now you can easily access it from the main Open APIs page.',
+              type: 'success',
+              timer: 10000
+            });
+
+          } else {
+            $el.attr('data-bookmarked', null);
+            $el.find('i.bookmark.icon').removeClass('pink');
+          }
+        });
+      });
+
+
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  /**
+   * Cheks whether the API spot
+   * is bookmarked and sets the
+   * status.
+   * @return {[type]} [description]
+   */
+  const _checkIfBookmarked = function() {
+
+    try {
+
+      // get the API details
+      const specUrl = _api.specUrl;
+
+      // get the element
+      const $el = $('.ui.menu .item[data-action="bookmark api"]');
+
+      // get the collection of
+      // bookmarked Open APIs
+      // from local storage
+      const key = 'openapis|bookmarks';
+
+      BrowserStorage.local.get(key, (items) => {
+
+        const bookmarks = items[key];
+
+        // look for the item first
+        const bm = _.find(bookmarks, {specUrl});
+
+        // if already bookmarked, remove
+        // it from the collection
+        if (!_.isEmpty(bm)) {
+          $el.attr('data-bookmarked', '');
+          $el.find('i.bookmark.icon').addClass('pink');
+        }
+      });
+
+    } catch (e) {
+      console.error(e);
     }
   };
 

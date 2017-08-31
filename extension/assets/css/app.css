@@ -25,6 +25,17 @@ body {
 }
 
 /*******************************
+  Fixed top menu
+*******************************/
+
+/* NEW floating labels on top menu */
+.ui.menu .item>.floating.label.new {
+    top: 4em;
+    left: 80%;
+}
+
+
+/*******************************
   Master headers backgrounds
 *******************************/
 
