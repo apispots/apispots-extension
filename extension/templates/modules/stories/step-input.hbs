@@ -18,14 +18,17 @@
         {{#if description}}data-tooltip="{{description}}"{{/if}}
         data-position="right center"
         data-property="{{name}}"
+        data-root
         >
         <label>{{name}}</label>
 
         {{#eq fieldType "select"}}
-          <select class="ui dropdown parameter search selection" name="{{name}}"
+          <select class="ui dropdown parameter search selection"
+          name="{{name}}"
           data-rules="{{rules}}"
           {{#if selectMultiple}}multiple=""{{/if}}
           {{#if fieldAllowAdditions}}data-allowAdditions="true"{{/if}}
+
           >
             <option value=""></option>
             {{#each fieldValues}}

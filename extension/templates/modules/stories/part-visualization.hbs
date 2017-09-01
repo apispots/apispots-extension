@@ -5,6 +5,9 @@
   {{#if output.ok}}
     <div>
       <span class="ui green circular label empty"></span>
+      <span class="ui basic green label">
+        {{output.status}}
+      </span>
       {{output.statusText}}
     </div>
 
@@ -22,6 +25,9 @@
           you are seeing the raw response text instead.
         </div>
 
+          <span class="ui basic orange label">
+            {{output.status}}
+          </span>
           {{output.text}}
       {{/if}}
 
@@ -29,6 +35,9 @@
 
   {{else}}
     <span class="ui red circular label empty"></span>
+    <span class="ui basic red label">
+      Unknown
+    </span>
     {{output.statusText}}
   {{/if}}
 

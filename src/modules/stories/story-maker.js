@@ -62,9 +62,6 @@ export default (function() {
     const html = tplModal(model);
     $modal = $(html);
 
-    // save button
-    $('#btn-save', $modal).on('click', _onSaveStory);
-
     $modal.modal({
       closable: false,
       duration: 100,
@@ -77,6 +74,16 @@ export default (function() {
       onHidden: () => {
         // clear local data
         _resetData();
+      },
+      onApprove: () => {
+        try {
+          // save the story
+          _onSaveStory();
+          return true;
+        } catch (e) {
+          // something failed
+          return false;
+        }
       }
     }).modal('show');
 
@@ -129,9 +136,6 @@ export default (function() {
       const html = tplModal(model);
       $modal = $(html);
 
-      // save button
-      $('#btn-save', $modal).on('click', _onSaveStory);
-
       $modal.modal({
         closable: false,
         duration: 100,
@@ -144,6 +148,16 @@ export default (function() {
         onHidden: () => {
           // clear local data
           _resetData();
+        },
+        onApprove: () => {
+          try {
+            // save the story
+            _onSaveStory();
+            return true;
+          } catch (e) {
+            // something failed
+            return false;
+          }
         }
       }).modal('show');
 
@@ -878,7 +892,7 @@ export default (function() {
     try {
 
       // the dataset object
-      let dataset = {};
+      const dataset = {};
 
       // get all forms in the view
       const $form = $('.modal .form').eq(0);
@@ -896,6 +910,7 @@ export default (function() {
 
           // is included?
           const included = $form.attr('data-include');
+          const isRootForm = (typeof $form.attr('data-root') !== 'undefined');
 
           // process only forms mark
           // as included
@@ -923,6 +938,11 @@ export default (function() {
 
               // get the corresponding property name
               const propname = $field.attr('data-property');
+              const isRootField = (typeof $field.attr('data-root') !== 'undefined');
+
+              if (isRootForm && (!isRootField)) {
+                return;
+              }
 
               // get the parameter control
               const $ctl = $('.parameter', $field);
@@ -976,15 +996,6 @@ export default (function() {
 
       // traverse the top-level form
       traverseForm($form, dataset);
-
-      // TODO: This should be changed
-      // temp fix for form traversal mixup
-      // in case of 'body' payload
-      if (typeof dataset.body !== 'undefined') {
-        dataset = {
-          body: dataset.body
-        };
-      }
 
       /*
        * set the story input
