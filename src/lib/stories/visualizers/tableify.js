@@ -45,9 +45,11 @@ function tableify(obj, columns, parents) {
       if (!_.isEmpty(obj)) {
         obj.forEach((o) => {
           if (typeof o === 'object' && !Array.isArray(o)) {
-            Object.keys(o).forEach((k) => {
-              keys[k] = true;
-            });
+            if (!_.isEmpty(o)) {
+              Object.keys(o).forEach((k) => {
+                keys[k] = true;
+              });
+            }
           }
         });
       }
@@ -89,9 +91,11 @@ function tableify(obj, columns, parents) {
     if (!columns) {
       buf.push('<table>');
 
-      Object.keys(obj).forEach((key) => {
-        buf.push('<tr>', `<th${getClass(obj[key])}>`, key, '</th>', `<td${getClass(obj[key])}>`, tableify(obj[key], false, parents), '</td>', '</tr>');
-      });
+      if (!_.isEmpty(obj)) {
+        Object.keys(obj).forEach((key) => {
+          buf.push('<tr>', `<th${getClass(obj[key])}>`, key, '</th>', `<td${getClass(obj[key])}>`, tableify(obj[key], false, parents), '</td>', '</tr>');
+        });
+      }
 
       buf.push('</table>');
     } else if (!_.isEmpty(columns)) {
