@@ -51,6 +51,13 @@
                   <option value="{{this}}" {{#eq defaultValue this}}selected{{/eq}}>{{this}}</option>
                 {{/each}}
               </select>
+
+              {{#if fieldAllowAdditions}}
+                <div class="ui up pointing basic blue label">
+                  Type in the box to enter tag-like values
+                </div>
+              {{/if}}
+
             {{/eq}}
 
             {{#eq fieldType "input"}}
