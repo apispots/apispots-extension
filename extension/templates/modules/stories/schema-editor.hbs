@@ -44,7 +44,8 @@
                 data-rules="{{rules}}"
 
                 {{#if selectMultiple}}multiple=""{{/if}}
-                {{#if fieldAllowAdditions}}data-allowAdditions="true"{{/if}}>
+                {{#if fieldAllowAdditions}}data-allowAdditions="true"{{/if}}
+                >
                 <option value=""></option>
                 {{#each fieldValues}}
                   <option value="{{this}}" {{#eq defaultValue this}}selected{{/eq}}>{{this}}</option>

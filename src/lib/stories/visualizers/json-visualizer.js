@@ -1,4 +1,5 @@
 
+import _ from 'lodash';
 import renderjson from 'renderjson';
 
 import Visualizer from './visualizer';
@@ -23,6 +24,16 @@ export default class JsonVisualizer extends Visualizer {
 
     // convert the JSON into HTML
     renderjson.set_icons('+', '-');
+
+    // decide on the default
+    // expansion level
+    if (_.isArray(output.data)) {
+      if (output.data.length < 100) {
+        renderjson.set_show_to_level(2);
+      }
+    } else {
+      renderjson.set_show_to_level(1);
+    }
 
     const html = renderjson(output.data);
 

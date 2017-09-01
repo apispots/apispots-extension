@@ -6,7 +6,6 @@
 import _ from 'lodash';
 import asyncEachSeries from 'async/eachSeries';
 import asyncWaterfall from 'async/waterfall';
-// import axios from 'axios';
 
 import ApiDefinition from '../openapi/api-definition';
 
@@ -81,10 +80,10 @@ export default (function() {
                     const output = {
                       ok: res.ok,
                       status: res.status,
-                      statusText: res.statusText,
+                      statusText: (_.isEmpty(res.statusText) ? undefined : res.statusText),
                       headers: res.headers,
-                      data: res.obj,
-                      text: res.text
+                      data: (_.isEmpty(res.obj) ? undefined : res.obj),
+                      text: (_.isEmpty(res.text) ? undefined : res.text)
                     };
 
                     // set the part's output section
@@ -165,12 +164,25 @@ export default (function() {
 
     return new Promise((resolve, reject) => {
 
+      const opId = part.operationId;
+      const operation = api.getOperation(opId);
+
+      const opts = {
+        operationId: opId,
+        parameters: part.input.parameters,
+        headers: {}
+      };
+
+      // set the request content type
+      if (_.isEmpty(operation.consumes)) {
+        // if no 'consumes' section is defined,
+        // use 'application/json' as the default
+        opts.requestContentType = 'application/json';
+      }
+
       // execute the API operation
       // using the client interface
-      api.client.execute({
-        operationId: part.operationId,
-        parameters: part.input.parameters
-      })
+      api.client.execute(opts)
         .then((res) => {
           resolve(res);
         })

@@ -1,5 +1,6 @@
 <h3 class="ui dividing header">Fill in the story's input dataset</h3>
 
+{{#if hasParameters}}
 
 <div class="ui form equal width" data-schema="{{type}}" data-root>
 
@@ -21,8 +22,10 @@
         <label>{{name}}</label>
 
         {{#eq fieldType "select"}}
-          <select class="ui dropdown parameter" name="{{name}}" {{#if selectMultiple}}multiple=""{{/if}}
+          <select class="ui dropdown parameter search selection" name="{{name}}"
           data-rules="{{rules}}"
+          {{#if selectMultiple}}multiple=""{{/if}}
+          {{#if fieldAllowAdditions}}data-allowAdditions="true"{{/if}}
           >
             <option value=""></option>
             {{#each fieldValues}}
@@ -50,9 +53,21 @@
         {{/eq}}
       </div>
 
-
     {{/if}}
 
   {{/each}}
 
 </div>
+
+{{else}}
+  <div class="ui positive message">
+    <div class="header">
+      Operation without input
+    </div>
+    <p>
+      This operation does not require any
+      input dataset. You can move on to
+      the next step.
+    </p>
+  </div>
+{{/if}}

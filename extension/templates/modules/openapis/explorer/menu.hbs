@@ -1,8 +1,26 @@
 <div class="ui fixed menu">
   <div class="ui container">
-    <div class="header item">
-        {{info.title}}
+
+    {{#if bookmarks}}
+    <div class="ui pointing dropdown link item">
+        <span class="text">{{spec.info.title}}</span>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <div class="header">Bookmarks</div>
+          {{#each bookmarks}}
+            <a class="item" href="/pages/openapis.html?spec={{specUrl}}">{{title}}</a>
+          {{/each}}
+          <div class="header">Other</div>
+          <a class="item" href="/pages/openapis.html">Home</a>
+        </div>
       </div>
+    {{else}}
+      <div class="header item">
+        {{spec.info.title}}
+      </div>
+    {{/if}}
+
+
     <a class="item" href="#" data-action="bookmark api">
       <div class="floating mini ui green label new"
         data-tooltip="Bookmarks this API spot"
@@ -11,9 +29,7 @@
         <i class="bookmark icon"></i>
       </span>
     </a>
-    <a class="item" href="/pages/openapis.html">
-      Back to Open APIs
-    </a>
+
 
     <a href='#' class="item" data-section="general">
       General

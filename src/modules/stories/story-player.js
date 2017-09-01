@@ -127,7 +127,7 @@ export default (function() {
         });
       })
       .catch(e => {
-        console.log('story failed to execute', e);
+        console.error('story failed to execute', e);
       })
       .finally(() => {
         // $btn.removeClass('disabled loading');

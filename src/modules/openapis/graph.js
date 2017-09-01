@@ -23,8 +23,6 @@ export default (function() {
 
     const root = api.pathsGraph;
 
-    console.log(root);
-
     const nodes = [];
     const edges = [];
 

@@ -11,6 +11,8 @@ import StoryManager from '../../lib/stories/story-manager';
 import BrowserStorage from '../../lib/common/browser-storage';
 import graph from './graph';
 import '../../../extension/templates/modules/openapis/explorer/module.css';
+import '../stories/story-player';
+import CatalogService from '../../lib/openapi/catalog-service';
 
 import tplBody from '../../../extension/templates/modules/openapis/explorer/index.hbs';
 import tplGeneral from '../../../extension/templates/modules/openapis/explorer/general.hbs';
@@ -47,39 +49,62 @@ export default (function() {
         // set the Open API instance
         _api = openapi;
 
-        // render the body
-        const html = tplBody(openapi.spec);
+        const model = {
+          spec: openapi.spec
+        };
 
-        // render the body
-        $('body').html(html);
+        asyncWaterfall([
 
-        // scroll to top
-        window.scrollTo(0, 0);
-
-        // attach event listeners
-        _attachListeners();
-
-        let section = 'general';
-
-        // check if there is a selected
-        // section in the hashbang
-        if (window.location.hash) {
-          const hash = window.location.hash.replace('#', '');
-
-          // check if the section exists
-          if ($(`.menu .item[data-section='${hash}']`).length > 0) {
-            section = hash;
+          (cb) => {
+            // load bookmarked spots
+            CatalogService.getBookmarkedSpots()
+              .then(bookmarks => {
+                model.bookmarks = bookmarks;
+                cb();
+              })
+              .catch(cb);
           }
-        }
 
-        // render the selected section
-        $(`.menu .item[data-section='${section}']`).trigger('click');
+        ], (e) => {
+          if (e) {
+            console.error(e);
+          }
 
-        // set the bookmarked status
-        _checkIfBookmarked();
+          // render the body
+          const html = tplBody(model);
 
-        // done
-        resolve();
+          // render the body
+          $('body').html(html);
+
+          // scroll to top
+          window.scrollTo(0, 0);
+
+          // attach event listeners
+          _attachListeners();
+
+          let section = 'general';
+
+          // check if there is a selected
+          // section in the hashbang
+          if (window.location.hash) {
+            const hash = window.location.hash.replace('#', '');
+
+            // check if the section exists
+            if ($(`.menu .item[data-section='${hash}']`).length > 0) {
+              section = hash;
+            }
+          }
+
+          // render the selected section
+          $(`.menu .item[data-section='${section}']`).trigger('click');
+
+          // set the bookmarked status
+          _checkIfBookmarked();
+
+          // done
+          resolve();
+        });
+
       } catch (e) {
         reject(e);
       }
@@ -99,6 +124,9 @@ export default (function() {
       _renderSection(section);
     });
     $('.menu .item[data-action="bookmark api"]').on('click', _bookmarkApi);
+
+    $('.ui.dropdown').dropdown();
+
   };
 
   /**
@@ -248,8 +276,6 @@ export default (function() {
             o.items.type = id;
           }
         }
-
-        console.log(o);
       });
     }
 
@@ -545,6 +571,9 @@ export default (function() {
 
         // bind listeners
         $('.ui.dropdown').dropdown();
+        $('.ui.tipped').popup({
+          hoverable: true
+        });
 
         // create a new story
         $('.item[data-id="new-story"], .button[data-action="create story"]').on('click', () => {

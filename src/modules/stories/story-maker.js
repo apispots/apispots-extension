@@ -359,6 +359,10 @@ export default (function() {
     // get the operation definition
     const operation = _.cloneDeep(_api.getOperation(opId));
 
+
+    // for now remove all 'header' params
+    _.remove(operation.parameters, (o) => o.in === 'header');
+
     _.each(operation.parameters, (o) => {
       // check if the param has a schema
       if (typeof o.schema !== 'undefined') {
@@ -374,7 +378,8 @@ export default (function() {
     // create the model
     const model = {
       title: _api.title,
-      parameters: operation.parameters
+      parameters: operation.parameters,
+      hasParameters: (!_.isEmpty(operation.parameters))
     };
 
     // render the form template
@@ -1205,7 +1210,7 @@ export default (function() {
 
       })
       .catch(e => {
-        console.log('story failed to execute', e);
+        console.error('story failed to execute', e);
       })
       .finally(() => {
         $btn.removeClass('disabled loading');

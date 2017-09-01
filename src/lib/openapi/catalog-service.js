@@ -8,6 +8,7 @@ import axios from 'axios';
 
 import ApiCatalog from './api-catalog';
 import ApiCatalogEntry from './api-catalog-entry';
+import BrowserStorage from '../common/browser-storage';
 
 export default (function() {
 
@@ -173,7 +174,7 @@ export default (function() {
         .then((response) => {
 
           const data = response.data;
-          // console.log(data);
+
           // create a new catalog instance
           const catalog = new ApiCatalog();
           // catalog.id = 'apistack';
@@ -222,13 +223,41 @@ export default (function() {
   };
 
 
+  /**
+   * Returns a list of bookmarked API spots.
+   * @return {[type]} [description]
+   */
+  const _getBookmarkedSpots = function() {
+    return new Promise((resolve) => {
+
+      // get the collection of
+      // bookmarked Open APIs
+      // from local storage
+      const key = 'openapis|bookmarks';
+
+      BrowserStorage.local.get(key, (items) => {
+
+        // return the bookmarks
+        const bookmarks = items[key];
+
+        const out = _.chain(bookmarks)
+          .orderBy(['title'])
+          .value();
+
+        resolve(out);
+      });
+
+    });
+  };
+
   return {
 
     /*
      * Public
      */
     loadByProviderId: _loadByProviderId,
-    loadByUrl: _loadByUrl
+    loadByUrl: _loadByUrl,
+    getBookmarkedSpots: _getBookmarkedSpots
 
   };
 
