@@ -29,3 +29,21 @@ chrome.runtime.onMessage.addListener((message) => {
   // broadcast the event
   postal.publish(message);
 });
+
+/**
+ * Listens for available updates notifications.
+ *
+ * @type {[type]}
+ */
+chrome.runtime.onUpdateAvailable.addListener((details) => {
+
+  try {
+    postal.publish({
+      channel: 'extension',
+      topic: 'update available',
+      data: details
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
