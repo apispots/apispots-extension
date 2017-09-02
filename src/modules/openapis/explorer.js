@@ -353,7 +353,7 @@ export default (function() {
     try {
 
       const data = {
-        paths: _api.paths
+        paths: _api.operationsByPath
       };
 
       const html = tplPaths(data);

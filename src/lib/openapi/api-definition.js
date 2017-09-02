@@ -219,6 +219,7 @@ export default class ApiDefinition {
           verbs: _.keys(o).sort()
         };
 
+
         return obj;
       })
       .sortBy()
@@ -369,6 +370,8 @@ export default class ApiDefinition {
         // return a compact version of the operation
         const obj = {
           id: o.operationId,
+          path: o.path,
+          verb: o.verb,
           summary: o.summary,
           description: (_.isEmpty(o.description) ? o.summary : o.description)
         };
@@ -376,6 +379,24 @@ export default class ApiDefinition {
       })
       // sort by summary text
       .sortBy(['summary'])
+      .value();
+
+    return res;
+  }
+
+  /**
+   * Returns a compact list
+   * of operations grouped by path.
+   * @return {[type]} [description]
+   */
+  get operationsByPath() {
+
+    const ops = this.operationsBySummary;
+
+    const res = _.chain(ops)
+      // group by path
+      .sortBy(['path'])
+      .groupBy('path')
       .value();
 
     return res;

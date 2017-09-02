@@ -1,6 +1,6 @@
-<h2>API paths</h2>
+<h2>Operations grouped by path</h2>
 <p>
-List of supported API paths with allowed operations indicators.
+List of supported API paths with supported summarized operations.
 Clicking on a path will open its details.
 </p>
 
@@ -14,12 +14,17 @@ Clicking on a path will open its details.
       <div class="two column row">
         <div class="column">
           <h4>
-            <a href='#' data-type="path" data-id="{{path}}">{{path}}</a></h4>
+            <a href='#' data-type="path" data-id="{{@key}}">{{@key}}</a></h4>
         </div>
         <div class="column">
-          {{#each verbs}}
-            {{#verb this}}{{/verb}}
-          {{/each}}
+
+          <div class="ui list">
+            {{#each this}}
+              <div class="item">{{#verb verb}}{{/verb}} {{summary}}</div>
+            {{/each}}
+
+          </div>
+
         </div>
       </div>
     </div>
