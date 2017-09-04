@@ -3,7 +3,7 @@
  *
  * @author Chris Spiliotopoulos
  */
-import * as _ from 'lodash';
+import _ from 'lodash';
 import axios from 'axios';
 
 import ApiCatalog from './api-catalog';
@@ -173,7 +173,12 @@ export default (function() {
       axios.get(url)
         .then((response) => {
 
-          const data = response.data;
+          let data = response.data;
+
+          // if array, get first element
+          if (_.isArray(data)) {
+            data = data[0];
+          }
 
           // create a new catalog instance
           const catalog = new ApiCatalog();
