@@ -1,0 +1,59 @@
+<div class="ui modal" data-type="activate authentication">
+  <i class="close icon"></i>
+  <div class="header">
+    Activate authentication
+  </div>
+  <div class="content">
+
+    <form class="ui form" data-step="outline">
+
+      <div class="inline field">
+        <label>Type</label>
+        <span class="ui basic blue label">{{type}}</span>
+      </div>
+
+      {{#eq type "basic"}}
+        <div class="field required">
+          <label>Username</label>
+          <input class="ui text parameter" type="text" name="username" placeholder="Enter the username"
+          {{#if credentials}}
+            value="{{credentials.username}}"
+          {{/if}}
+          >
+        </div>
+        <div class="field required">
+          <label>Password</label>
+          <input class="ui text parameter" type="password" name="password" placeholder="Enter the password"
+          {{#if credentials}}
+            value="{{credentials.password}}"
+          {{/if}}
+          >
+        </div>
+      {{/eq}}
+
+      {{#eq type "apiKey"}}
+        <div class="field required">
+          <label>API key</label>
+          <input class="ui text parameter" type="text" name="apiKey" placeholder="Enter the API key"
+          {{#if credentials}}
+            value="{{credentials.apiKey}}"
+          {{/if}}
+          >
+        </div>
+      {{/eq}}
+
+    </form>
+
+  </div>
+
+  <div class="actions">
+    <div class="ui deny button">
+      Cancel
+    </div>
+    <div class="ui positive right labeled icon button" data-action="save credentials">
+      Save
+      <i class="save icon"></i>
+    </div>
+  </div>
+
+</div>

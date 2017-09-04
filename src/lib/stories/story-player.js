@@ -6,8 +6,10 @@
 import _ from 'lodash';
 import asyncEachSeries from 'async/eachSeries';
 import asyncWaterfall from 'async/waterfall';
+import asyncMap from 'async/map';
 
 import ApiDefinition from '../openapi/api-definition';
+import AuthenticationManager from '../openapi/authentication-manager';
 
 export default (function() {
 
@@ -166,6 +168,9 @@ export default (function() {
 
       const opId = part.operationId;
       const operation = api.getOperation(opId);
+      const specUrl = api.specUrl;
+
+      console.log(operation);
 
       const opts = {
         operationId: opId,
@@ -180,13 +185,61 @@ export default (function() {
         opts.requestContentType = 'application/json';
       }
 
-      // execute the API operation
-      // using the client interface
-      api.client.execute(opts)
-        .then((res) => {
-          resolve(res);
-        })
-        .catch(reject);
+      asyncWaterfall([
+
+        (cb) => {
+
+          /*
+           * securities
+           */
+          opts.securities = {};
+
+          if (!_.isEmpty(operation.security)) {
+
+            // check if credentials are provided
+            asyncMap(operation.security, (name, done) => {
+
+              AuthenticationManager.getCredentials(specUrl, name)
+                .then(credentials => {
+
+                  if (!_.isEmpty(credentials)) {
+
+                    console.log('credentials found for', name, credentials);
+
+                    // add the credentials to the settings
+                    if (credentials.type === 'basic') {
+
+                      const value = `Basic ${window.btoa(unescape(encodeURIComponent(`${credentials.username}:${credentials.password}`)))}`;
+                      opts.securities[name] = value;
+                    }
+                  }
+
+                  done();
+                });
+            }, (e) => {
+
+              if (e) {
+                console.error(e);
+              }
+
+              // all securities inspected
+              cb();
+            });
+          }
+        }
+
+      ], () => {
+
+        // execute the API operation
+        // using the client interface
+        api.client.execute(opts)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch(reject);
+
+      });
+
 
     });
 

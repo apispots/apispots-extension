@@ -12,6 +12,7 @@ import BrowserStorage from '../../lib/common/browser-storage';
 import graph from './graph';
 import '../../../extension/templates/modules/openapis/explorer/module.css';
 import '../stories/story-player';
+import './authentication';
 import CatalogService from '../../lib/openapi/catalog-service';
 
 import tplBody from '../../../extension/templates/modules/openapis/explorer/index.hbs';
@@ -236,8 +237,45 @@ export default (function() {
         definitions: spec.securityDefinitions
       };
 
+      // supported types so far
+      const supported = ['basic', 'apiKey'];
+
+      // check if type is supported
+      _.each(data.definitions, (o, key) => {
+
+        // the security definition name
+        o.name = key;
+
+        if (_.includes(supported, o.type)) {
+          o.supported = true;
+        }
+
+        // if type is 'basic' there are
+        // no properties
+        if (o.type !== 'basic') {
+          o.hasProperties = true;
+        }
+      });
+
       const html = tplSecurityDefinitions(data);
       $('#content').html(html);
+
+      // bind listeners
+      $('.button[data-action="activate authentication"]').on('click', (e) => {
+
+        const type = $(e.currentTarget).attr('data-type');
+        const name = $(e.currentTarget).attr('data-name');
+
+        postal.publish({
+          channel: 'openapis',
+          topic: 'activate authentication',
+          data: {
+            api: _api,
+            type,
+            name
+          }
+        });
+      });
 
     } catch (e) {
       console.error(`Failed to render General section - ${e}`);
