@@ -5,6 +5,7 @@
  */
 
 import jsyaml from 'js-yaml';
+import _ from 'lodash';
 
 
 export default (function() {
@@ -86,8 +87,14 @@ export default (function() {
           // is this a valid YAML or JSON document?
           content = jsyaml.load(content);
 
+          // if array, get first element
+          if (_.isArray(content)) {
+            content = content[0];
+          }
+
           // check for the 'swaggerVersion' attribute
-          if ((typeof content.specificationVersion === 'undefined') ||
+          if (
+            ((!_.has(content, 'specificationVersion')) && (!_.has(content, 'specificationversion'))) ||
             (typeof content.name == 'undefined') ||
             (typeof content.url == 'undefined')) {
             throw new Error('Not a valid APIS.json resource');
