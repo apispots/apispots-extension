@@ -182,7 +182,7 @@ export default (function() {
 
           // create a new catalog instance
           const catalog = new ApiCatalog();
-          // catalog.id = 'apistack';
+
           catalog.name = data.name;
           catalog.description = data.description;
           catalog.image = data.image;
@@ -193,6 +193,20 @@ export default (function() {
           catalog.maintainers = data.maintainers;
 
           catalog['x-common'] = data['x-common'];
+
+          _.each(catalog['x-common'], (p) => {
+
+            // if property holds a value
+            // that is a partial URL,
+            // build the full version of it
+            const url = p.url;
+            const baseUrl = _.trimEnd(_.replace(catalog.url, 'apis.json', ''), '/');
+
+            if ((!_.startsWith(url, 'http://'))
+              && (!_.startsWith('https://'))) {
+              p.url = `${baseUrl}${url}`;
+            }
+          });
 
           // transform to a collection
           const apis = _.map(data.apis, (o) => {
@@ -207,6 +221,28 @@ export default (function() {
               api.baseURL = o.baseURL;
               api.tags = o.tags;
               api.properties = o.properties;
+
+              _.each(api.properties, (p) => {
+
+                // if property holds a value
+                // that is a partial URL,
+                // build the full version of it
+                const url = p.url;
+
+                if ((!_.startsWith(url, 'http://'))
+                  && (!_.startsWith('https://'))) {
+                  p.url = `${api.baseURL}${url}`;
+                }
+
+                // try to detect the Open API spec URL
+                // by matching potential keywords
+                const type = _.toLower(p.type);
+
+                if (_.includes(type, 'openapi') ||
+                    _.includes(type, 'swagger')) {
+                  api.spec = p.url;
+                }
+              });
 
               // return the API
               return api;
