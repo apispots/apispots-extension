@@ -259,7 +259,10 @@ export default (function() {
     if (_.isEmpty(definition.properties)) {
       delete definition.properties;
     } else {
-      _.each(definition.properties, (o) => {
+      _.each(definition.properties, (o, key) => {
+
+        o.name = key;
+
 
         // check if the prop is a ref
         if (typeof o.$$ref !== 'undefined') {
@@ -276,6 +279,12 @@ export default (function() {
             o.items.type = id;
           }
         }
+
+        // check for required properties
+        if (_.includes(definition.required, o.name)) {
+          o.required = true;
+        }
+
       });
     }
 
