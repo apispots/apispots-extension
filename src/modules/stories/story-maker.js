@@ -373,7 +373,6 @@ export default (function() {
     // get the operation definition
     const operation = _.cloneDeep(_api.getOperation(opId));
 
-
     // for now remove all 'header' params
     _.remove(operation.parameters, (o) => o.in === 'header');
 
@@ -757,6 +756,13 @@ export default (function() {
             prop.required = true;
           } else {
             prop.optional = true;
+          }
+        }
+
+        // check if model property is required
+        if (!_.isEmpty(prop.parent)) {
+          if (_.includes(prop.parent.required, prop.name)) {
+            prop.required = true;
           }
         }
 
