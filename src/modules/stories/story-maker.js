@@ -328,6 +328,9 @@ export default (function() {
       $select.dropdown('set selected', _operationId);
     }
 
+    // dropdown
+    $('.modal .dropdown').dropdown();
+
     // form validators
     $('.modal form[data-step="outline"]')
       .form({
