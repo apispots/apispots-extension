@@ -431,6 +431,9 @@ export default (function() {
 
     // bind the dataset validators
     _bindDatasetValidators();
+
+    // refresh the modal
+    $modal.modal('refresh');
   };
 
   /**
