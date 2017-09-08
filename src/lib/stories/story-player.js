@@ -7,6 +7,7 @@ import _ from 'lodash';
 import asyncEachSeries from 'async/eachSeries';
 import asyncWaterfall from 'async/waterfall';
 import asyncMap from 'async/map';
+import Swagger from 'swagger-client';
 
 import ApiDefinition from '../openapi/api-definition';
 import AuthenticationManager from '../openapi/authentication-manager';
@@ -150,10 +151,8 @@ export default (function() {
       throw new Error(`Undefined operation ${part.operationId}`);
     }
 
-
     // mark part as valid
     part.valid = true;
-
   };
 
 
@@ -169,20 +168,28 @@ export default (function() {
       const opId = part.operationId;
       const operation = api.getOperation(opId);
       const specUrl = api.specUrl;
-
-      console.log(operation);
-
-      const opts = {
+      const securities = {};
+      const params = {
         operationId: opId,
-        parameters: part.input.parameters,
-        headers: {}
+        parameters: part.input.parameters
       };
 
-      // set the request content type
+      // set the default request content type
       if (_.isEmpty(operation.consumes)) {
         // if no 'consumes' section is defined,
         // use 'application/json' as the default
-        opts.requestContentType = 'application/json';
+        params.requestContentType = 'application/json';
+      } else if (operation.consumes.length === 1) {
+        params.requestContentType = operation.consumes[0];
+      }
+
+      // set the default request content type
+      if (_.isEmpty(operation.produces)) {
+        // if no 'consumes' section is defined,
+        // use 'application/json' as the default
+        params.requestContentType = 'application/json';
+      } else if (operation.produces.length === 1) {
+        params.responseContentType = operation.produces[0];
       }
 
       asyncWaterfall([
@@ -192,25 +199,25 @@ export default (function() {
           /*
            * securities
            */
-          opts.securities = {};
-
           if (!_.isEmpty(operation.security)) {
 
             // check if credentials are provided
-            asyncMap(operation.security, (name, done) => {
+            asyncMap(operation.security, (entry, done) => {
+
+              const name = _.keys(entry)[0];
 
               AuthenticationManager.getCredentials(specUrl, name)
                 .then(credentials => {
 
                   if (!_.isEmpty(credentials)) {
 
-                    console.log('credentials found for', name, credentials);
-
                     // add the credentials to the settings
                     if (credentials.type === 'basic') {
 
-                      const value = `Basic ${window.btoa(unescape(encodeURIComponent(`${credentials.username}:${credentials.password}`)))}`;
-                      opts.securities[name] = value;
+                      securities[name] = {
+                        username: credentials.username,
+                        password: credentials.password
+                      };
                     }
                   }
 
@@ -225,24 +232,33 @@ export default (function() {
               // all securities inspected
               cb();
             });
+          } else {
+            cb();
           }
         }
 
       ], () => {
 
-        // execute the API operation
-        // using the client interface
-        api.client.execute(opts)
-          .then((res) => {
-            resolve(res);
-          })
-          .catch(reject);
+        Swagger({
+          spec: api.spec
+        })
+          .then(client => {
 
+            // set authorizations
+            client.authorizations = securities;
+
+            // execute the API operation
+            // using the client interface
+            client.execute(params)
+              .then((res) => {
+                resolve(res);
+              })
+              .catch((e) => {
+                reject(e);
+              });
+          });
       });
-
-
     });
-
   };
 
   return {
