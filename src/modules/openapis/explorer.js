@@ -503,9 +503,12 @@ export default (function() {
           if (typeof o.schema !== 'undefined') {
             obj.type = o.schema.type;
 
+            // is this a collection of objects?
             if ((typeof o.schema.items !== 'undefined') &&
               (typeof o.schema.items.$$ref !== 'undefined')) {
               obj.schema = o.schema.items.$$ref.replace('#/definitions/', '');
+            } else {
+              obj.schema = o.schema.$$ref.replace('#/definitions/', '');
             }
           }
 
