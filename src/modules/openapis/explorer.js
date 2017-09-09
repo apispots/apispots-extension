@@ -524,103 +524,121 @@ export default (function() {
         definition
       };
 
-      // process operations
-      _.each(definition, (o) => {
+      asyncWaterfall([
 
-        // process parameter references
-        _.each(o.parameters, (p) => {
-          if (p.in === 'body') {
+        (cb) => {
 
-            if ((typeof p.schema !== 'undefined') &&
-              (typeof p.schema.$$ref !== 'undefined')) {
-              const schema = p.schema.$$ref.replace('#/definitions/', '');
-              p.schema = schema;
+          // get the list of activated
+          // security definitions
+          AuthenticationManager.getActivatedBySpecUrl(_api.specUrl)
+            .then((securities) => {
+              data.securities = securities;
+              cb();
+            });
+        }
 
-            } else if ((typeof p.schema !== 'undefined') &&
-              (typeof p.schema.items !== 'undefined') &&
-              (typeof p.schema.items.$$ref !== 'undefined')) {
-              const schema = p.schema.items.$$ref.replace('#/definitions/', '');
-              p.type = p.schema.type;
-              p.schema = schema;
+      ], () => {
 
+        // process operations
+        _.each(definition, (o) => {
+
+          // process parameter references
+          _.each(o.parameters, (p) => {
+            if (p.in === 'body') {
+
+              if ((typeof p.schema !== 'undefined') &&
+                (typeof p.schema.$$ref !== 'undefined')) {
+                const schema = p.schema.$$ref.replace('#/definitions/', '');
+                p.schema = schema;
+
+              } else if ((typeof p.schema !== 'undefined') &&
+                (typeof p.schema.items !== 'undefined') &&
+                (typeof p.schema.items.$$ref !== 'undefined')) {
+                const schema = p.schema.items.$$ref.replace('#/definitions/', '');
+                p.type = p.schema.type;
+                p.schema = schema;
+
+              }
             }
-          }
-        });
+          });
 
-        // process security
-        _.each(o.security, (s) => {
-          o.security = _.map(s, (o, key) => ({
-            definition: key,
-            scopes: o
-          }));
-        });
+          // process security
+          _.each(o.security, (s) => {
+            o.security = _.map(s, (o, key) => ({
+              definition: key,
+              scopes: o,
+              active: _.includes(data.securities, key)
+            }));
+          });
 
-        // process responses
-        o.responses = _.map(o.responses, (o, key) => {
-          const obj = {
-            code: key,
-            description: o.description
-          };
+          // process responses
+          o.responses = _.map(o.responses, (o, key) => {
+            const obj = {
+              code: key,
+              description: o.description
+            };
 
-          if (typeof o.schema !== 'undefined') {
-            obj.type = o.schema.type;
+            if (typeof o.schema !== 'undefined') {
+              obj.type = o.schema.type;
 
-            // is this a collection of objects?
-            if ((typeof o.schema.items !== 'undefined') &&
-              (typeof o.schema.items.$$ref !== 'undefined')) {
-              obj.schema = o.schema.items.$$ref.replace('#/definitions/', '');
-            } else {
-              obj.schema = o.schema.$$ref.replace('#/definitions/', '');
+              // is this a collection of objects?
+              if ((typeof o.schema.items !== 'undefined') &&
+                (typeof o.schema.items.$$ref !== 'undefined')) {
+                obj.schema = o.schema.items.$$ref.replace('#/definitions/', '');
+              } else {
+                obj.schema = o.schema.$$ref.replace('#/definitions/', '');
+              }
             }
-          }
 
-          return obj;
+            return obj;
+          });
         });
-      });
 
-      const html = tplOperation(data);
+        const html = tplOperation(data);
 
-      const $html = $(html);
+        const $html = $(html);
 
-      const $modal = $html.modal({
-        duration: 100
-      });
+        const $modal = $html.modal({
+          duration: 100
+        });
 
-      $modal.modal('show');
+        $modal.modal('show');
 
-      const $tab = $('.menu .item', $html);
-      $tab.tab();
+        const $tab = $('.menu .item', $html);
+        $tab.tab();
 
-      $('.modal .menu .item').on('click', function() {
-        const verb = $(this).attr('data-tab');
-        $('.modal .tab').removeClass('active');
-        $tab.tab('change tab', verb);
+        $('.modal .menu .item').on('click', function() {
+          const verb = $(this).attr('data-tab');
+          $('.modal .tab').removeClass('active');
+          $tab.tab('change tab', verb);
+          $modal.modal('refresh');
+        });
+
         $modal.modal('refresh');
-      });
 
-      $modal.modal('refresh');
+        // listeners
+        $('.modal .view.definition').on('click', _renderDefinition);
+        $('.modal .button[data-action="create story"]').on('click', (e) => {
 
-      // listeners
-      $('.modal .view.definition').on('click', _renderDefinition);
-      $('.modal .button[data-action="create story"]').on('click', (e) => {
+          // get the target operation Id
+          const operationId = $(e.currentTarget).attr('data-operation');
 
-        // get the target operation Id
-        const operationId = $(e.currentTarget).attr('data-operation');
+          // render the data stories section
+          _renderSection('stories');
 
-        // render the data stories section
-        _renderSection('stories');
+          postal.publish({
+            channel: 'stories',
+            topic: 'create story',
+            data: {
+              api: _api,
+              operationId
+            }
+          });
 
-        postal.publish({
-          channel: 'stories',
-          topic: 'create story',
-          data: {
-            api: _api,
-            operationId
-          }
         });
 
-      });
 
+      });
 
     } catch (e) {
       // silent fail if path is undefined

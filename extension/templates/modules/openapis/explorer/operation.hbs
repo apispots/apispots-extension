@@ -21,7 +21,7 @@
         <h4>Operation Id</h4>
         <span class="ui label basic blue">{{operationId}}</span>
 
-        <button class="ui labeled mini green icon button"
+        <button class="ui labeled mini green icon basic button"
           data-action="create story"
           data-operation="{{operationId}}">
           <i class="play icon"></i>
@@ -55,7 +55,22 @@
         <h3>Security</h3>
           {{#each security}}
           <div>
-            <span class="ui basic blue label">{{definition}}</span>
+            <span class="ui basic blue label"
+
+              {{#if active}}
+                data-tooltip="This security has been activated"
+              {{else}}
+                data-tooltip="This security has not been activated"
+              {{/if}}
+            >
+              {{#if active}}
+                <i class="green toggle on icon"></i>
+              {{else}}
+                <i class="red toggle on icon"></i>
+              {{/if}}
+
+              {{definition}}
+            </span>
             {{#each scopes}}
             <a class="ui image label">
               <i class="ui icon lock"></i>

@@ -108,6 +108,31 @@ export default (function() {
     });
   };
 
+  /**
+   * Returns a list of named security
+   * definitions that have been activated
+   * for a given spec URL.
+   * @param  {[type]} specUrl [description]
+   * @return {[type]}         [description]
+   */
+  const _getActivatedBySpecUrl = function(specUrl) {
+
+    return new Promise((resolve) => {
+
+      const key = `openapis|credentials|${specUrl}`;
+
+      // remove the entry from local storage
+      BrowserStorage.local.get(key, (items) => {
+
+        const entries = items[key] || {};
+
+        const names = _.keys(entries);
+        resolve(names);
+      });
+    });
+  };
+
+
   return {
 
     /*
@@ -115,7 +140,8 @@ export default (function() {
      */
     saveCredentials: _saveCredentials,
     getCredentials: _getCredentials,
-    deleteCredentials: _deleteCredentials
+    deleteCredentials: _deleteCredentials,
+    getActivatedBySpecUrl: _getActivatedBySpecUrl
 
   };
 
