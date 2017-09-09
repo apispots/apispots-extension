@@ -14,15 +14,7 @@ body {
   min-height: 600px;
 }
 
-.main.container {
-  /*padding: 4em 0em 2em;*/
-}
 
-
-.main.container>p {
-  line-height: 1.5;
-  color: rgba(0, 0, 0, 0.8);
-}
 
 /*******************************
   Fixed top menu
@@ -54,8 +46,18 @@ body {
 }
 
 /*******************************
-  Open APIs Explorer
+    Containers
 *******************************/
+
+.little.padded.container {
+  padding: 2em 0em 2em;
+}
+
+
+.main.container>p {
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.8);
+}
 
 
 /*******************************

@@ -3,6 +3,7 @@
  *
  * @author Chris Spiliotopoulos
  */
+import _ from 'lodash';
 
 import BrowserStorage from '../common/browser-storage';
 
@@ -70,13 +71,51 @@ export default (function() {
     });
   };
 
+  /**
+   * Deletes the specific set of credentials.
+   * @param  {[type]} specUrl [description]
+   * @param  {[type]} name    [description]
+   * @return {[type]}         [description]
+   */
+  const _deleteCredentials = function(specUrl, name) {
+
+    return new Promise((resolve) => {
+
+      const key = `openapis|credentials|${specUrl}`;
+
+      // remove the entry from local storage
+      BrowserStorage.local.get(key, (items) => {
+
+        const entries = items[key] || {};
+        delete entries[name];
+
+        // update the entry in the store
+        items = {};
+        items[key] = entries;
+
+        if (_.isEmpty(entries)) {
+          // if list is empty, remove it completely
+          BrowserStorage.local.remove(key, () => {
+            resolve();
+          });
+        } else {
+          // update the list
+          BrowserStorage.local.set(items, () => {
+            resolve();
+          });
+        }
+      });
+    });
+  };
+
   return {
 
     /*
      * Public
      */
     saveCredentials: _saveCredentials,
-    getCredentials: _getCredentials
+    getCredentials: _getCredentials,
+    deleteCredentials: _deleteCredentials
 
   };
 

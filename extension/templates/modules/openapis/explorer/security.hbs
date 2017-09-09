@@ -10,10 +10,10 @@
   <div class="ui special cards security definitions">
 
     {{#each definitions}}
-      <div class="ui card">
+      <div class="ui card {{#if activated}}raised{{/if}}">
 
         <div class="content">
-          <span class="ui label basic blue right floated">{{type}}</span>
+          <span class="ui label {{#if activated}}primary green {{else}} basic blue {{/if}} right floated">{{type}}</span>
           <div class="header">{{@key}}</div>
           <div class="description">
             {{#if description}}
@@ -92,13 +92,38 @@
         </div>
 
         {{#if supported}}
-          <div class="ui bottom attached button"
-            data-action="activate authentication"
-            data-type="{{type}}"
-            data-name="{{name}}">
-            <i class="red power icon"></i>
-            Activate
-          </div>
+
+            {{#if activated}}
+            <div class="extra content">
+              <div class="ui two buttons">
+                <div class="ui basic blue button"
+                  data-tooltip="Edit authentication settings"
+                  data-action="activate authentication"
+                  data-type="{{type}}"
+                  data-name="{{name}}">
+                  <i class="edit icon"></i> Edit</div>
+                <div class="ui basic red button"
+                  data-tooltip="Deactivate authentication"
+                  data-action="deactivate authentication"
+                  data-type="{{type}}"
+                  data-name="{{name}}">
+                  <i class="toggle off icon"></i> Off</div>
+              </div>
+            </div>
+            {{else}}
+              <div class="ui bottom attached button"
+                data-tooltip="Activate authentication"
+                data-action="activate authentication"
+                data-type="{{type}}"
+                data-name="{{name}}">
+                  <i class="toggle off icon"></i>
+                  Activate
+                  <div class="floating mini ui green label new"
+                    data-tooltip="Click to activate this authentication method"
+                    data-position="bottom center">NEW</div>
+              </div>
+            {{/if}}
+
         {{/if}}
 
       </div>

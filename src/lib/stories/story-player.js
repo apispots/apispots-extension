@@ -9,6 +9,7 @@ import asyncWaterfall from 'async/waterfall';
 import asyncMap from 'async/map';
 import Swagger from 'swagger-client';
 
+
 import ApiDefinition from '../openapi/api-definition';
 import AuthenticationManager from '../openapi/authentication-manager';
 

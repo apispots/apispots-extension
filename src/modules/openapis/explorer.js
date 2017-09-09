@@ -4,6 +4,7 @@
  */
 import * as _ from 'lodash';
 import postal from 'postal';
+import asyncMap from 'async/map';
 import asyncWaterfall from 'async/waterfall';
 import swal from 'sweetalert2';
 
@@ -14,6 +15,7 @@ import '../../../extension/templates/modules/openapis/explorer/module.css';
 import '../stories/story-player';
 import './authentication';
 import CatalogService from '../../lib/openapi/catalog-service';
+import AuthenticationManager from '../../lib/openapi/authentication-manager';
 
 import tplBody from '../../../extension/templates/modules/openapis/explorer/index.hbs';
 import tplGeneral from '../../../extension/templates/modules/openapis/explorer/general.hbs';
@@ -237,48 +239,108 @@ export default (function() {
         definitions: spec.securityDefinitions
       };
 
-      // supported types so far
-      const supported = ['basic', 'apiKey'];
+      asyncWaterfall([
 
-      // check if type is supported
-      _.each(data.definitions, (o, key) => {
+        (cb) => {
+          // supported types so far
+          const supported = ['basic', 'apiKey'];
 
-        // the security definition name
-        o.name = key;
+          // check if type is supported
+          _.each(data.definitions, (o, key) => {
 
-        if (_.includes(supported, o.type)) {
-          o.supported = true;
+            // the security definition name
+            o.name = key;
+
+            if (_.includes(supported, o.type)) {
+              o.supported = true;
+            }
+
+            // if type is 'basic' there are
+            // no properties
+            if (o.type !== 'basic') {
+              o.hasProperties = true;
+            }
+          });
+
+          cb();
+        },
+
+
+        (cb) => {
+
+          // get activated securities
+
+          asyncMap(data.definitions, (o, done) => {
+
+            // get the security name
+            const name = o.name;
+
+            // get any saved credentials for this definition
+            AuthenticationManager.getCredentials(_api.specUrl, name)
+              .then(credentials => {
+
+                // if credentials are found, mark
+                // security definition as activated
+                o.activated = (!_.isEmpty(credentials));
+
+                done();
+              });
+          }, (e) => {
+            if (e) {
+              console.error(e);
+            }
+
+            cb();
+          });
+
         }
 
-        // if type is 'basic' there are
-        // no properties
-        if (o.type !== 'basic') {
-          o.hasProperties = true;
+      ], (e) => {
+
+        if (e) {
+          console.error(e);
         }
-      });
 
-      const html = tplSecurityDefinitions(data);
-      $('#content').html(html);
+        const html = tplSecurityDefinitions(data);
+        $('#content').html(html);
 
-      // bind listeners
-      $('.button[data-action="activate authentication"]').on('click', (e) => {
+        // bind listeners
+        $('.button[data-action="activate authentication"]').on('click', (e) => {
 
-        const type = $(e.currentTarget).attr('data-type');
-        const name = $(e.currentTarget).attr('data-name');
+          const type = $(e.currentTarget).attr('data-type');
+          const name = $(e.currentTarget).attr('data-name');
 
-        postal.publish({
-          channel: 'openapis',
-          topic: 'activate authentication',
-          data: {
-            api: _api,
-            type,
-            name
-          }
+          postal.publish({
+            channel: 'openapis',
+            topic: 'activate authentication',
+            data: {
+              api: _api,
+              type,
+              name
+            }
+          });
         });
+
+        $('.button[data-action="deactivate authentication"]').on('click', (e) => {
+
+          const type = $(e.currentTarget).attr('data-type');
+          const name = $(e.currentTarget).attr('data-name');
+
+          postal.publish({
+            channel: 'openapis',
+            topic: 'deactivate authentication',
+            data: {
+              api: _api,
+              type,
+              name
+            }
+          });
+        });
+
       });
 
     } catch (e) {
-      console.error(`Failed to render General section - ${e}`);
+      console.error(`Failed to render Security section - ${e}`);
     }
   };
 
@@ -844,13 +906,17 @@ export default (function() {
     callback: _onOpenApiPathOperations
   });
 
-  // event bindings
   postal.subscribe({
     channel: 'stories',
     topic: 'reload stories',
     callback: _onReloadStories
   });
 
+  postal.subscribe({
+    channel: 'openapis',
+    topic: 'reload security',
+    callback: _renderSecurity
+  });
 
   return {
 

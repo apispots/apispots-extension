@@ -5,6 +5,7 @@
 import _ from 'lodash';
 import asyncWaterfall from 'async/waterfall';
 import postal from 'postal';
+import swal from 'sweetalert2';
 
 import AuthenticationManager from '../../lib/openapi/authentication-manager';
 
@@ -180,10 +181,72 @@ export default (function() {
       const name = _name;
 
       // save the set of credentials
-      AuthenticationManager.saveCredentials(specUrl, name, credentials);
+      AuthenticationManager.saveCredentials(specUrl, name, credentials)
+        .then(() => {
+          postal.publish({
+            channel: 'openapis',
+            topic: 'reload security'
+          });
+
+          swal(
+            'Activated!',
+            'Authentication credentials have been saved',
+            'success'
+          );
+        });
     } catch (e) {
     // silent
     }
+  };
+
+  /**
+   * User selected to deactivate
+   * the authentication.
+   * @param  {[type]} data [description]
+   * @return {[type]}      [description]
+   */
+  const _onDeactivateAuthentication = function(data) {
+
+    // remember these
+    _api = data.api;
+    _type = data.type;
+    _name = data.name;
+
+    swal({
+      title: 'Are you sure?',
+      text: 'You are about to deactivate the selected authentication',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, deactivate it!'
+    }).then(() => {
+
+      // save the credentials
+      const specUrl = _api.specUrl;
+      const name = _name;
+
+      // delete the set of credentials
+      AuthenticationManager.deleteCredentials(specUrl, name)
+        .then(() => {
+
+          postal.publish({
+            channel: 'openapis',
+            topic: 'reload security'
+          });
+
+          swal(
+            'Deleted!',
+            'The authentication has been deactivated',
+            'success'
+          );
+
+        });
+    })
+      .catch(() => {
+      // silent
+      });
+
   };
 
 
@@ -192,6 +255,12 @@ export default (function() {
     channel: 'openapis',
     topic: 'activate authentication',
     callback: _onActivateAuthentication
+  });
+
+  postal.subscribe({
+    channel: 'openapis',
+    topic: 'deactivate authentication',
+    callback: _onDeactivateAuthentication
   });
 
   return {
