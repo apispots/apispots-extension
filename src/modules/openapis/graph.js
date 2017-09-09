@@ -59,10 +59,19 @@ export default (function() {
 
     GraphUtils.traverseBF(root, (o) => {
 
+      const path = o.path;
+      let name = o.name;
+      let group = o.group;
+
+      if (_.isEmpty(name)) {
+        name = 'API Base';
+        group = 'root';
+      }
+
       const node = {
-        id: o.path,
-        label: o.name,
-        group: (o.name === '' ? 0 : o.group)
+        id: path,
+        label: name,
+        group
       };
 
       nodes.push(node);
