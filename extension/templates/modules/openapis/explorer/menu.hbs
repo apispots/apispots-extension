@@ -2,7 +2,7 @@
   <div class="ui container">
 
     {{#if bookmarks}}
-    <div class="ui pointing dropdown link item">
+      <div class="ui pointing dropdown link item">
         <span class="text">{{spec.info.title}}</span>
         <i class="dropdown icon"></i>
         <div class="menu">
@@ -15,9 +15,14 @@
         </div>
       </div>
     {{else}}
-      <div class="header item">
-        {{spec.info.title}}
-      </div>
+      <div class="ui pointing dropdown link item">
+        <span class="text">{{spec.info.title}}</span>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <div class="header">Other</div>
+          <a class="item" href="/pages/openapis.html">Home</a>
+        </div>
+      </div>      
     {{/if}}
 
 
