@@ -2,6 +2,7 @@ import postal from 'postal';
 
 import notifications from './notifications';
 
+
 /**
  * Browser actions handler.
  *
@@ -50,23 +51,38 @@ export default (function() {
   const _onExtensionUpdateAvailable = function(data) {
     try {
 
+      // get the version info
+      const version = data.version;
+
+      // split the version semantic parts
+      const parts = version.split('.');
+
+      let isMajorOrMinor = true;
+
+      if ((parts.length === 3) &&
+          (parts[2] !== '0')) {
+        isMajorOrMinor = false;
+      }
+
       // show a notification to the user
-      chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'assets/images/logos/logo-64.png',
-        title: 'The API Spots have an update!',
-        message: `The latest version ${data.version} is available for update and will be automatically installed when Chrome is restarted.`,
-        contextMessage: 'Click to find out more'
-      }, (notificationId) => {
+      // only this is a major or minor release
+      if (isMajorOrMinor) {
+        chrome.notifications.create({
+          type: 'basic',
+          iconUrl: 'assets/images/logos/logo-64.png',
+          title: 'API Spots update available!',
+          message: `The latest version ${data.version} is available for update and will be automatically installed when Chrome is restarted.`,
+          contextMessage: 'Click to find out more'
+        }, (notificationId) => {
 
-        // add it to the notifications map
-        notifications.addToMap(notificationId, {
-          channel: 'extension',
-          topic: 'update notification clicked',
-          data
+          // add it to the notifications map
+          notifications.addToMap(notificationId, {
+            channel: 'extension',
+            topic: 'update notification clicked',
+            data
+          });
         });
-      });
-
+      }
 
     } catch (e) {
       console.error(e);
