@@ -133,7 +133,6 @@ export default class ApiDefinition {
     return this._specUrl;
   }
 
-
   /**
    * Returns the Open API client instance.
    * @return {[type]} [description]
