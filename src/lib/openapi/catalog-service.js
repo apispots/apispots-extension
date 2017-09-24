@@ -5,9 +5,9 @@
  */
 import _ from 'lodash';
 import axios from 'axios';
+import ApiCatalog from 'apispots-lib-stories/lib/openapi/api-catalog';
+import ApiCatalogEntry from 'apispots-lib-stories/lib/openapi/api-catalog-entry';
 
-import ApiCatalog from './api-catalog';
-import ApiCatalogEntry from './api-catalog-entry';
 import BrowserStorage from '../common/browser-storage';
 
 export default (function() {
@@ -291,6 +291,130 @@ export default (function() {
     });
   };
 
+
+  /**
+   * Adds a spot bookmark
+   * @param {[type]} specUrl [description]
+   * @param {[type]} title   [description]
+   */
+  const _addBookmark = (specUrl, title) => new Promise((resolve, reject) => {
+
+    try {
+      if (_.isEmpty(specUrl)) {
+        throw new Error('Undefined spec URL');
+      }
+
+      if (_.isEmpty(title)) {
+        title = specUrl;
+      }
+
+      // get the collection of
+      // bookmarked Open APIs
+      // from local storage
+      const key = 'openapis|bookmarks';
+
+      BrowserStorage.local.get(key, (items) => {
+
+        let bookmarks = items[key];
+        let bm;
+
+        // look for the item first
+        bm = _.find(bookmarks, {specUrl});
+
+        if (_.isEmpty(bm)) {
+
+          // add bookmark to the collection
+          if (_.isEmpty(bookmarks)) {
+            bookmarks = [];
+          }
+
+          bm = {
+            specUrl,
+            title
+          };
+
+          bookmarks.push(bm);
+
+          // update the entry in local storage
+          items = {};
+          items[key] = bookmarks;
+
+          BrowserStorage.local.set(items, () => {
+            resolve();
+          });
+        } else {
+          // do nothing
+          resolve();
+        }
+
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+
+  /**
+   * Checks if a spot is bookmarked
+   * @param  {[type]}  specUrl [description]
+   * @return {Boolean}         [description]
+   */
+  const _isBookmarked = (specUrl) => new Promise(((resolve) => {
+
+    const key = 'openapis|bookmarks';
+
+    BrowserStorage.local.get(key, (items) => {
+
+      const bookmarks = items[key];
+
+      // look for the item first
+      const bm = _.find(bookmarks, {specUrl});
+
+      resolve(!_.isEmpty(bm));
+    });
+
+  }));
+
+
+  /**
+   * Removes a spot bookmark
+   * @param {[type]} specUrl [description]
+   * @param {[type]} title   [description]
+   */
+  const _removeBookmark = (specUrl) => new Promise((resolve) => {
+
+    // get the collection of
+    // bookmarked Open APIs
+    // from local storage
+    const key = 'openapis|bookmarks';
+
+    BrowserStorage.local.get(key, (items) => {
+
+      const bookmarks = items[key];
+
+      // look for the item first
+      const bm = _.find(bookmarks, {specUrl});
+
+      if (!_.isEmpty(bm)) {
+
+        // remove bookmark from the collection
+        _.remove(bookmarks, (o) => o.specUrl === specUrl);
+
+        // update the entry in local storage
+        items = {};
+        items[key] = bookmarks;
+
+        BrowserStorage.local.set(items, () => {
+          resolve();
+        });
+      } else {
+        // do nothing
+        resolve();
+      }
+
+    });
+
+  });
+
   return {
 
     /*
@@ -298,7 +422,10 @@ export default (function() {
      */
     loadByProviderId: _loadByProviderId,
     loadByUrl: _loadByUrl,
-    getBookmarkedSpots: _getBookmarkedSpots
+    getBookmarkedSpots: _getBookmarkedSpots,
+    addBookmark: _addBookmark,
+    isBookmarked: _isBookmarked,
+    removeBookmark: _removeBookmark
 
   };
 

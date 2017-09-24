@@ -1,0 +1,82 @@
+<h2>
+  Data stories
+
+  <div class="ui right floated basic red image label tipped"
+    data-html="<h5>This feature is under development</h5><p>If something is not working as expected please <a href='https://github.com/apispots/apispots-extension/issues' target='_blank'>report an issue</a></p>"
+    data-position="bottom center">
+    <i class="bug icon"></i>
+    Bug zone
+  </div>
+</h2>
+
+<p>
+A <strong>data story</strong> is a high-level abstraction
+of an API interaction that involves an API operation, an
+input and an output all bundled together as one
+executable unit.
+</p>
+
+
+<div class="ui cards stories top margin">
+
+  <div class="ui card">
+    <div class="content">
+      <div class="header">A new data story</div>
+      <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+    </div>
+    <div class="ui bottom attached button" data-action="create story">
+      <i class="add icon"></i>
+      Create story
+    </div>
+  </div>
+
+  {{#each stories}}
+
+    <div class="story card" data-id="{{id}}">
+      <div class="content">
+        <div class="header">{{title}}</div>
+        <div class="meta">
+          {{#if tsHuman}}
+            <small>Updated {{tsHuman}} ago</small>
+          {{/if}}
+        </div>
+        <div class="description">
+          {{description}}
+        </div>
+      </div>
+      <div class="extra content">
+        <span class="left floated play"
+          data-tooltip="Play story"
+          data-action="play story"
+          data-id="{{id}}">
+          <i class="play icon"></i>
+        </span>
+        <span class="right floated settings">
+          <div class="ui icon top left pointing dropdown"
+            data-tooltip="Settings">
+            <i class="ellipsis vertical icon"></i>
+            <div class="menu">
+              <div class="item"
+                data-action="edit story"
+                data-id="{{id}}">
+                <i class="edit icon"></i> Edit
+              </div>
+              <div class="item"
+                data-action="delete story"
+                data-id="{{id}}">
+                <i class="delete icon"></i> Delete
+              </div>
+            </div>
+          </div>
+
+        </span>
+      </div>
+    </div>
+
+
+
+  {{/each}}
+
+
+
+</div>

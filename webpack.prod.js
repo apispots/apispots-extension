@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const merge = require('webpack-merge');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
@@ -81,7 +80,20 @@ const webpackConfig = [
 
       new UglifyJSPlugin({
         parallel: true,
-        sourceMap: false
+        sourceMap: false,
+        include: [
+          path.resolve(__dirname, 'node_modules/jquery')
+        ],
+        uglifyOptions: {
+          ie8: false,
+          ecma: 8,
+          mangle: false,
+          output: {
+            comments: false,
+            beautify: false,
+            ascii_only: true
+          }
+        }
       })
     ]
 
@@ -92,7 +104,7 @@ const webpackConfig = [
     context: path.resolve(__dirname, 'src/'),
 
     entry: {
-      content: './browser/content/index.js'
+      content: './browser/content/index.js',
     },
 
     output: {
@@ -110,6 +122,7 @@ const webpackConfig = [
     ]
 
   }
+
 
 ];
 

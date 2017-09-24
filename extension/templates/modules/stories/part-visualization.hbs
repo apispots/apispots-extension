@@ -1,6 +1,7 @@
 
 
-<div class="ui segment story part {{#if output.ok}}green{{else}}red{{/if}}">
+<div class="ui segment story part {{#if output.ok}}green{{else}}red{{/if}}"
+  data-partidx="{{index}}">
 
   {{#if output.ok}}
     <div>
@@ -9,6 +10,27 @@
         {{output.status}}
       </span>
       {{output.statusText}}
+
+      {{#if output.data}}
+
+        <div class="ui right floated export output">
+
+          <div class="ui icon top left pointing dropdown"
+            data-tooltip="Download output dataset">
+            <i class="download icon"></i>
+            <div class="menu">
+              <div class="item"
+                data-action="export as flat csv"
+                data-id="{{id}}">
+                <i class="excel file icon"></i>
+                Flat CSV
+              </div>
+            </div>
+          </div>
+
+        </div>
+      {{/if}}
+
     </div>
 
     <div class="ui little padded container">
@@ -18,14 +40,6 @@
       {{else}}
 
         {{#if output.text}}
-          <div class="ui warning message">
-            <i class="close icon"></i>
-            <div class="header">
-              Heads up!
-            </div>
-            The data returned from the service could not be parsed, so
-            you are seeing the raw response text instead.
-          </div>
 
             <span class="ui basic orange label">
               {{output.status}}

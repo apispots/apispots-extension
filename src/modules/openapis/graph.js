@@ -71,6 +71,7 @@ export default (function() {
       const node = {
         id: path,
         label: name,
+        title: '<small>test</small>',
         group
       };
 

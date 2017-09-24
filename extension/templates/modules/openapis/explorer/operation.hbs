@@ -9,24 +9,31 @@
       {{#each definition}}
       <a class="item {{#eq @index 0}}active{{/eq}}" data-tab="{{@key}}">
         {{#verb @key}}{{/verb}}
-        <span>{{@key}}</span>
+
+        {{#if deprecated}}
+          <span><del>{{@key}}</del></span> <span class="ui tiny label">deprecated</span>
+        {{else}}
+          <span>{{@key}}</span>
+        {{/if}}
       </a>
       {{/each}}
     </div>
 
     {{#each definition}}
 
-      <div class="ui tab {{#eq @index 0}}active{{/eq}}" data-tab="{{@key}}">
+      <div class="ui tab {{#eq @index 0}}active{{/eq}} disabled" data-tab="{{@key}}">
 
         <h4>Operation Id</h4>
         <span class="ui label basic blue">{{operationId}}</span>
 
-        <button class="ui labeled mini green icon basic button"
-          data-action="create story"
-          data-operation="{{operationId}}">
-          <i class="play icon"></i>
-          Create data story
-        </button>
+        {{#unless deprecated}}
+          <button class="ui labeled mini green icon basic button"
+            data-action="create story"
+            data-operation="{{operationId}}">
+            <i class="play icon"></i>
+            Create data story
+          </button>
+        {{/unless}}
 
         <h3>Summary</h3>
         {{#if summary}}
@@ -111,10 +118,10 @@
                   {{/if}}
                 </td>
                 <td>
-                  {{#if type}}
-                  <span class="ui basic label blue centered">{{type}}</span>
-                  {{else}}
+                  {{#if hasSchema}}
                   <span class="ui basic label blue centered">{{schema}}</span>
+                  {{else}}
+                  <span class="ui basic label blue centered">{{type}}</span>
                   {{/if}}
                 </td>
                 <td>

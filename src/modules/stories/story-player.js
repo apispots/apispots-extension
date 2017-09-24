@@ -2,14 +2,15 @@
  * Story maker module.
  * @return {[type]} [description]
  */
-import _ from 'lodash';
 import postal from 'postal';
 import asyncWaterfall from 'async/waterfall';
+import FileSaver from 'file-saver';
+import jsonexport from 'jsonexport';
+import StoryPlayer from 'apispots-lib-stories/lib/stories/story-player';
 
-import DataStory from '../../lib/stories/data-story';
-import StoryPlayer from '../../lib/stories/story-player';
 import StoryVisualizer from './story-visualizer';
 import StoryManager from '../../lib/stories/story-manager';
+import CredentialsManager from '../../lib/openapi/browser-credentials-manager';
 
 import tplStoryPlayer from '../../../extension/templates/modules/stories/story-player.hbs';
 
@@ -18,6 +19,7 @@ export default (function() {
   /*
    * Private
    */
+
 
   // the API definition instance
   let _api = null;
@@ -113,6 +115,9 @@ export default (function() {
    */
   const _playStory = function() {
 
+    // set the credentials manager instance
+    StoryPlayer.setCredentialsManager(CredentialsManager);
+
     // play the story
     StoryPlayer.play(_story)
       .then(() => {
@@ -128,10 +133,31 @@ export default (function() {
       })
       .catch(e => {
         console.error('story failed to execute', e);
-      })
-      .finally(() => {
-        // $btn.removeClass('disabled loading');
       });
+
+  };
+
+  /**
+   * Called when the user has
+   * selected to export the story
+   * output.
+   * @return {[type]} [description]
+   */
+  const _onExportOutput = (data) => {
+
+    const idx = data.partIndex;
+    const output = _story.parts[idx].output;
+
+    // export the data as a flat CSV
+    jsonexport(output.data, (err, csv) => {
+      if (err) {
+        console.error(err);
+      } else {
+        const blob = new Blob([csv], {type: 'text/csv'});
+        FileSaver.saveAs(blob, 'data.csv');
+      }
+    });
+
   };
 
 
@@ -140,6 +166,12 @@ export default (function() {
     channel: 'stories',
     topic: 'play story',
     callback: _onPlayStory
+  });
+
+  postal.subscribe({
+    channel: 'stories',
+    topic: 'export output',
+    callback: _onExportOutput
   });
 
 

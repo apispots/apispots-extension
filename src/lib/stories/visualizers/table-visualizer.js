@@ -26,7 +26,7 @@ export default class TableVisualizer extends Visualizer {
     const $cnt = $(container);
     $cnt.html(html);
 
-    $('table', $cnt).addClass('ui celled collapsing compact table');
+    $('table', $cnt).addClass('ui padded celled table');
 
     // emit an event
     this.emit('rendered');

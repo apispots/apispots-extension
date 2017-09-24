@@ -6,8 +6,8 @@
 import _ from 'lodash';
 import shortid from 'shortid';
 import moment from 'moment';
+import DataStory from 'apispots-lib-stories/lib/stories/data-story';
 
-import DataStory from './data-story';
 import BrowserStorage from '../common/browser-storage';
 
 export default (function() {
@@ -219,6 +219,52 @@ export default (function() {
     });
   };
 
+  /**
+   * Searches all available data stories
+   * matching any input query params.
+   * @param  {[type]} query [description]
+   * @return {[type]}       [description]
+   */
+  const _search = (query) => new Promise((resolve) => {
+
+    const specUrl = query.specUrl;
+    const phrase = query.phrase;
+
+    // get all stories for this spec URL
+    _getStoriesBySpec(specUrl)
+      .then(stories => {
+
+        const matches = _.chain(stories)
+          .filter(o => {
+
+            const matchpoints = [];
+
+            // check if phrase is contained within title
+            if (_.includes(o.title.toLowerCase(), phrase.toLowerCase())) {
+              matchpoints.push('title');
+            }
+
+            // check if phrase is contained within description
+            if (!_.isEmpty(o.description)) {
+              if (_.includes(o.description.toLowerCase(), phrase.toLowerCase())) {
+                matchpoints.push('description');
+              }
+            }
+
+            if (_.isEmpty(matchpoints)) {
+              return false;
+            }
+
+            // set the matchpoints and
+            // include this story
+            o.matchpoints = matchpoints;
+            return true;
+          })
+          .value();
+
+        resolve(matches);
+      });
+  });
 
   return {
 
@@ -228,7 +274,8 @@ export default (function() {
     getStoriesBySpec: _getStoriesBySpec,
     getStory: _getStory,
     save: _save,
-    delete: _delete
+    delete: _delete,
+    search: _search
 
   };
 

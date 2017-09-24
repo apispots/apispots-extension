@@ -1,0 +1,548 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://data.unistats.ac.uk/api/v4/KIS'
+info:
+  title: Unistats API - OAI 3
+  description: Compare official course data from universities and colleges
+  termsOfService: 'http://dataportal.unistats.ac.uk/'
+  contact:
+    name: Open Referral
+    url: 'https://openreferral.org/'
+    email: info@openreferral.org
+  license:
+    name: Open Data Commons Public Domain
+    url: 'http://opendatacommons.org/licenses/pddl/'
+  version: v4
+paths:
+  /Institutions:
+    get:
+      summary: Retrieve a list of Institutions
+      description: >-
+        Retrieve a list of Institutions (returns the first 25 records
+        alphabetically by Sortable Institution Name)
+      operationId: getAllInstitutions
+      parameters:
+        - in: query
+          name: pageIndex
+          description: The page index of the results
+          schema:
+            type: number
+        - in: query
+          name: pageSize
+          description: The number of records fetched in a results page
+          schema:
+            type: number
+      security:
+        - basic: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Institution'
+      tags:
+        - institutions
+  /Institution/{PUBUKPRN}:
+    get:
+      summary: Retrieve KIS Data about an Institution
+      description: Retrieve KIS Data about an Institution
+      operationId: getInstitution
+      parameters:
+        - in: path
+          name: PUBUKPRN
+          description: Publication UK Provider Reference Number
+          schema:
+            type: string
+            maxLength: 8
+          required: true
+      security:
+        - basic: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Institution'
+      tags:
+        - institutions
+  /Institution/{PUBUKPRN}/Courses:
+    get:
+      summary: Retrieve KIS Data records about the courses for an Institution
+      description: >-
+        Retrieves KIS Data records about the courses for an Institution (returns
+        the first 25 records alphabetically by Course Title)
+      operationId: getInstitutionCourses
+      parameters:
+        - in: path
+          name: PUBUKPRN
+          description: Publication UK Provider Reference Number
+          schema:
+            type: string
+            maxLength: 8
+          required: true
+        - in: query
+          name: pageIndex
+          description: The page index of the results
+          schema:
+            type: number
+        - in: query
+          name: pageSize
+          description: The number of records fetched in a results page
+          schema:
+            type: number
+      security:
+        - basic: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+      tags:
+        - courses
+  /Institution/{PUBUKPRN}/Course/{KISCOURSEID}/{KISMODE}:
+    get:
+      summary: Retrieve KIS Data about a Course
+      description: Retrieve KIS Data about a Course
+      operationId: getInstitutionCourse
+      parameters:
+        - in: path
+          name: PUBUKPRN
+          description: Publication UK Provider Reference Number
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: KISCOURSEID
+          description: The KIS Id of the course
+          required: true
+          schema:
+            type: string
+            maxLength: 30
+        - in: path
+          name: KISMODE
+          description: 'The KIS Id of the course, 1 = Full-time, 2 = Part-time, 3 = Both'
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - 1
+                - 2
+                - 3
+      security:
+        - basic: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accreditation'
+      tags:
+        - courses
+  /Institution/{PUBUKPRN}/Course/{KISCOURSEID}/{KISMODE}/Accreditation:
+    get:
+      summary: Retrieve KIS Data about accreditations for a Course
+      description: Retrieve KIS Data about accreditations for a Course
+      operationId: getInstitutionCourseAccrediations
+      parameters:
+        - in: path
+          name: PUBUKPRN
+          description: Publication UK Provider Reference Number
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: KISCOURSEID
+          description: The KIS Id of the course
+          required: true
+          schema:
+            type: string
+            maxLength: 30
+        - in: path
+          name: KISMODE
+          description: 'The KIS Id of the course, 1 = Full-time, 2 = Part-time, 3 = Both'
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - 1
+                - 2
+                - 3
+      security:
+        - basic: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Accreditation'
+      tags:
+        - courses
+  /Institution/{PUBUKPRN}/Course/{KISCOURSEID}/{KISMODE}/Locations:
+    get:
+      summary: Retrieve KIS Data about Locations for a Course
+      description: Retrieve KIS Data about Locations for a Course
+      operationId: getInstitutionCourseLocations
+      parameters:
+        - in: path
+          name: PUBUKPRN
+          description: Publication UK Provider Reference Number
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: KISCOURSEID
+          description: The KIS Id of the course
+          required: true
+          schema:
+            type: string
+            maxLength: 30
+        - in: path
+          name: KISMODE
+          description: 'The KIS Id of the course, 1 = Full-time, 2 = Part-time, 3 = Both'
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - 1
+                - 2
+                - 3
+      security:
+        - basic: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+      tags:
+        - courses
+  /Institution/{PUBUKPRN}/Course/{KISCOURSEID}/{KISMODE}/Statistics:
+    get:
+      summary: Retrieve KIS Data statistics for a Course
+      description: Retrieves KIS Data statistics for a Course
+      operationId: getInstitutionCourseStatistics
+      parameters:
+        - in: path
+          name: PUBUKPRN
+          description: Publication UK Provider Reference Number
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: KISCOURSEID
+          description: The KIS Id of the course
+          required: true
+          schema:
+            type: string
+            maxLength: 30
+        - in: path
+          name: KISMODE
+          description: 'The KIS Id of the course, 1 = Full-time, 2 = Part-time, 3 = Both'
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - 1
+                - 2
+                - 3
+      security:
+        - basic: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Statistic'
+      tags:
+        - courses
+
+
+components:
+
+  schemas:
+
+    Accreditation:
+      description: Describes an accreditation of a course
+      properties:
+        AccType:
+          description: The type of accreditation
+          type: string
+        AccreditingBodyCode:
+          description: The accreditation body code
+          type: string
+        ApiUrl:
+          description: The API URL of the accreditation details
+          type: string
+        DependentOnStudentChoice:
+          description: Is dependent on student choice?
+          type: boolean
+        DependentOnStudentChoiceUrl:
+          description: The URL of the student dependent choice info
+          type: string
+        DependentOnStudentChoiceUrlWales:
+          description: The URL of the student dependent choice info in Welsh
+          type: string
+        Text:
+          description: Textual information
+          type: string
+        TextWales:
+          description: Textual information in Welsh
+          type: string
+        Url:
+          description: The URL of the accreditation
+          type: string
+      type: object
+
+    Institution:
+      description: Describes an institution
+      properties:
+        APROutcome:
+          description: The APR outcome
+          type: string
+        ApiUrl:
+          description: The URL of the API call that returns this institution instance
+          type: string
+        Country:
+          description: The country the institution is located at
+          type: string
+        Name:
+          description: The institution name
+          type: string
+        NumberOfCourses:
+          description: The number of courses offered by the institution
+          type: number
+        PUBUKPRN:
+          description: The Publication UK Provider Reference Number
+          type: number
+        PUBUKPRNCountry:
+          description: The Publication UK Provider Reference Number country
+          type: string
+        QAAReportUrl:
+          description: The QAA report URL
+          type: string
+        SortableName:
+          description: A sortable name for this institution
+          type: string
+        StudentUnionUrl:
+          description: The URL that fetches the details of the student union
+          type: string
+        StudentUnionUrlWales:
+          description: The URL that fetches the details of the student union in Welsh
+          type: string
+        TEFOutcome:
+          description: The TEF outcome
+          type: string
+        UKPRN:
+          description: The UK Register of Learning Providers code
+          type: string
+      required:
+        - ApiUrl
+        - Country
+        - Name
+        - PUBUKPRN
+        - PUBUKPRNCountry
+        - SortableName
+        - UKPRN
+      type: object
+
+    Course:
+      description: Describes a course offered by an institution
+      properties:
+        ApiUrl:
+          description: The URL of the API call that returns this institution instance
+          type: string
+        ApplicationUKPRN:
+          description: The course application UKPRN
+          type: string
+        AssessmentMethodsUrl:
+          description: The URL of the list of assessment methods
+          type: string
+        AssessmentMethodsUrlWales:
+          description: The URL of the list of assessment methods in Welsh
+          type: string
+        DistanceLearning:
+          description: Distance learning details
+          type: string
+        EmploymentDetailsUrl:
+          description: The URL of employment details
+          type: string
+        EmploymentDetailsUrlWales:
+          description: The URL of employment details in Welsh
+          type: string
+        FoundationYearAvailable:
+          description: Whether foundation year is available
+          type: number
+        Honours:
+          description: Has honours?
+          type: boolean
+        IsPartTime:
+          description: Is part time?
+          type: boolean
+        JACSCodes:
+          description: A list of JACS codes
+          type: array
+        KisAimCode:
+          description: The KisAim code
+          type: string
+        KisAimLabel:
+          description: The KisAim label
+          type: string
+        KisCourseId:
+          description: The Kis Id of the course
+          type: string
+        KisMode:
+          description: The Kis mode
+          type: string
+        LDCSCodes:
+          description: A list of LDCS codes
+          type: array
+        LearningAndTeachingMethodsUrl:
+          description: The URL of learning and teaching methods
+          type: string
+        LearningAndTeachingMethodsUrlWales:
+          description: The URL of learning and teaching methods in Welsh
+          type: string
+        LengthInYears:
+          description: The course length in years
+          type: number
+        LocationChangesDuringCourse:
+          description: Can location change during course?
+          type: boolean
+        SandwichAvailable:
+          description: Is sandwich available?
+          type: number
+        SupportDetailsUrl:
+          description: The URL of sandwich details
+          type: string
+        SupportDetailsUrlWales:
+          description: The URL of sandwich details in Welsh
+          type: string
+        Title:
+          description: The course title
+          type: string
+        TitleInWelsh:
+          description: The course title in Welsh
+          type: string
+        TotalNumberOfStages:
+          description: The total number of course stages
+          type: number
+        YearAbroadAvailable:
+          description: The number of years available abroad
+          type: number
+      type: object
+
+    Location:
+      description: Describes a location
+      properties:
+        ApiUrl:
+          description: The URL of location details
+          type: string
+        Latitude:
+          description: The latitute coordinate
+          type: number
+        LocationId:
+          description: The Id of the location
+          type: string
+        LocationUKPRN:
+          description: The location UKPRN code
+          type: string
+        Longitude:
+          description: The longitude coordinate
+          type: number
+        Name:
+          description: The location name
+          type: string
+        NameInWelsh:
+          description: The location name in Welsh
+          type: string
+        StudentUnionUrl:
+          description: The URL of the student union
+          type: string
+        StudentUnionUrlWales:
+          description: The URL of the student union in Welsh
+          type: string
+        UCASCourseIds:
+          description: A list of UCAS course Ids
+          type: array
+        UKPRN:
+          description: The UK Register of Learning Providers code
+          type: string
+      type: object
+
+    Statistic:
+      description: Statistical information on a course
+      properties:
+        AggregationLevel:
+          description: The aggregation level
+          type: number
+        ApiUrl:
+          description: The API URL of the statistical info
+          type: string
+        Code:
+          description: The statistic code
+          type: string
+        JACSSubjectCode:
+          description: The JACS subject code
+          type: string
+        Population:
+          description: The population count
+          type: number
+        ResponseRate:
+          description: The response rate
+          type: number
+        Details:
+          description: A list of statistical details
+          type: array
+          items:
+            $ref: '#/components/schemas/StatisticalDetail'
+      type: object
+
+    StatisticalDetail:
+      description: A statistical detail
+      properties:
+        Code:
+          description: The statistic detail code
+          type: string
+        IsPercentage:
+          description: Is this statistical value a percentage?
+          type: boolean
+        Value:
+          description: The statistical value
+          type: number
+      type: object
+
+  securitySchemes:
+
+    basic:
+      type: http
+      description: >-
+        The Unistats API uses HTTP Basic Auth. Every request for data requires
+        authenticating with an active access token. When authenticating, use the
+        access token as the username. The password can be anything.
+      scheme: basic

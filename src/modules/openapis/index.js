@@ -2,10 +2,11 @@ import _ from 'lodash';
 import postal from 'postal';
 import swal from 'sweetalert2';
 import asyncWaterfall from 'async/waterfall';
+import stories from 'apispots-lib-stories';
 
 import '../../common/base';
-import ApiDefinition from '../../lib/openapi/api-definition';
-import ApiCatalogService from '../../lib/openapi/catalog-service';
+import Storage from '../../lib/common/browser-storage';
+import CatalogService from '../../lib/openapi/catalog-service';
 import Explorer from './explorer';
 import Catalog from './catalog';
 import '../stories/story-maker';
@@ -36,52 +37,63 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
       postal.publish(command);
     } else {
 
-      const model = {};
-
-      asyncWaterfall([
-        (cb) => {
-
-          // load any bookmaked spots
-          ApiCatalogService.getBookmarkedSpots()
-            .then((bookmarks) => {
-              // add them to the model
-              model.bookmarks = bookmarks;
-              cb();
-            })
-            .catch(cb);
-        }
-
-      ], (e) => {
-
-        if (e) {
-          console.error(e);
-        }
-
-        // render the default view
-        const html = tplBody(model);
-        $('body').html(html);
-
-        // fix menu when passed
-        $('.masthead')
-          .visibility({
-            once: false,
-            onBottomPassed() {
-              $('.fixed.menu').transition('fade in');
-            },
-            onBottomPassedReverse() {
-              $('.fixed.menu').transition('fade out');
-            }
-          });
-
-        // bind all event listeners
-        _bindListeners();
-        _bindValidators();
-
-      });
-
+      // load the default view
+      _loadDefaultView();
     }
 
   };
+
+  /**
+   * Loads the default view.
+   * @return {[type]} [description]
+   */
+  const _loadDefaultView = () => {
+
+    const model = {};
+
+    asyncWaterfall([
+      (cb) => {
+
+        // load any bookmaked spots
+        CatalogService.getBookmarkedSpots()
+          .then((bookmarks) => {
+            // add them to the model
+            model.bookmarks = bookmarks;
+            cb();
+          })
+          .catch(cb);
+      }
+
+    ], (e) => {
+
+      if (e) {
+        console.error(e);
+      }
+
+      // render the default view
+      const html = tplBody(model);
+      $('body').html(html);
+
+      // fix menu when passed
+      $('.masthead')
+        .visibility({
+          once: false,
+          onBottomPassed() {
+            $('.fixed.menu').transition('fade in');
+          },
+          onBottomPassedReverse() {
+            $('.fixed.menu').transition('fade out');
+          }
+        });
+
+      // bind all event listeners
+      _bindListeners();
+      _bindValidators();
+
+    });
+
+  };
+
 
   /**
    * Checks for content deep links.
@@ -133,7 +145,6 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   };
 
-
   /**
    * Binds all event listeners
    * @return {[type]} [description]
@@ -163,6 +174,7 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
       return false;
     });
 
+    $('[data-action="remove bookmark"]').on('click', _onDeleteBookmark);
 
   };
 
@@ -198,36 +210,64 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
 
     // load the definition from the given URL
     const url = data.spec;
+    let spec = null;
 
-    ApiDefinition.load({url})
-      .then((api) => {
+    asyncWaterfall([
 
-        // load the Open API into the explorer
-        Explorer.render(api)
-          .catch((e) => {
-            // show an error alert
-            swal({
-              title: 'Open API explorer',
-              text: e.message,
-              type: 'error',
-              timer: 3000
-            });
+      (cb) => {
+        // if the URL is for local file
+        // check if the content is available
+        // in local storage
+        if ((typeof url !== 'undefined') &&
+          (url.startsWith('file://'))) {
+          spec = Storage.local.get([url], (data) => {
+            if (!_.isEmpty(data)) {
+              spec = data[url];
+              cb();
+            }
           });
-      })
-      .catch((err) => {
+        } else {
+          cb();
+        }
+      }
 
-        // switch to normal state
-        $('#input-url-definition').parent().removeClass('loading disabled');
-        $('.dimmer').removeClass('visible');
+    ], () => {
 
-        // show an error alert
-        swal({
-          title: 'Something went wrong...',
-          text: `${err.message} [${url}]`,
-          type: 'error',
-          timer: 10000
+      // load the story definition
+      stories.ApiDefinitionLoader.load({url, spec})
+        .then((api) => {
+
+          // load the Open API into the explorer
+          Explorer.render(api)
+            .catch((e) => {
+              // show an error alert
+              swal({
+                title: 'Open API explorer',
+                text: e.message,
+                type: 'error',
+                timer: 3000
+              });
+            });
+        })
+        .catch((err) => {
+
+          // show an error alert
+          // and reload the default view
+          swal({
+            title: 'Something went wrong...',
+            text: `${err.message} [${url}]`,
+            type: 'error',
+            timer: 10000
+          })
+            .then(() => {
+              setTimeout(_loadDefaultView, 300);
+            })
+            .catch(() => {
+              setTimeout(_loadDefaultView, 300);
+            });
         });
-      });
+
+    });
 
   };
 
@@ -247,9 +287,9 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
     let promise;
 
     if (!_.isEmpty(providerId)) {
-      promise = ApiCatalogService.loadByProviderId(providerId);
+      promise = CatalogService.loadByProviderId(providerId);
     } else if (!_.isEmpty(url)) {
-      promise = ApiCatalogService.loadByUrl(url);
+      promise = CatalogService.loadByUrl(url);
     }
     // load the selected Open API catalog
     promise
@@ -273,6 +313,44 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
           timer: 3000
         });
       });
+  };
+
+  /**
+   * User selected to delete a spot
+   * bookmark.
+   * @param  {[type]} specUrl [description]
+   * @return {[type]}         [description]
+   */
+  const _onDeleteBookmark = (e) => {
+
+    const specUrl = $(e.currentTarget).attr('data-spec');
+
+    swal({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete the selected bookmark?',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(() => {
+
+      // remove bookmark
+      CatalogService.removeBookmark(specUrl)
+        .then(() => {
+
+          // remove the segment
+          const $cnt = $(e.currentTarget).closest('.segment');
+          $cnt.fadeOut(() => {
+            $cnt.remove();
+          });
+
+        });
+    })
+      .catch(() => {
+        // silent
+      });
+
   };
 
 

@@ -8,14 +8,13 @@ import asyncMap from 'async/map';
 import asyncWaterfall from 'async/waterfall';
 import swal from 'sweetalert2';
 
-import StoryManager from '../../lib/stories/story-manager';
-import BrowserStorage from '../../lib/common/browser-storage';
 import graph from './graph';
 import '../../../extension/templates/modules/openapis/explorer/module.css';
+import '../stories/story-viewer';
 import '../stories/story-player';
 import './authentication';
 import CatalogService from '../../lib/openapi/catalog-service';
-import AuthenticationManager from '../../lib/openapi/authentication-manager';
+import CredentialsManager from '../../lib/openapi/browser-credentials-manager';
 
 import tplBody from '../../../extension/templates/modules/openapis/explorer/index.hbs';
 import tplGeneral from '../../../extension/templates/modules/openapis/explorer/general.hbs';
@@ -26,7 +25,6 @@ import tplOperations from '../../../extension/templates/modules/openapis/explore
 import tplOperation from '../../../extension/templates/modules/openapis/explorer/operation.hbs';
 import tplPaths from '../../../extension/templates/modules/openapis/explorer/paths.hbs';
 import tplGraph from '../../../extension/templates/modules/openapis/explorer/graph.hbs';
-import tplStories from '../../../extension/templates/modules/openapis/explorer/stories.hbs';
 
 export default (function() {
 
@@ -179,7 +177,6 @@ export default (function() {
         tags: spec.tags,
         schemes: spec.schemes,
         externalDocs: spec.externalDocs
-
       };
 
       const html = tplGeneral(data);
@@ -198,21 +195,11 @@ export default (function() {
   const _renderDefinitions = function() {
     try {
 
-      const spec = _api.spec;
-
       const data = {
         definitions: []
       };
 
-      const definitions = _
-        .chain(_.cloneDeep(spec.definitions))
-        .map((o, key) => {
-          o.name = key;
-          return o;
-        })
-        .sortBy('name')
-        .value();
-
+      const definitions = _api.schemas;
       data.definitions = definitions;
 
       const html = tplDefinitions(data);
@@ -233,50 +220,22 @@ export default (function() {
   const _renderSecurity = function() {
     try {
 
-      const spec = _api.spec;
-
       const data = {
-        definitions: spec.securityDefinitions
+        definitions: _api.securities
       };
 
       asyncWaterfall([
 
         (cb) => {
-          // supported types so far
-          const supported = ['basic', 'apiKey'];
-
-          // check if type is supported
-          _.each(data.definitions, (o, key) => {
-
-            // the security definition name
-            o.name = key;
-
-            if (_.includes(supported, o.type)) {
-              o.supported = true;
-            }
-
-            // if type is 'basic' there are
-            // no properties
-            if (o.type !== 'basic') {
-              o.hasProperties = true;
-            }
-          });
-
-          cb();
-        },
-
-
-        (cb) => {
 
           // get activated securities
-
           asyncMap(data.definitions, (o, done) => {
 
             // get the security name
             const name = o.name;
 
             // get any saved credentials for this definition
-            AuthenticationManager.getCredentials(_api.specUrl, name)
+            CredentialsManager.getCredentials(_api.specUrl, name)
               .then(credentials => {
 
                 // if credentials are found, mark
@@ -354,39 +313,7 @@ export default (function() {
     const id = $(this).attr('data-id');
 
     // get the definition instance
-    const definition = _.cloneDeep(_api.getDefinition(id));
-
-    if (_.isEmpty(definition.properties)) {
-      delete definition.properties;
-    } else {
-      _.each(definition.properties, (o, key) => {
-
-        o.name = key;
-
-
-        // check if the prop is a ref
-        if (typeof o.$$ref !== 'undefined') {
-          // enrich the model with the reference Id
-          const id = o.$$ref.replace('#/definitions/', '');
-          o.type = id;
-        }
-
-        // process array of definitions
-        if (o.type === 'array') {
-          if ((!_.isEmpty(o.items)) &&
-               (!_.isEmpty(o.items.$$ref))) {
-            const id = o.items.$$ref.replace('#/definitions/', '');
-            o.items.type = id;
-          }
-        }
-
-        // check for required properties
-        if (_.includes(definition.required, o.name)) {
-          o.required = true;
-        }
-
-      });
-    }
+    const definition = _api.getDefinition(id);
 
     const data = {
       id,
@@ -530,69 +457,34 @@ export default (function() {
 
           // get the list of activated
           // security definitions
-          AuthenticationManager.getActivatedBySpecUrl(_api.specUrl)
+          CredentialsManager.getActivatedBySpecUrl(_api.specUrl)
             .then((securities) => {
               data.securities = securities;
               cb();
             });
+        },
+
+        (cb) => {
+
+          // go through all operations
+          _.each(definition, (o) => {
+
+            // process security
+            _.each(o.security, (s) => {
+
+              // enrich security elements
+              o.security = _.map(s, (o, key) => ({
+                definition: key,
+                scopes: o,
+                active: _.includes(data.securities, key)
+              }));
+            });
+          });
+
+          cb();
         }
 
       ], () => {
-
-        // process operations
-        _.each(definition, (o) => {
-
-          // process parameter references
-          _.each(o.parameters, (p) => {
-            if (p.in === 'body') {
-
-              if ((typeof p.schema !== 'undefined') &&
-                (typeof p.schema.$$ref !== 'undefined')) {
-                const schema = p.schema.$$ref.replace('#/definitions/', '');
-                p.schema = schema;
-
-              } else if ((typeof p.schema !== 'undefined') &&
-                (typeof p.schema.items !== 'undefined') &&
-                (typeof p.schema.items.$$ref !== 'undefined')) {
-                const schema = p.schema.items.$$ref.replace('#/definitions/', '');
-                p.type = p.schema.type;
-                p.schema = schema;
-
-              }
-            }
-          });
-
-          // process security
-          _.each(o.security, (s) => {
-            o.security = _.map(s, (o, key) => ({
-              definition: key,
-              scopes: o,
-              active: _.includes(data.securities, key)
-            }));
-          });
-
-          // process responses
-          o.responses = _.map(o.responses, (o, key) => {
-            const obj = {
-              code: key,
-              description: o.description
-            };
-
-            if (typeof o.schema !== 'undefined') {
-              obj.type = o.schema.type;
-
-              // is this a collection of objects?
-              if ((typeof o.schema.items !== 'undefined') &&
-                (typeof o.schema.items.$$ref !== 'undefined')) {
-                obj.schema = o.schema.items.$$ref.replace('#/definitions/', '');
-              } else {
-                obj.schema = o.schema.$$ref.replace('#/definitions/', '');
-              }
-            }
-
-            return obj;
-          });
-        });
 
         const html = tplOperation(data);
 
@@ -660,131 +552,6 @@ export default (function() {
 
 
   /**
-   * Renders the data stories section.
-   * @return {[type]} [description]
-   */
-  const _renderStories = function() {
-    try {
-
-      const model = {};
-
-      asyncWaterfall([
-
-        (cb) => {
-
-          // get all stories associated with this spec
-          StoryManager.getStoriesBySpec(_api.specUrl)
-            .then((stories) => {
-              // add them to the model
-              model.stories = stories;
-              cb();
-            })
-            .catch();
-        },
-
-        (cb) => {
-          const html = tplStories(model);
-          $('#content').html(html);
-
-          cb();
-        }
-
-      ], (e) => {
-
-        if (e) {
-          console.error(e);
-        }
-
-        $('.cards .image').dimmer({
-          on: 'hover'
-        });
-
-        // bind listeners
-        $('.ui.dropdown').dropdown();
-        $('.ui.tipped').popup({
-          hoverable: true
-        });
-
-        // create a new story
-        $('.item[data-id="new-story"], .button[data-action="create story"]').on('click', () => {
-
-          postal.publish({
-            channel: 'stories',
-            topic: 'create story',
-            data: {
-              api: _api
-            }
-          });
-        });
-
-        // play a story
-        $('.ui.cards.stories .story button[data-action="play story"]').on('click', (e) => {
-
-          const $el = $(e.currentTarget);
-          const storyId = $el.attr('data-id');
-
-          postal.publish({
-            channel: 'stories',
-            topic: 'play story',
-            data: {
-              api: _api,
-              storyId
-            }
-          });
-        });
-
-        // edit a story
-        $('.ui.cards.stories .story button[data-action="edit story"]').on('click', (e) => {
-
-          const $el = $(e.currentTarget);
-          const storyId = $el.attr('data-id');
-
-          postal.publish({
-            channel: 'stories',
-            topic: 'edit story',
-            data: {
-              api: _api,
-              storyId
-            }
-          });
-        });
-
-        // delete a story
-        $('.ui.cards.stories .story button[data-action="delete story"]').on('click', (e) => {
-
-          const $el = $(e.currentTarget);
-          const storyId = $el.attr('data-id');
-
-          swal({
-            title: 'Are you sure?',
-            text: 'Do you really want to delete the selected data story?',
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-          }).then(() => {
-
-            // delete the story from local storage
-            StoryManager.delete(_api.specUrl, storyId)
-              .then(() => {
-                // reload
-                _renderStories();
-              });
-          })
-            .catch(() => {
-              // silent
-            });
-        });
-
-      });
-
-    } catch (e) {
-      console.error(`Failed to render Data stories section - ${e}`);
-    }
-  };
-
-  /**
    * Bookmarks the current API spot.
    * @return {[type]} [description]
    */
@@ -799,68 +566,44 @@ export default (function() {
       // check current state
       const $el = $(e.currentTarget);
 
-      // get the collection of
-      // bookmarked Open APIs
-      // from local storage
-      const key = 'openapis|bookmarks';
-      let bookmarked = false;
+      CatalogService.isBookmarked(specUrl)
+        .then(bookmarked => {
 
-      BrowserStorage.local.get(key, (items) => {
+          if (!bookmarked) {
 
-        let bookmarks = items[key];
-        let bm;
+            // add a bookmark
+            CatalogService.addBookmark(specUrl, title)
+              .then(() => {
+                $el.attr('data-bookmarked', '');
+                $el.find('i.bookmark.icon').addClass('pink');
 
-        // look for the item first
-        bm = _.find(bookmarks, {specUrl});
-
-        // if already bookmarked, remove
-        // it from the collection
-        if (!_.isEmpty(bm)) {
-
-          // remove bookmark from the collection
-          _.remove(bookmarks, (o) => o.specUrl === specUrl);
-
-        } else {
-
-          // add bookmark to the collection
-          if (_.isEmpty(bookmarks)) {
-            bookmarks = [];
-          }
-
-          bm = {
-            specUrl,
-            title
-          };
-
-          bookmarks.push(bm);
-          bookmarked = true;
-        }
-
-        // update the entry in local storage
-        items = {};
-        items[key] = bookmarks;
-
-        BrowserStorage.local.set(items, () => {
-
-          if (bookmarked) {
-            $el.attr('data-bookmarked', '');
-            $el.find('i.bookmark.icon').addClass('pink');
-
-            // show an alert
-            swal({
-              title: 'Open API spot bookmarked!',
-              text: 'You have created a bookmark for this API spot. Now you can easily access it from the main Open APIs page.',
-              type: 'success',
-              timer: 10000
-            });
-
+                // show an alert
+                swal({
+                  title: 'Open API spot bookmarked!',
+                  text: 'You have created a bookmark for this API spot. Now you can easily access it from the main Open APIs page.',
+                  type: 'success',
+                  timer: 10000
+                });
+              })
+              .catch(e => {
+                // show an error alert
+                swal({
+                  title: 'Something went wrong...',
+                  text: e.message,
+                  type: 'error',
+                  timer: 3000
+                });
+              });
           } else {
-            $el.attr('data-bookmarked', null);
-            $el.find('i.bookmark.icon').removeClass('pink');
+
+            // remove the bookmark
+            CatalogService.removeBookmark(specUrl)
+              .then(() => {
+                $el.attr('data-bookmarked', null);
+                $el.find('i.bookmark.icon').removeClass('pink');
+              });
           }
         });
-      });
-
 
     } catch (e) {
       console.error(e);
@@ -883,25 +626,13 @@ export default (function() {
       // get the element
       const $el = $('.ui.menu .item[data-action="bookmark api"]');
 
-      // get the collection of
-      // bookmarked Open APIs
-      // from local storage
-      const key = 'openapis|bookmarks';
-
-      BrowserStorage.local.get(key, (items) => {
-
-        const bookmarks = items[key];
-
-        // look for the item first
-        const bm = _.find(bookmarks, {specUrl});
-
-        // if already bookmarked, remove
-        // it from the collection
-        if (!_.isEmpty(bm)) {
-          $el.attr('data-bookmarked', '');
-          $el.find('i.bookmark.icon').addClass('pink');
-        }
-      });
+      CatalogService.isBookmarked(specUrl)
+        .then(bookmarked => {
+          if (bookmarked) {
+            $el.attr('data-bookmarked', '');
+            $el.find('i.bookmark.icon').addClass('pink');
+          }
+        });
 
     } catch (e) {
       console.error(e);
@@ -916,6 +647,23 @@ export default (function() {
     _renderStories();
   };
 
+
+  /**
+   * Triggers an event for
+   * rendering the available stories.
+   * @return {[type]} [description]
+   */
+  const _renderStories = function() {
+
+    postal.publish({
+      channel: 'stories',
+      topic: 'load',
+      data: {
+        api: _api
+      }
+    });
+
+  };
 
   // event listeners
   postal.subscribe({

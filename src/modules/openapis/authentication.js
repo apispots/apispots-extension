@@ -7,7 +7,7 @@ import asyncWaterfall from 'async/waterfall';
 import postal from 'postal';
 import swal from 'sweetalert2';
 
-import AuthenticationManager from '../../lib/openapi/authentication-manager';
+import CredentialsManager from '../../lib/openapi/browser-credentials-manager';
 
 import tplModal from '../../../extension/templates/modules/openapis/authentication/auth-modal.hbs';
 
@@ -52,7 +52,7 @@ export default (function() {
 
       (cb) => {
         // load any stored credentials
-        AuthenticationManager.getCredentials(_api.specUrl, _name)
+        CredentialsManager.getCredentials(_api.specUrl, _name)
           .then(credentials => {
 
             if (!_.isEmpty(credentials)) {
@@ -181,7 +181,7 @@ export default (function() {
       const name = _name;
 
       // save the set of credentials
-      AuthenticationManager.saveCredentials(specUrl, name, credentials)
+      CredentialsManager.saveCredentials(specUrl, name, credentials)
         .then(() => {
           postal.publish({
             channel: 'openapis',
@@ -227,7 +227,7 @@ export default (function() {
       const name = _name;
 
       // delete the set of credentials
-      AuthenticationManager.deleteCredentials(specUrl, name)
+      CredentialsManager.deleteCredentials(specUrl, name)
         .then(() => {
 
           postal.publish({

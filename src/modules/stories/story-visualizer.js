@@ -3,10 +3,12 @@
  * @return {[type]} [description]
  */
 import _ from 'lodash';
-// import postal from 'postal';
+import postal from 'postal';
 
 import JsonVisualizer from '../../lib/stories/visualizers/json-visualizer';
 import TableVisualizer from '../../lib/stories/visualizers/table-visualizer';
+import CsvVisualizer from '../../lib/stories/visualizers/csv-visualizer';
+import XmlVisualizer from '../../lib/stories/visualizers/xml-visualizer';
 
 import tplPartVisualization from '../../../extension/templates/modules/stories/part-visualization.hbs';
 
@@ -32,10 +34,10 @@ export default (function() {
     const parts = story.parts;
 
     // iterate though parts
-    _.each(parts, (part) => {
+    _.each(parts, (part, idx) => {
 
       // visualize each part individually
-      _visualizeStoryPart(part);
+      _visualizeStoryPart(part, idx);
     });
   };
 
@@ -45,7 +47,7 @@ export default (function() {
    * @param  {[type]} part [description]
    * @return {[type]}      [description]
    */
-  const _visualizeStoryPart = function(part) {
+  const _visualizeStoryPart = function(part, idx) {
 
     // if the visualization section is
     // missing, add the default JSON type
@@ -59,6 +61,7 @@ export default (function() {
     // act as the container for the
     // visualization
     const model = {
+      index: idx,
       output: part.output,
       type: part.visualization.type
     };
@@ -70,8 +73,32 @@ export default (function() {
     const $cnt = $('.story.output .segments');
     $cnt.append($html);
 
+    // initialize dropdowns
+    $('.modal .dropdown').dropdown({
+      action: 'combo'
+    });
+
+    // export output button
+    $('.modal .export.output [data-action="export as flat csv"]').on('click', (e) => {
+
+      const $el = $(e.currentTarget);
+      const partIndex = $el.parents('.story.part').attr('data-partidx');
+      const type = $el.attr('data-type');
+
+      postal.publish({
+        channel: 'stories',
+        topic: 'export output',
+        data: {
+          partIndex,
+          type
+        }
+      });
+    });
+
+
     // get the visualization container
     const $vis = $('.visualization', $cnt);
+    $vis.attr('id', `vis-${idx}`);
 
     if ($vis.length > 0) {
 
@@ -89,6 +116,10 @@ export default (function() {
         clazz = new JsonVisualizer();
       } else if (type === 'table') {
         clazz = new TableVisualizer();
+      } else if (type === 'csv') {
+        clazz = new CsvVisualizer();
+      } else if (type === 'xml') {
+        clazz = new XmlVisualizer();
       }
 
       clazz.visualize(part, $vis);

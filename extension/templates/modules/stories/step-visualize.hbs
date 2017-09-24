@@ -5,19 +5,39 @@
   <div class="ui cards">
 
     <div class="ui cards">
+
+      {{#if jsonSupported}}
       <div class="ui card raised">
         <div class="content">
           <img class="ui right floated image avatar" src="../../../../assets/images/stories/visualizations/json.svg">
           <div class="header">JSON</div>
           <div class="description">
             Display results in raw JSON
-            format as returned from the service.
+            format.
           </div>
         </div>
         <div class="ui bottom attached green active button" data-type="json">
           <i class="check icon"></i> Select
         </div>
       </div>
+      {{/if}}
+
+      {{#if xmlSupported}}
+        <div class="ui card">
+          <div class="content">
+            <img class="ui right floated image avatar" src="../../../../assets/images/stories/visualizations/xml.svg">
+            <div class="header">XML</div>
+            <div class="description">
+              Display results in raw XML
+              format.
+            </div>
+          </div>
+          <div class="ui bottom attached button" data-type="xml">
+            <i class="check icon"></i> Select
+          </div>
+        </div>
+      {{/if}}
+
       <div class="ui card">
         <div class="content">
           <img class="ui right floated image avatar" src="../../../../assets/images/stories/visualizations/table.svg">
@@ -28,6 +48,18 @@
           </div>
         </div>
         <div class="ui bottom attached button" data-type="table">
+          <i class="check icon"></i> Select
+        </div>
+      </div>
+      <div class="ui card">
+        <div class="content">
+          <img class="ui right floated image avatar" src="../../../../assets/images/stories/visualizations/csv.svg">
+          <div class="header">CSV</div>
+          <div class="description">
+            Download results in CSV format.
+          </div>
+        </div>
+        <div class="ui bottom attached button" data-type="csv">
           <i class="check icon"></i> Select
         </div>
       </div>

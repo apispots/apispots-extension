@@ -20,7 +20,19 @@ Clicking on a path will open its details.
 
           <div class="ui list">
             {{#each this}}
-              <div class="item">{{#verb verb}}{{/verb}} {{summary}}</div>
+              <div class="item">
+                {{#verb verb}}{{/verb}}
+
+                {{#if deprecated}}
+                  <del>{{summary}}</del>
+                {{else}}
+                  {{summary}}
+                {{/if}}
+
+                {{#if deprecated}}
+                  <span class="ui tiny label">deprecated</span>
+                {{/if}}
+              </div>
             {{/each}}
 
           </div>

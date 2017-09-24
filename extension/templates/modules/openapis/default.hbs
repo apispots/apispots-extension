@@ -36,7 +36,14 @@
           {{#each bookmarks}}
           <div class="ui segment  left aligned">
             <img class="ui avatar image" src="../../../assets/images/logos/logo-32.png">
-            <a class="header" href="/pages/openapis.html?spec={{specUrl}}">{{title}}</a>
+            <a class="header" href="/pages/openapis.html?spec={{specUrl}}"
+              data-tooltip="{{specUrl}}">{{title}}</a>
+            <div class="right floated">
+                <i class="remove large red circle outline icon clickable"
+                  title="Remove spot bookmark"
+                  data-action="remove bookmark"
+                  data-spec="{{specUrl}}"></i>
+            </div>
           </div>
           {{/each}}
 

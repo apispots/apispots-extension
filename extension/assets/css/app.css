@@ -1,10 +1,10 @@
+
 /*******************************
         Application
 *******************************/
 body {
-  font-size: 16px;
+  font-size: 14px;
 }
-
 
 .ui.modal>.content {
   font-size: 14px!important;
@@ -14,7 +14,13 @@ body {
   min-height: 600px;
 }
 
+.right.floated {
+  float: right;
+}
 
+.clickable {
+  cursor: pointer;
+}
 
 /*******************************
   Fixed top menu
@@ -53,10 +59,9 @@ body {
   padding: 2em 0em 2em;
 }
 
-
-.main.container>p {
-  line-height: 1.5;
-  color: rgba(0, 0, 0, 0.8);
+.main.container .introduction p, .main.container .tab > p, .main.container > p {
+  font-size: 16px;
+  line-height: 2;
 }
 
 
@@ -92,4 +97,25 @@ body {
   max-height: 600px;
   overflow-y: auto;
   overflow-x: auto;
+}
+
+.ui.card>.content .play.icon, .ui.cards>.card>.content .play.icon {
+    cursor: pointer;
+    opacity: .75;
+    -webkit-transition: color .1s ease;
+    transition: color .1s ease;
+}
+
+
+.ui.card>.content .play.icon:hover,.ui.cards>.card>.content .play.icon:hover {
+    opacity: 1;
+    color: #21ba45
+}
+
+
+/*******************************
+  Story player
+*******************************/
+.story.part .visualization {
+  height: 400px;
 }
