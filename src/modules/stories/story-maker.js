@@ -451,6 +451,11 @@ export default (function() {
       model.xmlSupported = true;
     }
 
+    if (_.includes(operation.produces, 'application/csv') ||
+        _.includes(operation.produces, 'text/csv')) {
+      model.csvSupported = true;
+    }
+
     // render the template
     const $cnt = $('.modal #step-contents');
     const html = tplStepVisualize(model);
