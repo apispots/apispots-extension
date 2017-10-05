@@ -48,47 +48,64 @@ export default (function() {
         StoryManager.getStory(_api.specUrl, data.storyId)
           .then(story => {
             // set the story instance
-            _story = story;
-            cb();
+            // _story = story;
+            cb(null, story);
           })
           .catch(e => {
             cb(e);
           });
       },
 
-      (cb) => {
+      (story, cb) => {
+        // set the credentials manager instance
+        StoryPlayer.setCredentialsManager(CredentialsManager);
 
-        // display the modal
-        const model = {
-          title: _story.definition.title
-        };
-
-        const html = tplStoryPlayer(model);
-        $modal = $(html);
-
-        $modal.modal({
-          closable: false,
-          duration: 100,
-          onVisible: () => {
-
-            $modal.modal('refresh');
-            cb();
-          },
-          onHidden: () => {
-            // clear local data
-            _resetData();
-          }
-        }).modal('show');
-
+        // play the story and return a promise
+        StoryPlayer.play(story)
+          .then(() => {
+            cb(null, story);
+          })
+          .catch(cb);
       }
 
-    ], (e) => {
+      // (cb) => {
+      //
+      //   // display the modal
+      //   const model = {
+      //     title: _story.definition.title
+      //   };
+      //
+      //   const html = tplStoryPlayer(model);
+      //   $modal = $(html);
+      //
+      //   $modal.modal({
+      //     closable: false,
+      //     duration: 100,
+      //     onVisible: () => {
+      //
+      //       $modal.modal('refresh');
+      //       cb();
+      //     },
+      //     onHidden: () => {
+      //       // clear local data
+      //       _resetData();
+      //     }
+      //   }).modal('show');
+      //
+      // }
+
+    ], (e, story) => {
       if (e) {
         console.error(e);
       }
 
-      // play the story
-      _playStory();
+      postal.publish({
+        channel: 'stories',
+        topic: 'story completed',
+        data: {
+          story
+        }
+      });
 
     });
 
@@ -108,34 +125,6 @@ export default (function() {
     $modal = null;
   };
 
-
-  /**
-   * Plays the current data story.
-   * @return {[type]} [description]
-   */
-  const _playStory = function() {
-
-    // set the credentials manager instance
-    StoryPlayer.setCredentialsManager(CredentialsManager);
-
-    // play the story
-    StoryPlayer.play(_story)
-      .then(() => {
-
-        // hide the loader
-        const $loader = $('.modal .story.output .load');
-        $loader.fadeOut(() => {
-          $loader.remove();
-
-          // visualize the story
-          StoryVisualizer.visualize(_story);
-        });
-      })
-      .catch(e => {
-        console.error('story failed to execute', e);
-      });
-
-  };
 
   /**
    * Called when the user has

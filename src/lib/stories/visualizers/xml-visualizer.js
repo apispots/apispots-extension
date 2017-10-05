@@ -29,7 +29,12 @@ export default class XmlVisualizer extends Visualizer {
     const editor = ace.edit($(container).get(0));
     editor.setTheme('ace/theme/chrome');
     editor.session.setMode('ace/mode/xml');
-    editor.setValue(xml);
+    try {
+      editor.setValue(xml);
+    } catch (e) {
+
+    }
+
     editor.clearSelection();
     editor.setReadOnly(true);
     editor.resize();

@@ -32,8 +32,11 @@ executable unit.
 
   {{#each stories}}
 
-    <div class="story card" data-id="{{id}}">
+    <div class="ui story card" data-id="{{id}}">
       <div class="content">
+        <div class="ui dimmer">
+          <div class="ui indeterminate text loader">Playing story...</div>
+        </div>
         <div class="header">{{title}}</div>
         <div class="meta">
           {{#if tsHuman}}
@@ -45,12 +48,19 @@ executable unit.
         </div>
       </div>
       <div class="extra content">
-        <span class="left floated play"
+
+        <button class="ui icon button tiny basic compact left floated"
           data-tooltip="Play story"
           data-action="play story"
           data-id="{{id}}">
           <i class="play icon"></i>
-        </span>
+        </button>
+
+        <div class="left floated result">
+          <span class="verb ui circular label mini empty status code"></span>
+          <span class="status text"></span>
+        </div>
+
         <span class="right floated settings">
           <div class="ui icon top left pointing dropdown"
             data-tooltip="Settings">

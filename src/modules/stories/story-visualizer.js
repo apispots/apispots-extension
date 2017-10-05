@@ -4,6 +4,7 @@
  */
 import _ from 'lodash';
 import postal from 'postal';
+import FileSaver from 'file-saver';
 
 import JsonVisualizer from '../../lib/stories/visualizers/json-visualizer';
 import TableVisualizer from '../../lib/stories/visualizers/table-visualizer';
@@ -103,9 +104,19 @@ export default (function() {
     if ($vis.length > 0) {
 
       // if the dataset is empty, exit now
-      if (_.isEmpty(part.output.data)) {
+      if (typeof part.output.data === 'undefined') {
         return;
       }
+
+      // if the output is a Blob,
+      // download it
+      if (part.output.data instanceof Blob) {
+        const blob = part.output.data;
+
+        FileSaver.saveAs(blob, 'data.zip');
+        return;
+      }
+
 
       let clazz;
 

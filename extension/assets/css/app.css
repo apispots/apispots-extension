@@ -119,3 +119,17 @@ body {
 .story.part .visualization {
   height: 400px;
 }
+
+.tab .editor {
+  height: 300px;
+  margin-top: 20px;
+}
+
+.story.card .result {
+  margin-left: 10px;
+  display: none;
+}
+
+.story.card .result .code {
+  cursor: help;
+}

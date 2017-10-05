@@ -168,6 +168,10 @@ export default (function() {
         const $el = $(e.currentTarget);
         const storyId = $el.attr('data-id');
 
+        // show the loader
+        const $card = $el.closest('.story.card');
+        $('.dimmer', $card).addClass('active');
+
         postal.publish({
           channel: 'stories',
           topic: 'play story',
@@ -278,6 +282,39 @@ export default (function() {
 
   };
 
+  /**
+   * Called when a story has
+   * completed its execution.
+   * @type {[type]}
+   */
+  const _onStoryCompleted = (data) => {
+
+    const story = data.story;
+    const storyId = story.id;
+
+    console.log(data.story);
+
+    // hide the loader
+    const $card = $(`.story.card[data-id="${storyId}"]`);
+    $('.dimmer', $card).removeClass('active');
+
+    try {
+      // check the results
+      const output = story.parts[0].output;
+
+      const color = (output.ok ? 'green' : 'red');
+      const text = (output.ok ? 'OK' : 'ERROR');
+      $('.result .status.code', $card).addClass(color);
+      $('.result .status.text', $card).text(text);
+
+      // show the results section
+      $('.result', $card).fadeIn();
+
+    } catch (e) {
+      console.error(e);
+    }
+
+  };
 
   // event bindings
   postal.subscribe({
@@ -292,6 +329,11 @@ export default (function() {
     callback: _onSearchStories
   });
 
+  postal.subscribe({
+    channel: 'stories',
+    topic: 'story completed',
+    callback: _onStoryCompleted
+  });
 
   return {
 

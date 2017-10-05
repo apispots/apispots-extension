@@ -9,6 +9,11 @@ import 'flatpickr/dist/flatpickr.min.css';
 import asyncWaterfall from 'async/waterfall';
 import swal from 'sweetalert2';
 import DataStory from 'apispots-lib-stories/lib/stories/data-story';
+import ace from 'brace';
+import 'brace/theme/chrome';
+import 'brace/mode/json';
+import 'brace/mode/xml';
+import 'brace/mode/text';
 
 import StoryManager from '../../lib/stories/story-manager';
 
@@ -225,29 +230,37 @@ export default (function() {
    */
   const _validateStep = function() {
 
-    // get all forms at this step
-    const $forms = $('.modal .form');
+    // get the payload type
+    const payloadType = $('.payload.tabs .item.active').attr('data-tab');
 
-    // validate each form in turn
-    _.each($forms, (form) => {
-      const $form = $(form);
+    // check the selected payload type
+    if (payloadType === 'payload-model') {
 
-      const included = $form.attr('data-include');
+      // get all forms at this step
+      const $forms = $('.modal .form');
 
-      // validate only included forms
-      if (included !== 'false') {
+      // validate each form in turn
+      _.each($forms, (form) => {
+        const $form = $(form);
 
-        $form.form('validate form');
-        const res = $form.form('is valid');
+        const included = $form.attr('data-include');
 
-        $modal.modal('refresh');
+        // validate only included forms
+        if (included !== 'false') {
 
-        if ((!res) ||
-          ((typeof res !== 'boolean') && (!res[res.length - 1]))) {
-          throw new Error('Invalid step input');
+          $form.form('validate form');
+          const res = $form.form('is valid');
+
+          $modal.modal('refresh');
+
+          if ((!res) ||
+            ((typeof res !== 'boolean') && (!res[res.length - 1]))) {
+            throw new Error('Invalid step input');
+          }
         }
-      }
-    });
+      });
+
+    }
 
     // gather step data
     if (_stepId === 'outline') {
@@ -383,13 +396,37 @@ export default (function() {
     const model = {
       title: _api.title,
       parameters: operation.parameters,
-      hasParameters: (!_.isEmpty(operation.parameters))
+      hasParameters: (!_.isEmpty(operation.parameters)),
+      consumes: operation.consumes
     };
+
+    // check if the operation has a payload param (in body)
+    const matches = _.find(operation.parameters, { in: 'body'
+    });
+    model.hasPayload = (!_.isEmpty(matches));
 
     // render the form template
     const $cnt = $('.modal #step-contents');
     const html = tplStepInput(model);
     $cnt.html(html);
+
+    // initialize the tabs
+    $('.payload.tabs .item').tab({
+      onVisible: (tabPath) => {
+
+        // when the ray payload tab is clicked
+        if (tabPath === 'payload-raw') {
+
+          // load the ACE editor
+          const editor = ace.edit($('.tab .editor').get(0));
+          editor.setTheme('ace/theme/chrome');
+          editor.session.setMode('ace/mode/json');
+          editor.$blockScrolling = Infinity;
+        }
+
+        $modal.modal('refresh');
+      }
+    });
 
     // initialize calendars
     flatpickr('.ui.input[data-format="date"]', {});
@@ -401,7 +438,7 @@ export default (function() {
     _bindSchemaManager();
 
     // initialize dropdowns
-    _.each($('.ui.dropdown', $cnt), (el) => {
+    _.each($('.form .ui.dropdown', $cnt), (el) => {
 
       const $el = $(el);
       const opts = {};
@@ -412,6 +449,25 @@ export default (function() {
 
       // create the dropdown
       $el.dropdown(opts);
+    });
+
+    // content type drop down
+    $('[name="payload-content-type"]').dropdown({
+      onChange: (value) => {
+
+        // change the session mode of the editor
+        const editor = ace.edit($('.tab .editor').get(0));
+
+        let mode = 'ace/mode/json';
+
+        if (value === 'application/xml') {
+          mode = 'ace/mode/xml';
+        } else if (value === 'text/plain') {
+          mode = 'ace/mode/text';
+        }
+
+        editor.session.setMode(mode);
+      }
     });
 
     // populate with existing data
@@ -452,7 +508,7 @@ export default (function() {
     }
 
     if (_.includes(operation.produces, 'application/csv') ||
-        _.includes(operation.produces, 'text/csv')) {
+      _.includes(operation.produces, 'text/csv')) {
       model.csvSupported = true;
     }
 
@@ -867,6 +923,13 @@ export default (function() {
       // the dataset object
       const dataset = {};
 
+      // get the payload type
+      let payloadType = $('.payload.tabs .item.active').attr('data-tab');
+
+      if (_.isEmpty(payloadType)) {
+        payloadType = 'payload-model';
+      }
+
       // get all forms in the view
       const $form = $('.modal .form').eq(0);
 
@@ -970,36 +1033,74 @@ export default (function() {
       // traverse the top-level form
       traverseForm($form, dataset);
 
-      /*
-       * set the story input
-       */
-      _story.parts[0].input = {
+      // set the story input
+      const input = {
+        payloadType,
         parameters: dataset
       };
+
+      if (payloadType === 'payload-raw') {
+        // get the raw payload from the editor
+        const editor = ace.edit($('.tab .editor').get(0));
+        const payload = editor.session.getValue();
+
+        const opId = _story.parts[0].operationId;
+        const operation = _api.getOperation(opId);
+
+        // find the 'in body' param of the operation
+        const match = _.find(operation.parameters, { in: 'body' });
+
+        // replace the correct parameter
+        // name with the payload
+        if (!_.isEmpty(match)) {
+          input.parameters[match.name] = payload;
+        }
+      }
+
+      // get the selected content type
+      const $dd = $('[name="payload-content-type"]');
+
+      if ($dd.length === 1) {
+        input.contentType = $dd.dropdown('get value');
+      }
+
+      // get the part
+      const part = _story.parts[0];
+
+      // set the input
+      part.input = input;
 
     } catch (e) {
       console.error('Failed to gather input dataset', e);
     }
   };
 
-
   /**
    * Populates the input dataset
-   * section with in-memory
-   * data.
+   * form with the saved part's data.
    * @return {[type]} [description]
    */
   const _populateInputDataset = function() {
 
     try {
 
-      if (_.isEmpty(_story.parts[0].input) ||
-        _.isEmpty(_story.parts[0].input.parameters)) {
+      const part = _story.parts[0];
+
+      if (_.isEmpty(part.input)) {
         return;
       }
 
+      // the default payload type
+      let payloadType = 'payload-model';
+
+      // if there is a set payload type
+      // on the input section, use this
+      if (!_.isEmpty(part.input.payloadType)) {
+        payloadType = part.input.payloadType;
+      }
+
       // get the story input (if exists)
-      const dataset = _story.parts[0].input.parameters;
+      const dataset = part.input.parameters;
 
       // get all forms in the view
       const $form = $('.modal .form').eq(0);
@@ -1070,7 +1171,6 @@ export default (function() {
                 // select box
 
                 let values;
-                // const allowAdditions = (typeof $ctl.attr('data-allowAdditions') !== 'undefined');
 
                 if (_.isArray(value)) {
                   // if this is an array of values,
@@ -1087,8 +1187,6 @@ export default (function() {
 
                   $ctl.dropdown('set selected', value);
                 }
-
-
               }
             }
           });
@@ -1099,8 +1197,6 @@ export default (function() {
           if (atLeastOneUsed) {
             _switchStateOfOptionalModels(true, $form);
           }
-
-
         } catch (e) {
           console.error(e);
         }
@@ -1117,6 +1213,49 @@ export default (function() {
 
       // traverse the top-level form
       traverseForm($form, dataset);
+
+      // switch to the selected payload type
+      $('.payload.tabs .item').tab('change tab', payloadType);
+
+      // if the saved payload type is 'raw'
+      if (payloadType === 'payload-raw') {
+
+        // set the selected content type
+        if (!_.isEmpty(part.input.contentType)) {
+          const $dd = $('[name="payload-content-type"]');
+
+          if ($dd.length === 1) {
+            $dd.dropdown('set selected', part.input.contentType);
+          }
+        }
+
+        // find the name of the 'in body' parameter
+        const opId = part.operationId;
+        const operation = _api.getOperation(opId);
+        const match = _.find(operation.parameters, { in: 'body' });
+        const name = match.name;
+
+        const payload = dataset[name];
+
+        // raw payload has been used, so
+        // populate the editor
+        const editor = ace.edit($('.tab .editor').get(0));
+        editor.setTheme('ace/theme/chrome');
+
+        let mode = 'ace/mode/json';
+
+        if (part.input.contentType === 'application/xml') {
+          mode = 'ace/mode/xml';
+        } else if (part.input.contentType === 'text/plain') {
+          mode = 'ace/mode/text';
+        }
+
+        editor.session.setMode(mode);
+        editor.setValue(payload);
+        editor.clearSelection();
+        editor.gotoLine(0, 0);
+        editor.resize();
+      }
 
     } catch (e) {
       // silent

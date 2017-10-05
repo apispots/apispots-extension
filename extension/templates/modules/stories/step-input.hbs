@@ -1,66 +1,97 @@
-<h3 class="ui dividing header">Fill in the story's input dataset</h3>
+
+<h3 class="ui dividing header">Enter the story input</h3>
 
 {{#if hasParameters}}
 
-<div class="ui form equal width" data-schema="{{type}}" data-root>
 
-  {{#each parameters}}
+  <div class="ui form equal width" data-schema="{{type}}" data-root>
 
-    {{#if this.schema}}
+    {{#each parameters}}
 
-      <div class="schema input" data-type="definition"
-        data-schema="{{type}}"
-        data-property="{{name}}"></div>
+      {{#if this.schema}}
 
-    {{else}}
+        {{#eq in "body"}}
 
-      <div class="eight wide field"
-        {{#if description}}data-tooltip="{{description}}"{{/if}}
-        data-position="right center"
-        data-property="{{name}}"
-        data-root
-        >
-        <label>{{name}}</label>
+          <h4 class="ui header">Choose a payload type</h4>
 
-        {{#eq fieldType "select"}}
-          <select class="ui dropdown parameter search selection"
-          name="{{name}}"
-          data-rules="{{rules}}"
-          {{#if selectMultiple}}multiple=""{{/if}}
-          {{#if fieldAllowAdditions}}data-allowAdditions="true"{{/if}}
-
-          >
-            <option value=""></option>
-            {{#each fieldValues}}
-              <option value="{{this}}" {{#eq defaultValue this}}selected{{/eq}}>{{this}}</option>
-            {{/each}}
-          </select>
-        {{/eq}}
-
-        {{#eq fieldType "input"}}
-          <input class="ui input parameter" type="{{inputType}}" placeholder="{{description}}" name="{{name}}"
-            data-format="{{format}}"
-            data-rules="{{rules}}"
-            >
-        {{/eq}}
-
-        {{#eq fieldType "file"}}
-          <div class="ui visible warning message">
-            <div class="header">
-              Sorry... unsupported feature :(
-            </div>
-            <p>
-              The file upload feature is not supported yet.
-            </p>
+          <div class="ui pointing secondary menu payload tabs">
+            <a class="item active" data-tab="payload-model">Model-based</a>
+            <a class="item" data-tab="payload-raw">Raw</a>
           </div>
+
+          <div class="ui bottom attached tab active" data-tab="payload-model">
+
+            <div class="schema input" data-type="definition"
+              data-schema="{{type}}"
+              data-property="{{name}}"
+              data-in="body"></div>
+
+          </div>
+
+          <div class="ui bottom attached tab" data-tab="payload-raw">
+
+            <h4 class="ui header">Choose a content type</h4>
+            <select class="ui dropdown" name="payload-content-type">
+              <option value="application/json" selected>JSON (application/json)</option>
+              <option value="application/xml">XML (application/xml)</option>
+              <option value="text/plain">Text (text/plain)</option>
+            </select>
+
+            <div class="editor">
+            </div>
+          </div>
+
         {{/eq}}
-      </div>
 
-    {{/if}}
+      {{else}}
 
-  {{/each}}
+        <div class="eight wide field"
+          {{#if description}}data-tooltip="{{description}}"{{/if}}
+          data-position="right center"
+          data-property="{{name}}"
+          data-root
+          >
+          <label>{{name}}</label>
 
-</div>
+          {{#eq fieldType "select"}}
+            <select class="ui dropdown parameter search selection"
+            name="{{name}}"
+            data-rules="{{rules}}"
+            {{#if selectMultiple}}multiple=""{{/if}}
+            {{#if fieldAllowAdditions}}data-allowAdditions="true"{{/if}}
+            >
+              <option value=""></option>
+              {{#each fieldValues}}
+                <option value="{{this}}" {{#eq defaultValue this}}selected{{/eq}}>{{this}}</option>
+              {{/each}}
+            </select>
+          {{/eq}}
+
+          {{#eq fieldType "input"}}
+            <input class="ui input parameter" type="{{inputType}}" placeholder="{{description}}" name="{{name}}"
+              data-format="{{format}}"
+              data-rules="{{rules}}"
+              >
+          {{/eq}}
+
+          {{#eq fieldType "file"}}
+            <div class="ui visible warning message">
+              <div class="header">
+                Sorry... unsupported feature :(
+              </div>
+              <p>
+                The file upload feature is not supported yet.
+              </p>
+            </div>
+          {{/eq}}
+        </div>
+
+      {{/if}}
+
+    {{/each}}
+
+  </div>
+
 
 {{else}}
   <div class="ui positive message">
