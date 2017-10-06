@@ -6,8 +6,21 @@
 
     <div class="ui cards">
 
-      {{#if jsonSupported}}
       <div class="ui card raised">
+        <div class="content">
+          <img class="ui right floated image avatar" src="../../../../assets/images/stories/visualizations/text.svg">
+          <div class="header">Text</div>
+          <div class="description">
+            Display results in plain text.
+          </div>
+        </div>
+        <div class="ui bottom attached green active button" data-type="text">
+          <i class="check icon"></i> Select
+        </div>
+      </div>
+
+      {{#if jsonSupported}}
+      <div class="ui card">
         <div class="content">
           <img class="ui right floated image avatar" src="../../../../assets/images/stories/visualizations/json.svg">
           <div class="header">JSON</div>
@@ -16,7 +29,7 @@
             format.
           </div>
         </div>
-        <div class="ui bottom attached green active button" data-type="json">
+        <div class="ui bottom attached green button" data-type="json">
           <i class="check icon"></i> Select
         </div>
       </div>
@@ -66,6 +79,8 @@
         </div>
       </div>
       {{/if}}
+
+
 
     </div>
 

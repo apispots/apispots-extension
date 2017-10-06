@@ -233,8 +233,7 @@ export default (function() {
     // get the payload type
     const payloadType = $('.payload.tabs .item.active').attr('data-tab');
 
-    // check the selected payload type
-    if (payloadType === 'payload-model') {
+    if (_.isEmpty(payloadType) || (payloadType !== 'payload-raw')) {
 
       // get all forms at this step
       const $forms = $('.modal .form');

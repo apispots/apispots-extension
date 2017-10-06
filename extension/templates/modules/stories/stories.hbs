@@ -21,20 +21,19 @@ executable unit.
 
   <div class="ui card">
     <div class="content">
-      <div class="header">A new data story</div>
       <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
     </div>
     <div class="ui bottom attached button" data-action="create story">
       <i class="add icon"></i>
-      Create story
+      Create a story
     </div>
   </div>
 
   {{#each stories}}
 
     <div class="ui story card" data-id="{{id}}">
-      <div class="content">
-        <div class="ui dimmer">
+      <div class="ui content blurring">
+        <div class="ui inverted dimmer">
           <div class="ui indeterminate text loader">Playing story...</div>
         </div>
         <div class="header">{{title}}</div>
@@ -59,6 +58,7 @@ executable unit.
         <div class="left floated result">
           <span class="verb ui circular label mini empty status code"></span>
           <span class="status text"></span>
+          <small>in <span class="duration"></span> secs</small>
         </div>
 
         <span class="right floated settings">

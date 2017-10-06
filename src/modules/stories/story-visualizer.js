@@ -3,14 +3,17 @@
  * @return {[type]} [description]
  */
 import _ from 'lodash';
-import postal from 'postal';
+import swal from 'sweetalert2';
 import FileSaver from 'file-saver';
+import moment from 'moment';
 
+import TextVisualizer from '../../lib/stories/visualizers/text-visualizer';
 import JsonVisualizer from '../../lib/stories/visualizers/json-visualizer';
 import TableVisualizer from '../../lib/stories/visualizers/table-visualizer';
 import CsvVisualizer from '../../lib/stories/visualizers/csv-visualizer';
 import XmlVisualizer from '../../lib/stories/visualizers/xml-visualizer';
 
+import tplStoryPlayer from '../../../extension/templates/modules/stories/story-visualizer.hbs';
 import tplPartVisualization from '../../../extension/templates/modules/stories/part-visualization.hbs';
 
 export default (function() {
@@ -19,17 +22,47 @@ export default (function() {
    * Private
    */
 
+  let _story = null;
+
+  // the modal instance
+  let $modal;
 
   /**
-    * Visualizes a story.
-    * @param  {[type]} story [description]
-    * @return {[type]}       [description]
-    */
+   * Visualizes a story.
+   * @param  {[type]} story [description]
+   * @return {[type]}       [description]
+   */
   const _visualize = function(story) {
 
     if (_.isEmpty(story)) {
       throw new Error('Undefined story');
     }
+
+    // reset old data
+    // _reset();
+
+    _story = story;
+
+    // display the modal
+    const model = {
+      title: story.definition.title
+    };
+
+    const html = tplStoryPlayer(model);
+    $modal = $(html);
+
+    $modal.modal({
+      closable: false,
+      duration: 100,
+      onVisible: () => {
+
+        $modal.modal('refresh');
+      },
+      onHidden: () => {
+        // reset
+        _reset();
+      }
+    }).modal('show');
 
     // get story parts
     const parts = story.parts;
@@ -40,6 +73,22 @@ export default (function() {
       // visualize each part individually
       _visualizeStoryPart(part, idx);
     });
+
+
+  };
+
+
+  /**
+   * Resets local data.
+   * @return {[type]} [description]
+   */
+  const _reset = function() {
+
+    _story = null;
+
+    // destroy the modal instance
+    $modal.remove();
+    $modal = null;
   };
 
 
@@ -67,6 +116,10 @@ export default (function() {
       type: part.visualization.type
     };
 
+    // add the part duration
+    const duration = moment.duration(part.output.duration).asSeconds().toFixed(2);
+    model.duration = duration;
+
     const html = tplPartVisualization(model);
     const $html = $(html);
 
@@ -80,22 +133,7 @@ export default (function() {
     });
 
     // export output button
-    $('.modal .export.output [data-action="export as flat csv"]').on('click', (e) => {
-
-      const $el = $(e.currentTarget);
-      const partIndex = $el.parents('.story.part').attr('data-partidx');
-      const type = $el.attr('data-type');
-
-      postal.publish({
-        channel: 'stories',
-        topic: 'export output',
-        data: {
-          partIndex,
-          type
-        }
-      });
-    });
-
+    $('.modal .export.output [data-action="save raw data"]').on('click', _onSaveRawData);
 
     // get the visualization container
     const $vis = $('.visualization', $cnt);
@@ -108,29 +146,25 @@ export default (function() {
         return;
       }
 
-      // if the output is a Blob,
-      // download it
-      if (part.output.data instanceof Blob) {
-        const blob = part.output.data;
-
-        FileSaver.saveAs(blob, 'data.zip');
-        return;
-      }
-
-
       let clazz;
 
       // visualize based on the selected type
       const type = part.visualization.type;
 
-      if (type === 'json') {
-        clazz = new JsonVisualizer();
-      } else if (type === 'table') {
-        clazz = new TableVisualizer();
-      } else if (type === 'csv') {
-        clazz = new CsvVisualizer();
-      } else if (type === 'xml') {
-        clazz = new XmlVisualizer();
+      if (part.output.ok) {
+        if (type === 'text') {
+          clazz = new TextVisualizer();
+        } else if (type === 'json') {
+          clazz = new JsonVisualizer();
+        } else if (type === 'table') {
+          clazz = new TableVisualizer();
+        } else if (type === 'csv') {
+          clazz = new CsvVisualizer();
+        } else if (type === 'xml') {
+          clazz = new XmlVisualizer();
+        }
+      } else {
+        clazz = new TextVisualizer();
       }
 
       clazz.visualize(part, $vis);
@@ -152,12 +186,42 @@ export default (function() {
       .on('click', function() {
         $(this)
           .closest('.message')
-          .transition('fade')
-        ;
+          .transition('fade');
       });
 
     // refresh the modal
     $('.modal').modal('refresh');
+  };
+
+  /**
+   * Saves the output as raw data.
+   * @param  {[type]} e [description]
+   * @return {[type]}   [description]
+   */
+  const _onSaveRawData = (e) => {
+
+    const $el = $(e.currentTarget);
+    const idx = $el.parents('.story.part').attr('data-partidx');
+
+    const output = _story.outputs[idx];
+
+    swal({
+      title: 'Enter a filename',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      allowOutsideClick: false
+    }).then((filename) => {
+
+      const blob = new Blob([output.text], {
+        type: output.headers['content-type']
+      });
+
+      FileSaver.saveAs(blob, filename);
+    })
+      .catch(() => {
+        // silent
+      });
   };
 
 

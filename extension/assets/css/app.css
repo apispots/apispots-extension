@@ -117,7 +117,7 @@ body {
   Story player
 *******************************/
 .story.part .visualization {
-  height: 400px;
+  height: 300px;
 }
 
 .tab .editor {
@@ -130,6 +130,6 @@ body {
   display: none;
 }
 
-.story.card .result .code {
-  cursor: help;
+.story.visualizer .story.part .visualization {
+  margin-top: 10px;
 }

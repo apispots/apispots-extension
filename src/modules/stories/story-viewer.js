@@ -4,8 +4,10 @@
  */
 import postal from 'postal';
 import _ from 'lodash';
+import moment from 'moment';
 import asyncWaterfall from 'async/waterfall';
 import StoryManager from '../../lib/stories/story-manager';
+import './story-player';
 
 import tplCanvas from '../../../extension/templates/modules/stories/canvas.hbs';
 import tplStories from '../../../extension/templates/modules/stories/stories.hbs';
@@ -163,24 +165,7 @@ export default (function() {
       });
 
       // play a story
-      $('.ui.cards.stories .story [data-action="play story"]').on('click', (e) => {
-
-        const $el = $(e.currentTarget);
-        const storyId = $el.attr('data-id');
-
-        // show the loader
-        const $card = $el.closest('.story.card');
-        $('.dimmer', $card).addClass('active');
-
-        postal.publish({
-          channel: 'stories',
-          topic: 'play story',
-          data: {
-            api: _api,
-            storyId
-          }
-        });
-      });
+      $('.ui.cards.stories .story [data-action="play story"]').on('click', _onPlayStory);
 
       // edit a story
       $('.ui.cards.stories .story [data-action="edit story"]').on('click', (e) => {
@@ -283,6 +268,33 @@ export default (function() {
   };
 
   /**
+   * Initiates a new story play.
+   * @param  {[type]} e [description]
+   * @return {[type]}   [description]
+   */
+  const _onPlayStory = (e) => {
+    const $el = $(e.currentTarget);
+    const storyId = $el.attr('data-id');
+
+    // disable all other stories play buttons
+    $('.story.card [data-action="play story"]').attr('disabled', 'disabled');
+
+    // show the loader
+    const $card = $el.closest('.story.card');
+    $('.dimmer', $card).addClass('active');
+
+    postal.publish({
+      channel: 'stories',
+      topic: 'play story',
+      data: {
+        api: _api,
+        storyId
+      }
+    });
+  };
+
+
+  /**
    * Called when a story has
    * completed its execution.
    * @type {[type]}
@@ -292,23 +304,27 @@ export default (function() {
     const story = data.story;
     const storyId = story.id;
 
-    console.log(data.story);
-
     // hide the loader
     const $card = $(`.story.card[data-id="${storyId}"]`);
     $('.dimmer', $card).removeClass('active');
 
+    // enable all stories play buttons
+    $('.story.card [data-action="play story"]').attr('disabled', null);
+
     try {
-      // check the results
-      const output = story.parts[0].output;
+      // get the story output
+      const output = story.output;
 
       const color = (output.ok ? 'green' : 'red');
       const text = (output.ok ? 'OK' : 'ERROR');
-      $('.result .status.code', $card).addClass(color);
+      const duration = moment.duration(output.duration).asSeconds().toFixed(2);
+      $('.result .status.code', $card).removeClass('green red').addClass(color);
       $('.result .status.text', $card).text(text);
+      $('.result .duration', $card).text(duration);
 
       // show the results section
       $('.result', $card).fadeIn();
+
 
     } catch (e) {
       console.error(e);

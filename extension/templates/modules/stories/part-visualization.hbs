@@ -3,60 +3,60 @@
 <div class="ui segment story part {{#if output.ok}}green{{else}}red{{/if}}"
   data-partidx="{{index}}">
 
-  {{#if output.ok}}
-    <div>
+
+  <div>
+
+    {{#if output.ok}}
       <span class="ui green circular label empty"></span>
       <span class="ui basic green label">
         {{output.status}}
       </span>
-      {{output.statusText}}
+    {{else}}
+      <span class="ui red circular label empty"></span>
+      <span class="ui basic red label">
+        {{output.status}}
+      </span>
+    {{/if}}
 
-      {{#if output.data}}
-
-        <div class="ui right floated export output">
-
-          <div class="ui icon top left pointing dropdown"
-            data-tooltip="Download output dataset">
-            <i class="download icon"></i>
-            <div class="menu">
-              <div class="item"
-                data-action="export as flat csv"
-                data-id="{{id}}">
-                <i class="excel file icon"></i>
-                Flat CSV
-              </div>
-            </div>
-          </div>
-
-        </div>
-      {{/if}}
-
-    </div>
-
-    <div>
-
-      {{#if output.data}}
-        <div class="visualization" data-type="{{type}}"></div>
-      {{else}}
-
-        {{#if output.text}}
-
-            <span class="ui basic orange label">
-              {{output.status}}
-            </span>
-            {{output.text}}
-        {{/if}}
-
-      {{/if}}
-
-    </div>
-
-  {{else}}
-    <span class="ui red circular label empty"></span>
-    <span class="ui basic red label">
-      Unknown
-    </span>
     {{output.statusText}}
-  {{/if}}
+
+    <small>in <span class="duration">{{duration}}</span> secs</small>
+
+    {{#if output.data}}
+
+      <div class="ui right floated export output">
+
+        <button class="ui basic compact tiny icon button"
+          data-action="save raw data"
+          data-id="{{id}}" >
+          <i class="save icon"></i>
+          Save
+        </button>
+
+
+      </div>
+    {{/if}}
+
+  </div>
+
+  <div>
+
+    {{#if output.data}}
+      <div class="visualization" data-type="{{type}}"></div>
+    {{else}}
+
+      {{#if output.text}}
+
+          <span class="ui basic orange label">
+            {{output.status}}
+          </span>
+          {{output.text}}
+      {{/if}}
+
+    {{/if}}
+
+  </div>
+
+
 
 </div>

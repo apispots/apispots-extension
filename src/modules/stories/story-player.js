@@ -5,14 +5,14 @@
 import postal from 'postal';
 import asyncWaterfall from 'async/waterfall';
 import FileSaver from 'file-saver';
-import jsonexport from 'jsonexport';
+import _ from 'lodash';
+import swal from 'sweetalert2';
 import StoryPlayer from 'apispots-lib-stories/lib/stories/story-player';
 
 import StoryVisualizer from './story-visualizer';
 import StoryManager from '../../lib/stories/story-manager';
 import CredentialsManager from '../../lib/openapi/browser-credentials-manager';
 
-import tplStoryPlayer from '../../../extension/templates/modules/stories/story-player.hbs';
 
 export default (function() {
 
@@ -20,15 +20,6 @@ export default (function() {
    * Private
    */
 
-
-  // the API definition instance
-  let _api = null;
-
-  // the data story instance
-  let _story;
-
-  // the modal instance
-  let $modal;
 
   /**
    * Called when a story needs to be
@@ -38,14 +29,12 @@ export default (function() {
    */
   const _onPlayStory = function(data) {
 
-    // remember the API definition
-    _api = data.api;
-
     asyncWaterfall([
 
       (cb) => {
+
         // get the story instance
-        StoryManager.getStory(_api.specUrl, data.storyId)
+        StoryManager.getStory(data.api.specUrl, data.storyId)
           .then(story => {
             // set the story instance
             // _story = story;
@@ -68,37 +57,12 @@ export default (function() {
           .catch(cb);
       }
 
-      // (cb) => {
-      //
-      //   // display the modal
-      //   const model = {
-      //     title: _story.definition.title
-      //   };
-      //
-      //   const html = tplStoryPlayer(model);
-      //   $modal = $(html);
-      //
-      //   $modal.modal({
-      //     closable: false,
-      //     duration: 100,
-      //     onVisible: () => {
-      //
-      //       $modal.modal('refresh');
-      //       cb();
-      //     },
-      //     onHidden: () => {
-      //       // clear local data
-      //       _resetData();
-      //     }
-      //   }).modal('show');
-      //
-      // }
-
     ], (e, story) => {
       if (e) {
         console.error(e);
       }
 
+      // publish the event
       postal.publish({
         channel: 'stories',
         topic: 'story completed',
@@ -107,46 +71,56 @@ export default (function() {
         }
       });
 
+      // process the story output
+      _processStoryOutput(story);
+
     });
 
-
   };
 
 
   /**
-   * Resets local data.
-   * @return {[type]} [description]
+   * Processes the story ouput.
+   * @param  {[type]} story [description]
+   * @return {[type]}       [description]
    */
-  const _resetData = function() {
-    _story = null;
+  const _processStoryOutput = (story) => {
+    try {
 
-    // destroy the modal instance
-    $modal.remove();
-    $modal = null;
-  };
+      const output = story.output;
 
+      if (output.data instanceof Blob) {
+        // output type is Blob,
+        // so download now
+        const blob = output.data;
 
-  /**
-   * Called when the user has
-   * selected to export the story
-   * output.
-   * @return {[type]} [description]
-   */
-  const _onExportOutput = (data) => {
+        swal({
+          title: 'Enter a filename',
+          input: 'text',
+          showCancelButton: true,
+          confirmButtonText: 'Save',
+          allowOutsideClick: false
+        }).then((filename) => {
 
-    const idx = data.partIndex;
-    const output = _story.parts[idx].output;
+          FileSaver.saveAs(blob, filename);
+        })
+          .catch(() => {
+            // silent
+            FileSaver.saveAs(blob);
+          });
+      } else if ((typeof output.data !== 'undefined')
+                || (!_.isEmpty(output.text))) {
 
-    // export the data as a flat CSV
-    jsonexport(output.data, (err, csv) => {
-      if (err) {
-        console.error(err);
+        // visualize the output data
+        StoryVisualizer.visualize(story);
       } else {
-        const blob = new Blob([csv], {type: 'text/csv'});
-        FileSaver.saveAs(blob, 'data.csv');
-      }
-    });
+        // do nothing
 
+      }
+
+    } catch (e) {
+      // silent
+    }
   };
 
 
@@ -155,12 +129,6 @@ export default (function() {
     channel: 'stories',
     topic: 'play story',
     callback: _onPlayStory
-  });
-
-  postal.subscribe({
-    channel: 'stories',
-    topic: 'export output',
-    callback: _onExportOutput
   });
 
 
