@@ -319,12 +319,14 @@ export default (function() {
     /*
      * populate with existing data
      */
+    const $title = $('[name="title"]', 'form[data-step="outline"]');
 
     // title
-    $('[name="title"]', 'form[data-step="outline"]').val(_story.definition.title);
+    $title.val(_story.definition.title);
 
     // description
-    $('[name="description"]', 'form[data-step="outline"]').val(_story.definition.description);
+    const $descr = $('[name="description"]', 'form[data-step="outline"]');
+    $descr.val(_story.definition.description);
 
     // operation
     const $select = $('[name="operation"]', 'form[data-step="outline"]');
@@ -336,7 +338,14 @@ export default (function() {
     }
 
     // dropdown
-    $('.modal .dropdown').dropdown();
+    $('.modal .dropdown').dropdown({
+      onChange: (value, text) => {
+
+        // pre-populate with the selected
+        // operation title for convenience
+        $title.val(text);
+      }
+    });
 
     // form validators
     $('.modal form[data-step="outline"]')
@@ -400,8 +409,7 @@ export default (function() {
     };
 
     // check if the operation has a payload param (in body)
-    const matches = _.find(operation.parameters, { in: 'body'
-    });
+    const matches = _.find(operation.parameters, { in: 'body'});
     model.hasPayload = (!_.isEmpty(matches));
 
     // render the form template
@@ -532,8 +540,10 @@ export default (function() {
     });
 
     // set any previously selected type
-    if (!_.isEmpty(_story.parts[0].visualization)) {
-      const type = _story.parts[0].visualization.type;
+    const [{visualization}] = _story.parts;
+
+    if (!_.isEmpty(visualization)) {
+      const {type} = visualization;
       $(`.card .button[data-type="${type}"]`, $cnt).trigger('click');
     }
 
@@ -1094,8 +1104,10 @@ export default (function() {
 
       // if there is a set payload type
       // on the input section, use this
-      if (!_.isEmpty(part.input.payloadType)) {
-        payloadType = part.input.payloadType;
+      const {payloadType: type} = part.input;
+
+      if (!_.isEmpty(type)) {
+        payloadType = type;
       }
 
       // get the story input (if exists)
@@ -1232,7 +1244,7 @@ export default (function() {
         const opId = part.operationId;
         const operation = _api.getOperation(opId);
         const match = _.find(operation.parameters, { in: 'body' });
-        const name = match.name;
+        const {name} = match;
 
         const payload = dataset[name];
 

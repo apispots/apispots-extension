@@ -6,6 +6,8 @@ import postal from 'postal';
 import _ from 'lodash';
 import moment from 'moment';
 import asyncWaterfall from 'async/waterfall';
+import swal from 'sweetalert2';
+
 import StoryManager from '../../lib/stories/story-manager';
 import './story-player';
 
@@ -35,7 +37,7 @@ export default (function() {
 
     // bind listeners
     $('input[data-action="search"]').on('keyup', (e) => {
-      const key = e.key;
+      const {key} = e;
 
       if (key.toLowerCase() === 'enter') {
         _onSearch();
@@ -183,6 +185,9 @@ export default (function() {
         });
       });
 
+      // duplicate a story
+      $('.ui.cards.stories .story [data-action="duplicate story"]').on('click', _onDuplicateStory);
+
       // delete a story
       $('.ui.cards.stories .story [data-action="delete story"]').on('click', (e) => {
 
@@ -242,7 +247,7 @@ export default (function() {
    */
   const _onSearchStories = (data) => {
 
-    const phrase = data.phrase;
+    const {phrase} = data;
 
     if (_.isEmpty(phrase)) {
       // if no phrase is passed,
@@ -301,7 +306,7 @@ export default (function() {
    */
   const _onStoryCompleted = (data) => {
 
-    const story = data.story;
+    const {story} = data;
     const storyId = story.id;
 
     // hide the loader
@@ -313,7 +318,7 @@ export default (function() {
 
     try {
       // get the story output
-      const output = story.output;
+      const {output} = story;
 
       const color = (output.ok ? 'green' : 'red');
       const text = (output.ok ? 'OK' : 'ERROR');
@@ -331,6 +336,40 @@ export default (function() {
     }
 
   };
+
+  /**
+   * On duplicate story action.
+   * @param  {[type]} e [description]
+   * @return {[type]}   [description]
+   */
+  const _onDuplicateStory = (e) => {
+
+    const $el = $(e.currentTarget);
+    const storyId = $el.attr('data-id');
+    const {specUrl} = _api;
+
+    swal({
+      title: 'Enter a title for the new story',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      allowOutsideClick: false
+    }).then((title) => {
+
+      // duplicate the story
+      StoryManager.duplicate(specUrl, storyId, title)
+        .then(() => {
+
+          // reload the stories
+          _loadStories();
+        });
+    })
+      .catch(() => {
+        // silent
+      });
+
+  };
+
 
   // event bindings
   postal.subscribe({

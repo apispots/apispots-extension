@@ -31,3 +31,5 @@ node_modules
 
 package-lock.json
 extension/dist/*
+
+/test/sandbox/

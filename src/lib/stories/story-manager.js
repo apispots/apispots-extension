@@ -227,8 +227,7 @@ export default (function() {
    */
   const _search = (query) => new Promise((resolve) => {
 
-    const specUrl = query.specUrl;
-    const phrase = query.phrase;
+    const {specUrl, phrase} = query;
 
     // get all stories for this spec URL
     _getStoriesBySpec(specUrl)
@@ -266,6 +265,32 @@ export default (function() {
       });
   });
 
+  /**
+   * Duplicates a story instance.
+   * @param  {[type]} id [description]
+   * @return {[type]}    [description]
+   */
+  const _duplicate = function(specUrl, id, title) {
+    return new Promise((resolve, reject) => {
+
+      // get the story instance
+      _getStory(specUrl, id)
+        .then(story => {
+
+          const obj = _.cloneDeep(story);
+          delete obj.definition.id;
+          obj.definition.title = title;
+
+          // save the story
+          _save(obj)
+            .then(resolve)
+            .catch(reject);
+        })
+        .catch(reject);
+    });
+  };
+
+
   return {
 
     /*
@@ -275,7 +300,8 @@ export default (function() {
     getStory: _getStory,
     save: _save,
     delete: _delete,
-    search: _search
+    search: _search,
+    duplicate: _duplicate
 
   };
 
