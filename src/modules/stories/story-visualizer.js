@@ -38,9 +38,6 @@ export default (function() {
       throw new Error('Undefined story');
     }
 
-    // reset old data
-    // _reset();
-
     _story = story;
 
     // display the modal
@@ -65,7 +62,7 @@ export default (function() {
     }).modal('show');
 
     // get story parts
-    const parts = story.parts;
+    const {parts} = story;
 
     // iterate though parts
     _.each(parts, (part, idx) => {
@@ -149,7 +146,8 @@ export default (function() {
       let clazz;
 
       // visualize based on the selected type
-      const type = part.visualization.type;
+      const {visualization} = part;
+      const {type} = visualization;
 
       if (part.output.ok) {
         if (type === 'text') {

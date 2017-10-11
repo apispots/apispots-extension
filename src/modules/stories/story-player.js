@@ -87,9 +87,11 @@ export default (function() {
   const _processStoryOutput = (story) => {
     try {
 
-      const output = story.output;
+      const {output} = story;
 
-      if (output.data instanceof Blob) {
+      if ((output.data instanceof Blob) &&
+           (output.data.size > 0)) {
+
         // output type is Blob,
         // so download now
         const blob = output.data;
