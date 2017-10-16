@@ -23,12 +23,14 @@ export default class XmlVisualizer extends Visualizer {
   visualize(part, container) {
 
     // get the part's output section
-    const output = part.output;
+    const {output} = part;
     const xml = beautify.xml(output.data);
 
     const editor = ace.edit($(container).get(0));
     editor.setTheme('ace/theme/chrome');
     editor.session.setMode('ace/mode/xml');
+    editor.$blockScrolling = Infinity;
+
     try {
       editor.setValue(xml);
     } catch (e) {

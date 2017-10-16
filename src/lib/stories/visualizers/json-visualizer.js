@@ -22,7 +22,7 @@ export default class JsonVisualizer extends Visualizer {
   visualize(part, container) {
 
     // get the part's output section
-    const output = part.output;
+    const {output} = part;
 
     // get the part's output section
     const json = beautify.json(output.data);
@@ -30,6 +30,7 @@ export default class JsonVisualizer extends Visualizer {
     const editor = ace.edit($(container).get(0));
     editor.setTheme('ace/theme/chrome');
     editor.session.setMode('ace/mode/json');
+    editor.$blockScrolling = Infinity;
     editor.setValue(json);
     editor.clearSelection();
     editor.setReadOnly(true);

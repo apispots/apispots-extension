@@ -20,11 +20,12 @@ export default class TextVisualizer extends Visualizer {
   visualize(part, container) {
 
     // get the part's output section
-    const output = part.output;
+    const {output} = part;
 
     const editor = ace.edit($(container).get(0));
     editor.setTheme('ace/theme/chrome');
     editor.session.setMode('ace/mode/text');
+    editor.$blockScrolling = Infinity;
     editor.setValue(output.text);
     editor.clearSelection();
     editor.setReadOnly(true);
