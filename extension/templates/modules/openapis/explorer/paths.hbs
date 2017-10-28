@@ -13,10 +13,6 @@ Clicking on a path will open its details.
     <div class="ui stackable grid">
       <div class="two column row">
         <div class="column">
-          <h4>
-            <a href='#' data-type="path" data-id="{{@key}}">{{@key}}</a></h4>
-        </div>
-        <div class="column">
 
           <div class="ui list">
             {{#each this}}
@@ -26,7 +22,7 @@ Clicking on a path will open its details.
                 {{#if deprecated}}
                   <del>{{summary}}</del>
                 {{else}}
-                  {{summary}}
+                  <a href="#" data-type="path" data-id="{{this.path}}" data-verb="{{this.verb}}">{{summary}}</a>
                 {{/if}}
 
                 {{#if deprecated}}
@@ -38,6 +34,11 @@ Clicking on a path will open its details.
           </div>
 
         </div>
+        <div class="column">
+          <h4>
+            <a href='#' data-type="path" data-id="{{@key}}">{{@key}}</a></h4>
+        </div>
+
       </div>
     </div>
 

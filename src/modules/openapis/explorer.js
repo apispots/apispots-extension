@@ -400,11 +400,14 @@ export default (function() {
 
         // get the path Id and dispatch the event
         const path = $(this).attr('data-id');
+        const verb = $(this).attr('data-verb');
+
         postal.publish({
           channel: 'openapis',
           topic: 'openapi.path.operations',
           data: {
-            path
+            path,
+            verb
           }
         });
       });
@@ -441,7 +444,7 @@ export default (function() {
    * @param  {[type]} e [description]
    * @return {[type]}   [description]
    */
-  const _renderOperationsModal = function(path) {
+  const _renderOperationsModal = function(path, verb) {
     try {
       // get the definition instance
       const definition = _.cloneDeep(_api.path(path));
@@ -508,6 +511,12 @@ export default (function() {
 
         $modal.modal('refresh');
 
+        // if a verb is given, select the
+        // corresponding tab
+        if (!_.isUndefined(verb)) {
+          $tab.tab('change tab', verb);
+        }
+
         // listeners
         $('.modal .view.definition').on('click', _renderDefinition);
         $('.modal .button[data-action="create story"]').on('click', (e) => {
@@ -547,7 +556,7 @@ export default (function() {
   const _onOpenApiPathOperations = function(data) {
 
     // render the operations modal
-    _renderOperationsModal(data.path);
+    _renderOperationsModal(data.path, data.verb);
   };
 
 
