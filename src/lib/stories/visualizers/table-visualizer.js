@@ -1,5 +1,11 @@
+import 'datatables.net-se';
+import 'datatables.net-se/css/dataTables.semanticui.css';
+import 'datatables.net-buttons-se';
+import 'datatables.net-buttons/js/buttons.html5';
+import 'datatables.net-responsive-se';
+import _ from 'lodash';
+import flatten from 'flat';
 
-import tableify from './tableify';
 import Visualizer from './visualizer';
 
 /**
@@ -18,15 +24,65 @@ export default class TableVisualizer extends Visualizer {
   visualize(part, container) {
 
     // get the part's output section
-    const output = part.output;
+    const {
+      output
+    } = part;
 
-    const html = tableify(output.data);
+    try {
 
-    // append it to the container
-    const $cnt = $(container);
-    $cnt.html(html);
+      let {data} = output;
 
-    $('table', $cnt).addClass('ui padded celled table');
+      // append it to the container
+      const $cnt = $(container);
+
+      $cnt.append('<table class="ui table"></table>');
+
+      $('table', $cnt).addClass('ui padded celled table');
+
+      let columns = [];
+
+      if (_.isArray(data)) {
+
+        // if result is an array,
+        // flatten all entries
+        _.each(data, (o, idx) => {
+          const flat = flatten(o, {delimiter: '_'});
+          data[idx] = flat;
+        });
+
+        columns = _.map(data[0], (value, key) => ({
+          data: key,
+          name: key,
+          title: key
+        }));
+
+      } else {
+
+        // if result is an object,
+        // flatten it first
+        const flat = flatten(data, {delimiter: '_'});
+
+        data = [flat];
+
+        columns = _.map(flat, (value, key) => ({
+          data: key,
+          name: key,
+          title: key
+        }));
+      }
+
+      $('.table', $cnt).DataTable({
+        paging: false,
+        info: false,
+        responsive: true,
+        dom: '<lf<t>ip>',
+        data,
+        columns
+      });
+
+    } catch (e) {
+      console.error(e);
+    }
 
     // emit an event
     this.emit('rendered');

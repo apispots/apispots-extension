@@ -80,24 +80,6 @@ body {
   margin-top: 20px;
 }
 
-#section-visualizations {
-  padding: 20px!important;
-}
-
-.story.output {
-  margin-top: 20px;
-}
-
-.story.part .visualization[data-type=json] {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.story.part .visualization[data-type=table] {
-  max-height: 600px;
-  overflow-y: auto;
-  overflow-x: auto;
-}
 
 .ui.card>.content .play.icon, .ui.cards>.card>.content .play.icon {
     cursor: pointer;
@@ -117,7 +99,7 @@ body {
   Story player
 *******************************/
 .story.part .visualization {
-  height: 300px;
+  height: 400px;
 }
 
 .tab .editor {
@@ -132,4 +114,27 @@ body {
 
 .story.visualizer .story.part .visualization {
   margin-top: 10px;
+}
+
+#section-visualizations {
+  padding: 20px!important;
+}
+
+.story.output {
+  margin-top: 20px;
+}
+
+.story.part .visualization[data-type=json] {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.story.part .visualization[data-type=table] {
+  height: 600px;
+  /*overflow-y: auto;*/
+  overflow-x: auto;
+}
+
+.dataTables_filter {
+  margin-bottom: 10px;
 }

@@ -111,7 +111,8 @@ export default (function() {
             FileSaver.saveAs(blob);
           });
       } else if ((typeof output.data !== 'undefined')
-                || (!_.isEmpty(output.text))) {
+                || (!_.isEmpty(output.text))
+                || (!_.isEmpty(output.data))) {
 
         // visualize the output data
         StoryVisualizer.visualize(story);
