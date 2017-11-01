@@ -1,7 +1,9 @@
+import 'jszip';
 import 'datatables.net-se';
 import 'datatables.net-se/css/dataTables.semanticui.css';
 import 'datatables.net-buttons-se';
 import 'datatables.net-buttons/js/buttons.html5';
+import 'datatables.net-buttons/js/buttons.print';
 import 'datatables.net-responsive-se';
 import _ from 'lodash';
 import flatten from 'flat';
@@ -75,9 +77,21 @@ export default class TableVisualizer extends Visualizer {
         paging: false,
         info: false,
         responsive: true,
-        dom: '<lf<t>ip>',
+        dom: 'fBrt',
         data,
-        columns
+        columns,
+        buttons: [
+          {
+            className: 'ui basic button',
+            extend: 'copy',
+            text: 'Copy'
+          },
+          {
+            className: 'ui basic button',
+            extend: 'csv',
+            text: 'CSV'
+          }
+        ]
       });
 
     } catch (e) {
