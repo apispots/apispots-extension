@@ -60,7 +60,6 @@ export default (function() {
 
     // get the search phrase and context
     const phrase = $.trim($('input[data-action="search"]').val());
-    const context = $('.stories.menu .item.active').attr('data-view');
 
     // do not use phrases < 3 chars
     if ((!_.isEmpty(phrase)) && (phrase.length < 3)) {
@@ -71,7 +70,7 @@ export default (function() {
     // for the selected context
     postal.publish({
       channel: 'stories',
-      topic: `search ${context}`,
+      topic: 'search stories',
       data: {
         phrase
       }
