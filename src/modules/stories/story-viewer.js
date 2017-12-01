@@ -353,15 +353,20 @@ export default (function() {
       showCancelButton: true,
       confirmButtonText: 'Save',
       allowOutsideClick: false
-    }).then((title) => {
+    }).then((res) => {
 
-      // duplicate the story
-      StoryManager.duplicate(specUrl, storyId, title)
-        .then(() => {
+      if ((typeof res.value !== 'undefined') &&
+          (_.trim(res.value) !== '')) {
+        const title = _.trim(res.value);
 
-          // reload the stories
-          _loadStories();
-        });
+        // duplicate the story
+        StoryManager.duplicate(specUrl, storyId, title)
+          .then(() => {
+
+            // reload the stories
+            _loadStories();
+          });
+      }
     })
       .catch(() => {
         // silent
