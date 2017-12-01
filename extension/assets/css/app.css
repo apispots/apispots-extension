@@ -42,6 +42,19 @@ body {
   background-size: cover!important;
 }
 
+.masthead.segment {
+  min-height: 500px;
+  padding: 1em 0em;
+}
+
+.masthead h1.ui.header {
+  margin-top: 1em;
+}
+
+.ui.vertical.stripe {
+  padding: 3em 0em;
+}
+
 #home .masthead {
   background-image: url("/assets/backgrounds/stars.jpg")!important;
   background-size: auto;
@@ -71,6 +84,14 @@ body {
 
 .ui.cards.top.margin {
   margin-top: 20px;
+}
+
+.ui.cards>.card .meta {
+  word-wrap: break-word;
+}
+
+.ui.cards>.card>.content>.header:not(.ui) {
+  word-wrap: break-word;
 }
 
 /*******************************

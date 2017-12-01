@@ -22,39 +22,39 @@
 
 {{#if bookmarks}}
 
-<div class="ui vertical stripe intro segment" id="section-bookmarks">
-  <div class="ui stackable relaxed center aligned grid container">
-    <div class="row">
-      <div class="twelve wide column">
-        <h1 class="ui icon header">
-          <i class="bookmark icon blue"></i>
-          Your bookmarked spots
-        </h1>
+  <div class="ui vertical stripe intro segment" id="section-bookmarks">
 
-        <div class="ui segments">
+    <div class="ui column grid center aligned container">
 
-          {{#each bookmarks}}
-          <div class="ui segment  left aligned">
-            <img class="ui avatar image" src="../../../assets/images/logos/logo-32.png">
-            <a class="header" href="/pages/openapis.html?spec={{specUrl}}"
-              data-tooltip="{{specUrl}}">{{title}}</a>
-            <div class="right floated">
-                <i class="remove large red circle outline icon clickable"
-                  title="Remove spot bookmark"
-                  data-action="remove bookmark"
-                  data-spec="{{specUrl}}"></i>
+      <h2 class="ui header">
+        <i class="blue bookmark icon"></i>
+        Bookmarked API Spots
+      </h2>
+
+      <div class="ui cards">
+
+        {{#each bookmarks}}
+
+          <a class="card" href="/pages/openapis.html?spec={{specUrl}}">
+            <div class="content">
+              <div class="header">{{title}}</div>
+              <div class="meta">{{specUrl}}</div>
             </div>
-          </div>
-          {{/each}}
+            <div class="extra content">
+              <div class="right floated author">
+                <img class="ui avatar image" src="../../../assets/images/openapis/api.png">
+              </div>
+            </div>
+          </a>
 
-        </div>
+        {{/each}}
 
       </div>
+
+
     </div>
 
   </div>
-
-</div>
 
 {{/if}}
 
@@ -84,9 +84,7 @@
       <form class="ui form" method="get" id="form-openapi">
         <div class="field">
           <div class="ui icon input huge">
-            <input type="url" id="input-url-definition" name="openapi"
-              placeholder="http://petstore.swagger.io/v2/swagger.json"
-              value="http://petstore.swagger.io/v2/swagger.json">
+            <input type="url" id="input-url-definition" name="openapi" placeholder="http://petstore.swagger.io/v2/swagger.json" value="http://petstore.swagger.io/v2/swagger.json">
             <i class="inverted circular search link icon" id="icon-load-definition"></i>
           </div>
       </form>
