@@ -49,7 +49,7 @@ export default (function() {
     $modal = $(html);
 
     $modal.modal({
-      closable: false,
+      closable: true,
       duration: 100,
       onVisible: () => {
 
