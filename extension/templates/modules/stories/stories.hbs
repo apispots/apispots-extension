@@ -1,12 +1,5 @@
 <h2>
   Data stories
-
-  <div class="ui right floated basic red image label tipped"
-    data-html="<h5>This feature is under development</h5><p>If something is not working as expected please <a href='https://github.com/apispots/apispots-extension/issues' target='_blank'>report an issue</a></p>"
-    data-position="bottom center">
-    <i class="bug icon"></i>
-    Bug zone
-  </div>
 </h2>
 
 <p>
@@ -32,7 +25,9 @@ executable unit.
   {{#each stories}}
 
     <div class="ui story card" data-id="{{id}}">
+
       <div class="ui content blurring">
+
         <div class="ui inverted dimmer">
           <div class="ui indeterminate text loader">Playing story...</div>
         </div>
@@ -45,6 +40,11 @@ executable unit.
         <div class="description">
           {{description}}
         </div>
+        <div class="result">
+          <span class="verb ui circular label mini empty status code"></span>
+          <span class="status text"></span>
+          <small>in <span class="duration"></span> secs</small>
+        </div>
       </div>
       <div class="extra content">
 
@@ -54,12 +54,6 @@ executable unit.
           data-id="{{id}}">
           <i class="play icon"></i>
         </button>
-
-        <div class="left floated result">
-          <span class="verb ui circular label mini empty status code"></span>
-          <span class="status text"></span>
-          <small>in <span class="duration"></span> secs</small>
-        </div>
 
         <span class="right floated settings">
           <div class="ui icon top left pointing dropdown"
