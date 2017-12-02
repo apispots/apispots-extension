@@ -105,7 +105,7 @@ export default (function() {
    * @param  {[type]} data [description]
    * @return {[type]}      [description]
    */
-  const _onEditStory = function(data) {
+  const _onConfigureStory = function(data) {
 
     // remember the API definition
     _api = data.api;
@@ -133,7 +133,9 @@ export default (function() {
 
     ], () => {
 
-      const model = {};
+      const model = {
+        configure: true
+      };
 
       const html = tplModal(model);
       $modal = $(html);
@@ -1334,8 +1336,8 @@ export default (function() {
 
   postal.subscribe({
     channel: 'stories',
-    topic: 'edit story',
-    callback: _onEditStory
+    topic: 'configure story',
+    callback: _onConfigureStory
   });
 
 

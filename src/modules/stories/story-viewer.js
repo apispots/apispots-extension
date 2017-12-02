@@ -168,15 +168,15 @@ export default (function() {
       // play a story
       $('.ui.cards.stories .story [data-action="play story"]').on('click', _onPlayStory);
 
-      // edit a story
-      $('.ui.cards.stories .story [data-action="edit story"]').on('click', (e) => {
+      // configure a story
+      $('.ui.cards.stories .story [data-action="configure story"]').on('click', (e) => {
 
         const $el = $(e.currentTarget);
         const storyId = $el.attr('data-id');
 
         postal.publish({
           channel: 'stories',
-          topic: 'edit story',
+          topic: 'configure story',
           data: {
             api: _api,
             storyId

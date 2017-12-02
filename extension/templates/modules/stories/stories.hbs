@@ -55,16 +55,18 @@ executable unit.
           <i class="play icon"></i>
         </button>
 
-        <span class="right floated settings">
+        <button class="ui icon button tiny basic compact left floated"
+          data-tooltip="Configure story"
+          data-action="configure story"
+          data-id="{{id}}">
+          <i class="configure icon"></i>
+        </button>
+
+        <span class="right floated actions">
           <div class="ui icon top left pointing dropdown"
-            data-tooltip="Settings">
+            data-tooltip="Actions">
             <i class="ellipsis vertical icon"></i>
             <div class="menu">
-              <div class="item"
-                data-action="edit story"
-                data-id="{{id}}">
-                <i class="edit icon"></i> Edit
-              </div>
               <div class="item"
                 data-action="duplicate story"
                 data-id="{{id}}">
