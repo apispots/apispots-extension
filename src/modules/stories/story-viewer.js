@@ -201,18 +201,18 @@ export default (function() {
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
           confirmButtonText: 'Yes, delete it!'
-        }).then(() => {
+        }).then((res) => {
 
-          // delete the story from local storage
-          StoryManager.delete(_api.specUrl, storyId)
-            .then(() => {
+          if (res.value) {
+            // delete the story from local storage
+            StoryManager.delete(_api.specUrl, storyId)
+              .then(() => {
               // reload
-              _loadStories();
-            });
-        })
-          .catch(() => {
-            // silent
-          });
+                _loadStories();
+              });
+          }
+        });
+
       });
 
     } catch (e) {
