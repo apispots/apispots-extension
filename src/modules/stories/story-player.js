@@ -33,8 +33,13 @@ export default (function() {
 
       (cb) => {
 
+        const {
+          specUrl,
+          storyId
+        } = data;
+
         // get the story instance
-        StoryManager.getStory(data.api.specUrl, data.storyId)
+        StoryManager.getStory(specUrl, storyId)
           .then(story => {
             // set the story instance
             // _story = story;
@@ -87,10 +92,12 @@ export default (function() {
   const _processStoryOutput = (story) => {
     try {
 
-      const {output} = story;
+      const {
+        output
+      } = story;
 
       if ((output.data instanceof Blob) &&
-           (output.data.size > 0)) {
+        (output.data.size > 0)) {
 
         // output type is Blob,
         // so download now
@@ -110,9 +117,9 @@ export default (function() {
             // silent
             FileSaver.saveAs(blob);
           });
-      } else if ((typeof output.data !== 'undefined')
-                || (!_.isEmpty(output.text))
-                || (!_.isEmpty(output.data))) {
+      } else if ((typeof output.data !== 'undefined') ||
+        (!_.isEmpty(output.text)) ||
+        (!_.isEmpty(output.data))) {
 
         // visualize the output data
         StoryVisualizer.visualize(story);

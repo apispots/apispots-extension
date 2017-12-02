@@ -291,7 +291,7 @@ export default (function() {
       channel: 'stories',
       topic: 'play story',
       data: {
-        api: _api,
+        specUrl: _api.specUrl,
         storyId
       }
     });

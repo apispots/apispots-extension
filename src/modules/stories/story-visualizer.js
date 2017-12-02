@@ -45,6 +45,9 @@ export default (function() {
       title: story.definition.title
     };
 
+    // remove any previous modal instance
+    $('.modal.story.visualizer').remove();
+
     const html = tplStoryPlayer(model);
     $modal = $(html);
 
@@ -54,6 +57,29 @@ export default (function() {
       onVisible: () => {
 
         $modal.modal('refresh');
+
+        // replay story
+        $('.actions .replay.story').on('click', (e) => {
+          const {
+            id: storyId,
+            spec: specUrl
+          } = _story;
+
+          // show the button loader
+          const $btn = $(e.currentTarget);
+          $btn.addClass('loading disabled');
+
+          postal.publish({
+            channel: 'stories',
+            topic: 'play story',
+            data: {
+              specUrl,
+              storyId
+            }
+          });
+        });
+
+
       },
       onHidden: () => {
         // reset
@@ -62,7 +88,9 @@ export default (function() {
     }).modal('show');
 
     // get story parts
-    const {parts} = story;
+    const {
+      parts
+    } = story;
 
     // iterate though parts
     _.each(parts, (part, idx) => {
@@ -146,8 +174,12 @@ export default (function() {
       let clazz;
 
       // visualize based on the selected type
-      const {visualization} = part;
-      const {type} = visualization;
+      const {
+        visualization
+      } = part;
+      const {
+        type
+      } = visualization;
 
       if (part.output.ok) {
         if (type === 'text') {
