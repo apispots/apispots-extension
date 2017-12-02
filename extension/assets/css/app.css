@@ -152,8 +152,6 @@ body {
 
 .story.part .visualization[data-type=table] {
   height: 600px;
-  /*overflow-y: auto;*/
-  overflow-x: auto;
 }
 
 .dataTables_filter {

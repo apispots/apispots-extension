@@ -34,6 +34,16 @@ export default class TableVisualizer extends Visualizer {
 
       let {data} = output;
 
+      try {
+        data = JSON.parse(data);
+      } catch (e) {
+        // silent
+      }
+
+      if (_.isEmpty(data)) {
+        throw new Error('Empty data set');
+      }
+
       // append it to the container
       const $cnt = $(container);
 
@@ -63,7 +73,6 @@ export default class TableVisualizer extends Visualizer {
         // if result is an object,
         // flatten it first
         const flat = flatten(data, {delimiter: '_'});
-
         data = [flat];
 
         columns = _.map(flat, (value, key) => ({
@@ -71,12 +80,14 @@ export default class TableVisualizer extends Visualizer {
           name: key,
           title: key
         }));
+
       }
 
       $('.table', $cnt).DataTable({
         paging: false,
         info: false,
-        responsive: true,
+        scrollX: true,
+        scrollY: 500,
         dom: 'fBrt',
         data,
         columns,
@@ -95,7 +106,7 @@ export default class TableVisualizer extends Visualizer {
       });
 
     } catch (e) {
-      console.error(e);
+      // silent
     }
 
     // emit an event
