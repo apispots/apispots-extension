@@ -1,5 +1,5 @@
 extends:
-  airbnb
+  airbnb-base
 
 env:
   es6: true
@@ -85,6 +85,8 @@ rules:
   import/prefer-default-export:
     - off
   import/newline-after-import:
+    - off
+  import/no-extraneous-dependencies:
     - off
   import/no-dynamic-require:
     - off

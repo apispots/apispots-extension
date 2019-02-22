@@ -33,9 +33,6 @@
     "default_icon": "assets/images/logos/logo-128.png"
   },
 
-
-
   "web_accessible_resources": ["data/*.js"]
-
 
 }

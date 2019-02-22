@@ -1,9 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 let webpackConfig = {
+
+  mode: 'development',
 
   context: path.resolve(__dirname, 'src/'),
 
@@ -28,7 +30,12 @@ let webpackConfig = {
 
   plugins: [
 
-    new ExtractTextPlugin('styles.css'),
+    new MiniCssExtractPlugin({
+    // Options similar to the same options in webpackOptions.output
+    // both options are optional
+      filename: '[name].css',
+      chunkFilename: '[id].css'
+    }),
 
     new webpack.ProvidePlugin({
       jQuery: 'jquery',
@@ -53,9 +60,17 @@ webpackConfig = merge(webpackConfig, {
   module: {
     rules: [{
       test: /\.css$/,
-      use: ExtractTextPlugin.extract({
-        use: 'css-loader'
-      })
+      use: [
+        {
+          loader: MiniCssExtractPlugin.loader,
+          options: {
+            // you can specify a publicPath here
+            // by default it use publicPath in webpackOptions.output
+            publicPath: '../'
+          }
+        },
+        'css-loader'
+      ]
     },
     {
       test: /\.(png|svg|jpg|gif)$/,

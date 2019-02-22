@@ -30,7 +30,7 @@ export default (function() {
   const _scan = function(document) {
 
     // get the document's content type
-    const contentType = document.contentType;
+    const {contentType} = document;
 
     // get the outer text of the page body
     let content = document.body.textContent;
@@ -48,8 +48,8 @@ export default (function() {
         content = jsyaml.load(content);
 
         // check for the 'swaggerVersion' attribute
-        if ((typeof content.swaggerVersion === 'undefined') &&
-          (typeof content.swagger === 'undefined')) {
+        if ((typeof content.swaggerVersion === 'undefined')
+          && (typeof content.swagger === 'undefined')) {
           throw new Error('Not a Swagger document');
         }
 

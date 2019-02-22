@@ -1,11 +1,14 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const EncodingPlugin = require('webpack-encoding-plugin');
 
 const webpackConfig = [
 
   {
+
+    mode: 'production',
 
     context: path.resolve(__dirname, 'src/'),
 
@@ -26,9 +29,11 @@ const webpackConfig = [
 
       rules: [{
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          use: 'css-loader'
-        })
+        use: [{
+          loader: MiniCssExtractPlugin.loader
+        },
+        'css-loader'
+        ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -64,7 +69,13 @@ const webpackConfig = [
 
     plugins: [
 
-      new ExtractTextPlugin('styles.css'),
+      new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: '[name].css',
+        chunkFilename: 'styles.css'
+      }),
+      // new ExtractTextPlugin('styles.css'),
 
       new webpack.ProvidePlugin({
         jQuery: 'jquery',
@@ -101,6 +112,8 @@ const webpackConfig = [
 
   {
 
+    mode: 'production',
+
     context: path.resolve(__dirname, 'src/'),
 
     entry: {
@@ -118,6 +131,10 @@ const webpackConfig = [
       new webpack.LoaderOptionsPlugin({
         minimize: true,
         debug: false
+      }),
+
+      new EncodingPlugin({
+        encoding: 'ascii'
       })
     ]
 

@@ -41,7 +41,7 @@ Promise.all(promises)
       // one scanner has detected compatible content
 
       // get the first resolved message
-      const message = resolved[0].message;
+      const {message} = resolved[0];
 
       async.waterfall([
 
