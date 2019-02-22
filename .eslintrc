@@ -94,3 +94,7 @@ rules:
     - off
   jsx-a11y/href-no-hash:
     - off
+  prefer-destructuring:
+    - off
+  no-await-in-loop:
+    - off

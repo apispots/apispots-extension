@@ -23,10 +23,11 @@
 
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*", "file://*/*"],
-    "js": ["dist/content.bundle.js"]
+    "js": ["dist/content.bundle.js"],
+    "run_at": "document_end"
   }],
 
-  "permissions": ["tabs", "http://*/", "https://*/", "notifications", "storage"],
+  "permissions": ["activeTab", "tabs", "http://*/", "https://*/", "notifications", "storage"],
 
   "browser_action": {
     "default_title": "API Spots",

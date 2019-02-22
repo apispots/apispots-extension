@@ -2,71 +2,66 @@
  * Content script main.
  * @type {[type]}
  */
-import async from 'async';
 
-import ScannerSwagger from './scanner-swagger-definition';
-import ScannerOpenApi from './scanner-openapi-definition';
-import ScannerCatalogApisJson from './scanner-catalog-apisjson';
+import ScannerSwagger from './scanners/swagger';
+import ScannerOpenApi from './scanners/openapi';
+import ScanneApisJsonCatalog from './scanners/apisjson-catalog';
 import Storage from '../../lib/common/browser-storage';
 
 // list of supported content scanners
 const SCANNERS = [
-  ScannerSwagger,
-  ScannerOpenApi,
-  ScannerCatalogApisJson
+  new ScannerSwagger(),
+  new ScannerOpenApi(),
+  new ScanneApisJsonCatalog()
 ];
 
-/*
- * Execute all content scanners
- * in parallel using reflection,
- * so that failed promises won't
- * stop the flow
- */
-const promises = SCANNERS.map((o) => {
-  const p = o.scan(document);
-  return p.then((message) => ({message, status: 'resolved' }),
-    (e) => ({e, status: 'rejected' }));
-});
 
-Promise.all(promises)
-  .then((results) => {
+(async () => {
 
-    // after all scanners have
-    // completed, check if there
-    // is at least one successful result
-    const resolved = results.filter((o) => o.status === 'resolved');
+  let match = false;
+  let message = null;
 
-    if (resolved.length > 0) {
+  // check doc with all registered scanners
+  for (const scanner of SCANNERS) {
 
-      // one scanner has detected compatible content
+    try {
 
-      // get the first resolved message
-      const {message} = resolved[0];
+      // scan the document
+      message = await scanner.scan(document);
 
-      async.waterfall([
+      // document is matched
+      match = true;
+      break;
 
-        (cb) => {
-          // if the URL is for a local file,
-          // store its contents in local storage
-          const url = document.URL;
-          const content = document.body.textContent;
-          const items = {};
-          items[url] = content;
-          if (url.startsWith('file://')) {
-            Storage.local.set(items, cb);
-          } else {
-            cb();
-          }
-        }
-
-      ], () => {
-
-        // publish the action message to the runtime
-        chrome.runtime.sendMessage(undefined, message, undefined);
-      });
-
+    } catch (e) {
+      // fail silently
     }
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+
+  }
+
+  if (match) {
+    // if the URL is for a local file,
+    // store its contents in local storage
+    const url = document.URL;
+    const content = document.body.textContent;
+    const items = {};
+    items[url] = content;
+
+    if (url.startsWith('file://')) {
+      Storage.local.set(items);
+    }
+
+    // publish the action message to the runtime
+    chrome.runtime.sendMessage(undefined, message, undefined);
+    console.log(chrome);
+    chrome.tabs.executeScript({
+      code: 'document.body.style.backgroundColor="orange"'
+    });
+
+
+    // $('body').children().remove();
+
+  }
+
+
+})();
