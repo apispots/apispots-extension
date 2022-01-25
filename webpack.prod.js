@@ -1,8 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const EncodingPlugin = require('webpack-encoding-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
+
 
 const webpackConfig = [
 
@@ -24,6 +25,11 @@ const webpackConfig = [
     },
 
     devtool: false,
+
+    optimization: {
+      minimize: true,
+      minimizer: [new TerserPlugin()],
+    },
 
     module: {
 
@@ -87,25 +93,8 @@ const webpackConfig = [
       new webpack.LoaderOptionsPlugin({
         minimize: true,
         debug: false
-      }),
-
-      new UglifyJSPlugin({
-        parallel: true,
-        sourceMap: false,
-        include: [
-          path.resolve(__dirname, 'node_modules/jquery')
-        ],
-        uglifyOptions: {
-          ie8: false,
-          ecma: 8,
-          mangle: false,
-          output: {
-            comments: false,
-            beautify: false,
-            ascii_only: true
-          }
-        }
       })
+      
     ]
 
   },

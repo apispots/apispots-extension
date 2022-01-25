@@ -2,16 +2,13 @@ import _ from 'lodash';
 import postal from 'postal';
 import swal from 'sweetalert2';
 import asyncWaterfall from 'async/waterfall';
-import stories from 'apispots-lib-stories';
+import ApiDefinitionLoader from '../../lib/openapi/api-definition-loader';
 
 import '../../common/base';
 import Storage from '../../lib/common/browser-storage';
-import CatalogService from '../../lib/openapi/catalog-service';
 import Explorer from './explorer';
-import Catalog from './catalog';
-import '../stories/story-maker';
 
-import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
+import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
 {
 
@@ -19,7 +16,7 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
    * Initializes the view.
    * @return {[type]} [description]
    */
-  const onReady = function() {
+  const onReady = function () {
 
     // check if any query params have
     // been provided for loading specific
@@ -30,7 +27,7 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
       // if a command has been returned
       // switch view to loading state
 
-      const html = tplBody({loading: true});
+      const html = tplBody({ loading: true });
       $('body').html(html);
 
       // and publish the action
@@ -51,46 +48,13 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
 
     const model = {};
 
-    asyncWaterfall([
-      (cb) => {
+    // render the default view
+    const html = tplBody(model);
+    $('body').html(html);
 
-        // load any bookmaked spots
-        CatalogService.getBookmarkedSpots()
-          .then((bookmarks) => {
-            // add them to the model
-            model.bookmarks = bookmarks;
-            cb();
-          })
-          .catch(cb);
-      }
-
-    ], (e) => {
-
-      if (e) {
-        console.error(e);
-      }
-
-      // render the default view
-      const html = tplBody(model);
-      $('body').html(html);
-
-      // fix menu when passed
-      $('.masthead')
-        .visibility({
-          once: false,
-          onBottomPassed() {
-            $('.fixed.menu').transition('fade in');
-          },
-          onBottomPassedReverse() {
-            $('.fixed.menu').transition('fade out');
-          }
-        });
-
-      // bind all event listeners
-      _bindListeners();
-      _bindValidators();
-
-    });
+    // bind all event listeners
+    _bindListeners();
+    _bindValidators();
 
   };
 
@@ -99,7 +63,7 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
    * Checks for content deep links.
    * @return {[type]} [description]
    */
-  const _checkForDeepLinks = function() {
+  const _checkForDeepLinks = function () {
 
     try {
 
@@ -107,16 +71,10 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
 
       // check if a specific URL is provided
       // as a query param
-      if (!_.isEmpty(_getUrlParam('spec'))) {
-        const spec = _getUrlParam('spec');
-        command = {channel: 'openapis', topic: 'openapi.load', data: {spec }};
-      } else if (!_.isEmpty(_getUrlParam('providerId'))) {
-        const providerId = _getUrlParam('providerId');
-        command = {channel: 'openapis', topic: 'catalog.load', data: {providerId }};
-      } else if (!_.isEmpty(_getUrlParam('catalogUrl'))) {
-        const url = _getUrlParam('catalogUrl');
-        command = {channel: 'openapis', topic: 'catalog.load', data: {url }};
-      }
+      if (!_.isEmpty(_getUrlParam('url'))) {
+        const url = _getUrlParam('url');
+        command = { channel: 'openapis', topic: 'openapi.load', data: { spec: url } };
+      } 
 
       return command;
 
@@ -133,7 +91,7 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
    * returns a map of URL params
    * @return {[type]} [description]
    */
-  const _getUrlParam = function(name) {
+  const _getUrlParam = function (name) {
 
     const url = window.location.href;
 
@@ -149,7 +107,7 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
    * Binds all event listeners
    * @return {[type]} [description]
    */
-  const _bindListeners = function() {
+  const _bindListeners = function () {
 
     // API URL input
     $('#form-openapi').on('submit', (e) => {
@@ -157,56 +115,17 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
       return true;
     });
 
-    $('#icon-load-definition').on('click', () => {
-      // load the API definition from
-      // the entered URL
-      const url = $.trim($('#input-url-definition').val());
-      $('#input-url-definition').parent().addClass('loading disabled');
-      postal.publish({channel: 'openapis', topic: 'openapi.load', data: {spec: url }});
-      return false;
-    });
-
-    $('#icon-open-catalog').on('click', () => {
-      // open the catalog definition
-      const url = $.trim($('#input-url-catalog').val());
-      $('#input-url-catalog').parent().addClass('loading disabled');
-      postal.publish({channel: 'openapis', topic: 'catalog.load', data: {url, newTab: true }});
-      return false;
-    });
 
     $('[data-action="remove bookmark"]').on('click', _onDeleteBookmark);
 
   };
 
   /**
-   * Attaches validators
-   * @return {[type]} [description]
-   */
-  const _bindValidators = function() {
-    $('#form-openapi')
-      .form({
-        on: 'blur',
-        fields: {
-          openapi: {
-            identifier: 'openapi',
-            rules: [
-              {
-                type: 'url',
-                prompt: 'Please enter a valid URL'
-              }
-            ]
-          }
-        }
-      });
-  };
-
-
-  /**
    * Called when a user clicks on the
    *
    * @return {[type]} [description]
    */
-  const _onLoadApiDefinition = function(data) {
+  const _onLoadApiDefinition = function (data) {
 
     // load the definition from the given URL
     const url = data.spec;
@@ -234,7 +153,7 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
     ], () => {
 
       // load the story definition
-      stories.ApiDefinitionLoader.load({url, spec})
+      ApiDefinitionLoader.load({ url, spec })
         .then((api) => {
 
           // load the Open API into the explorer
@@ -269,50 +188,6 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
 
     });
 
-  };
-
-
-  /**
-   * Called when a user clicks on
-   * a catalog button.
-   * @return {[type]} [description]
-   */
-  const _onLoadApiCatalog = function(data) {
-
-    // get the catalog either
-    // by provider Id or URL
-    const providerId = data.providerId;
-    const url = data.url;
-
-    let promise;
-
-    if (!_.isEmpty(providerId)) {
-      promise = CatalogService.loadByProviderId(providerId);
-    } else if (!_.isEmpty(url)) {
-      promise = CatalogService.loadByUrl(url);
-    }
-    // load the selected Open API catalog
-    promise
-      .then((catalog) => {
-
-        $(this).removeClass('loading disabled');
-
-        // render the catalog view
-        Catalog.render(catalog);
-      })
-      .catch((err) => {
-
-        // switch to normal state
-        $('.loading').removeClass('loading disabled');
-
-        // show an error alert
-        swal({
-          title: 'Something went wrong...',
-          text: err.message,
-          type: 'error',
-          timer: 3000
-        });
-      });
   };
 
   /**
@@ -359,7 +234,6 @@ import tplBody from '../../../extension/templates/modules/openapis/index.hbs';
     .ready(onReady);
 
   // listen for events
-  postal.subscribe({channel: 'openapis', topic: 'openapi.load', callback: _onLoadApiDefinition});
-  postal.subscribe({channel: 'openapis', topic: 'catalog.load', callback: _onLoadApiCatalog});
-
+  postal.subscribe({ channel: 'openapis', topic: 'openapi.load', callback: _onLoadApiDefinition });
+  
 }

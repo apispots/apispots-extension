@@ -1,0 +1,55 @@
+{{> common/menu-sections.hbs}}
+
+<div class="ui vertical stripe segment" id="section-load-by-url">
+
+  <div class="ui text container">
+
+    <h3 class="ui header">Load an Open API / Swagger file</h3>
+    <p>
+      Enter the URL of an Open API (formerly Swagger) definition file - either in JSON or
+      in YAML format and visualize its contents.
+    </p>
+    <a class="ui large button" href="https://www.openapis.org/" target="_blank">Read more</a>
+
+    <h4 class="ui horizontal header">
+    </h4>
+
+    <form class="ui form" method="get" id="form-openapi">
+      <div class="field">
+        <div class="ui icon input huge">
+          <input type="url" id="input-url-definition" name="openapi"
+            placeholder="http://petstore.swagger.io/v2/swagger.json" value="http://petstore.swagger.io/v2/swagger.json">
+          <i class="inverted circular search link icon" id="icon-load-definition"></i>
+        </div>
+    </form>
+
+    {{!-- <h4 class="ui horizontal header divider">
+      <a href="#">or</a>
+    </h4>
+
+    <h3 class="ui header">Load an Open API catalog</h3>
+    <p>
+      APIs.json is a machine readable approach that API providers can use to
+      describe their API operations, similar to how web sites are described using sitemap.xml.
+    </p>
+    <a class="ui large button" href="http://apisjson.org/" target="_blank">Read more</a>
+
+    <h4 class="ui horizontal header">
+    </h4>
+
+    <form class="ui form" method="get" id="form-apisjson-catalog">
+      <div class="field">
+        <div class="ui icon input huge">
+          <input type="url" id="input-url-catalog" name="openapi" placeholder="Enter the catalog URL" value="">
+          <i class="inverted circular external link icon" id="icon-open-catalog"></i>
+        </div>
+    </form>
+ --}}
+  </div>
+
+
+</div>
+
+</div>
+
+{{!-- {{> modules/home/catalogs.hbs}} --}}

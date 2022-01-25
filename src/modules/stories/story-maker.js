@@ -5,7 +5,7 @@
 import _ from 'lodash';
 import postal from 'postal';
 import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
+// import 'flatpickr/dist/flatpickr.min.css';
 import asyncWaterfall from 'async/waterfall';
 import swal from 'sweetalert2';
 import DataStory from 'apispots-lib-stories/lib/stories/data-story';

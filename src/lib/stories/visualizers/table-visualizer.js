@@ -1,6 +1,6 @@
 import 'jszip';
 import 'datatables.net-se';
-import 'datatables.net-se/css/dataTables.semanticui.css';
+// import 'datatables.net-se/css/dataTables.semanticui.css';
 import 'datatables.net-buttons-se';
 import 'datatables.net-buttons/js/buttons.html5';
 import 'datatables.net-buttons/js/buttons.print';

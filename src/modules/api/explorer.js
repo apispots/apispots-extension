@@ -8,25 +8,23 @@ import asyncMap from 'async/map';
 import asyncWaterfall from 'async/waterfall';
 import swal from 'sweetalert2';
 
-import graph from './graph';
-import '../../../extension/templates/modules/openapis/explorer/module.css';
+import graph from '../api/graph';
 import '../stories/story-viewer';
 import '../stories/story-player';
-import './authentication';
+import '../api/authentication';
 import CatalogService from '../../lib/openapi/catalog-service';
 import CredentialsManager from '../../lib/openapi/browser-credentials-manager';
 
-import tplBody from '../../../extension/templates/modules/openapis/explorer/index.hbs';
-import tplGeneral from '../../../extension/templates/modules/openapis/explorer/general.hbs';
-import tplDefinitions from '../../../extension/templates/modules/openapis/explorer/definitions.hbs';
-import tplDefinition from '../../../extension/templates/modules/openapis/explorer/definition.hbs';
-import tplSecurityDefinitions from '../../../extension/templates/modules/openapis/explorer/security.hbs';
-import tplOperations from '../../../extension/templates/modules/openapis/explorer/operations.hbs';
-import tplOperation from '../../../extension/templates/modules/openapis/explorer/operation.hbs';
-import tplPaths from '../../../extension/templates/modules/openapis/explorer/paths.hbs';
-import tplGraph from '../../../extension/templates/modules/openapis/explorer/graph.hbs';
+import tplBody from '../../../extension/templates/modules/api/explorer/index.hbs';
+import tplGeneral from '../../../extension/templates/modules/api/explorer/general.hbs';
+import tplDefinition from '../../../extension/templates/modules/api/explorer/definition.hbs';
+import tplSecurityDefinitions from '../../../extension/templates/modules/api/explorer/security.hbs';
+import tplOperations from '../../../extension/templates/modules/api/explorer/operations.hbs';
+import tplOperation from '../../../extension/templates/modules/api/explorer/operation.hbs';
+import tplPaths from '../../../extension/templates/modules/api/explorer/paths.hbs';
+import tplGraph from '../../../extension/templates/modules/api/explorer/graph.hbs';
 
-export default (function() {
+export default (function () {
 
   /*
    * Private
@@ -39,7 +37,7 @@ export default (function() {
    * @param  {[type]} openapi [description]
    * @return {[type]}         [description]
    */
-  const _render = function(openapi) {
+  const _render = function (openapi) {
     return new Promise((resolve, reject) => {
       try {
 
@@ -51,7 +49,8 @@ export default (function() {
         _api = openapi;
 
         const model = {
-          spec: openapi.spec
+          spec: openapi.spec,
+          classes: _.chain(_api.schemas).sortBy('name').flatMap((o) => o.name).value()
         };
 
         asyncWaterfall([
@@ -83,24 +82,9 @@ export default (function() {
           // attach event listeners
           _attachListeners();
 
-          let section = 'general';
+          // render the general section
+          _renderSection('general');
 
-          // check if there is a selected
-          // section in the hashbang
-          if (window.location.hash) {
-            const hash = window.location.hash.replace('#', '');
-
-            // check if the section exists
-            if ($(`.menu .item[data-section='${hash}']`).length > 0) {
-              section = hash;
-            }
-          }
-
-          // render the selected section
-          $(`.menu .item[data-section='${section}']`).trigger('click');
-
-          // set the bookmarked status
-          _checkIfBookmarked();
 
           // done
           resolve();
@@ -116,7 +100,7 @@ export default (function() {
    * Attaches all event listeners
    * @return {[type]} [description]
    */
-  const _attachListeners = function() {
+  const _attachListeners = function () {
 
     // menu sections
     $('.menu .item[data-section]').on('click', (e) => {
@@ -124,6 +108,10 @@ export default (function() {
       const section = $(e.currentTarget).attr('data-section');
       _renderSection(section);
     });
+
+    // listeners
+    $('.menu .item[data-item=\"definition\"]').on('click', _onDefinitionSelected);
+
     $('.menu .item[data-action="bookmark api"]').on('click', _bookmarkApi);
 
     $('.ui.dropdown').dropdown();
@@ -134,18 +122,14 @@ export default (function() {
    * Renders a section.
    * @return {[type]} [description]
    */
-  const _renderSection = function(section) {
+  const _renderSection = function (section) {
 
     if (section === 'general') {
       _renderGeneral();
-    } else if (section === 'definitions') {
-      _renderDefinitions();
     } else if (section === 'security') {
       _renderSecurity();
-    } else if (section === 'operations') {
-      _renderOperations();
-    } else if (section === 'stories') {
-      _renderStories();
+    } else if (section === 'graph') {
+      _renderOperationsGraph();
     }
 
     // change the hashbang
@@ -165,7 +149,7 @@ export default (function() {
    * Renders the general section
    * @return {[type]} [description]
    */
-  const _renderGeneral = function() {
+  const _renderGeneral = function () {
     try {
 
       const spec = _api.spec;
@@ -188,36 +172,13 @@ export default (function() {
     }
   };
 
-  /**
-   * Renders the definitions section
-   * @return {[type]} [description]
-   */
-  const _renderDefinitions = function() {
-    try {
 
-      const data = {
-        definitions: []
-      };
-
-      const definitions = _api.schemas;
-      data.definitions = definitions;
-
-      const html = tplDefinitions(data);
-      $('#content').html(html);
-
-      // listeners
-      $('.card.definition .button').on('click', _renderDefinition);
-
-    } catch (e) {
-      console.error(`Failed to render General section - ${e}`);
-    }
-  };
 
   /**
    * Renders the security definitions section
    * @return {[type]} [description]
    */
-  const _renderSecurity = function() {
+  const _renderSecurity = function () {
     try {
 
       const data = {
@@ -309,7 +270,7 @@ export default (function() {
    * @param  {[type]} e [description]
    * @return {[type]}   [description]
    */
-  const _renderDefinition = function() {
+  const _onDefinitionSelected = function () {
     const id = $(this).attr('data-id');
 
     // get the definition instance
@@ -321,15 +282,12 @@ export default (function() {
     };
 
     const html = tplDefinition(data);
+    $('#content').html(html);
 
-    $(html)
-      .modal({
-        duration: 100
-      })
-      .modal('show');
+    $('a[data-item=\"definition\"]').on('click', _onDefinitionSelected);
 
-    // listeners
-    $('.view.definition').on('click', _renderDefinition);
+    // scroll to top
+    window.scrollTo(0, 0);
   };
 
 
@@ -337,7 +295,7 @@ export default (function() {
    * Renders the operations section
    * @return {[type]} [description]
    */
-  const _renderOperations = function() {
+  const _renderOperations = function () {
     try {
 
       const data = {};
@@ -346,7 +304,7 @@ export default (function() {
       $('#content').html(html);
 
       // bind the menu listener
-      $('.menu.presentation .item').on('click', function() {
+      $('.menu.presentation .item').on('click', function () {
         // render the selected operations view
         const id = $(this).attr('data-id');
         _onRenderOperationsView(id);
@@ -366,7 +324,7 @@ export default (function() {
    * @param  {[type]} id [description]
    * @return {[type]}    [description]
    */
-  const _onRenderOperationsView = function(id = 'paths') {
+  const _onRenderOperationsView = function (id = 'paths') {
 
     if (id === 'paths') {
       // default view
@@ -385,7 +343,7 @@ export default (function() {
    * Renders the API paths section
    * @return {[type]} [description]
    */
-  const _renderOperationPaths = function() {
+  const _renderOperationPaths = function () {
     try {
 
       const data = {
@@ -396,7 +354,7 @@ export default (function() {
       $('#section-contents').html(html);
 
       // path link clicked
-      $('a[data-type="path"]').on('click', function() {
+      $('a[data-type="path"]').on('click', function () {
 
         // get the path Id and dispatch the event
         const path = $(this).attr('data-id');
@@ -422,16 +380,19 @@ export default (function() {
    * Renders the API paths section
    * @return {[type]} [description]
    */
-  const _renderOperationsGraph = function() {
+  const _renderOperationsGraph = function () {
     try {
 
       const data = {};
 
       const html = tplGraph(data);
-      $('#section-contents').html(html);
-
+      $('#content').html(html);
+console.log(_api.paths)
       // render the graph view
       graph.render('#graph', _api);
+
+      // scroll to top
+      window.scrollTo(0, 0);
 
     } catch (e) {
       console.error(`Failed to render General section - ${e}`);
@@ -444,7 +405,7 @@ export default (function() {
    * @param  {[type]} e [description]
    * @return {[type]}   [description]
    */
-  const _renderOperationsModal = function(path, verb) {
+  const _renderOperationsModal = function (path, verb) {
     try {
       // get the definition instance
       const definition = _.cloneDeep(_api.path(path));
@@ -502,7 +463,7 @@ export default (function() {
         const $tab = $('.menu .item', $html);
         $tab.tab();
 
-        $('.modal .menu .item').on('click', function() {
+        $('.modal .menu .item').on('click', function () {
           const verb = $(this).attr('data-tab');
           $('.modal .tab').removeClass('active');
           $tab.tab('change tab', verb);
@@ -553,7 +514,7 @@ export default (function() {
    * @param  {[type]} data [description]
    * @return {[type]}      [description]
    */
-  const _onOpenApiPathOperations = function(data) {
+  const _onOpenApiPathOperations = function (data) {
 
     // render the operations modal
     _renderOperationsModal(data.path, data.verb);
@@ -564,7 +525,7 @@ export default (function() {
    * Bookmarks the current API spot.
    * @return {[type]} [description]
    */
-  const _bookmarkApi = function(e) {
+  const _bookmarkApi = function (e) {
 
     try {
 
@@ -625,7 +586,7 @@ export default (function() {
    * status.
    * @return {[type]} [description]
    */
-  const _checkIfBookmarked = function() {
+  const _checkIfBookmarked = function () {
 
     try {
 
@@ -652,7 +613,7 @@ export default (function() {
    * Reloads the API stories section.
    * @return {[type]} [description]
    */
-  const _onReloadStories = function() {
+  const _onReloadStories = function () {
     _renderStories();
   };
 
@@ -662,7 +623,7 @@ export default (function() {
    * rendering the available stories.
    * @return {[type]} [description]
    */
-  const _renderStories = function() {
+  const _renderStories = function () {
 
     postal.publish({
       channel: 'stories',

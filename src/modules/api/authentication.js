@@ -9,7 +9,7 @@ import swal from 'sweetalert2';
 
 import CredentialsManager from '../../lib/openapi/browser-credentials-manager';
 
-import tplModal from '../../../extension/templates/modules/openapis/authentication/auth-modal.hbs';
+import tplModal from '../../../extension/templates/modules/api/authentication/auth-modal.hbs';
 
 export default (function() {
 

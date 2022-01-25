@@ -1,7 +1,7 @@
 
 
 import FileSaver from 'file-saver';
-import jsonexport from 'jsonexport';
+// import jsonexport from 'jsonexport';
 
 import Visualizer from './visualizer';
 
@@ -24,17 +24,17 @@ export default class CsvVisualizer extends Visualizer {
     const output = part.output;
 
     // export the data as a flat CSV
-    jsonexport(output.data, (err, csv) => {
-      if (err) {
-        console.error(err);
-      } else {
-        const blob = new Blob([csv], {type: 'text/csv'});
-        FileSaver.saveAs(blob, 'data.csv');
-      }
-    });
+    // jsonexport(output.data, (err, csv) => {
+    //   if (err) {
+    //     console.error(err);
+    //   } else {
+    //     const blob = new Blob([csv], {type: 'text/csv'});
+    //     FileSaver.saveAs(blob, 'data.csv');
+    //   }
+    // });
 
-    // emit an event
-    this.emit('rendered');
+    // // emit an event
+    // this.emit('rendered');
   }
 
 

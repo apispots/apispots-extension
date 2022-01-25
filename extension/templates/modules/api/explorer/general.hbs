@@ -1,18 +1,17 @@
-<h1 class="ui dividing header">{{info.title}}<span class="ui blue label basic">{{info.version}}</span></h1>
-
-{{#markdown}}
-  {{info.description}}
-{{/markdown}}
+<h1 id="about" class="ui dividing header">{{info.title}}<span class="ui blue label basic">{{info.version}}</span></h1>
 
 
-<h2 class="ui header">Terms of service</h2>
+{{#markdown}}{{info.description}}{{/markdown}}
+
+
+<h2 class="ui header" id="tos">Terms of service</h2>
 {{#if info.termsOfService}}
   <p>{{info.termsOfService}}</p>
 {{else}}
   <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
 {{/if}}
 
-<h2 class="ui header">License</h2>
+<h2 id="license" class="ui header">License</h2>
 {{#if info.license}}
   <p><a href="{{info.license.url}}" target="_blank">{{info.license.name}}</a></p>
 {{else}}
@@ -20,7 +19,7 @@
 {{/if}}
 
 
-<h2 class="ui header">Contact</h2>
+<h2 id="contact" class="ui header">Contact</h2>
 {{#if info.contact}}
 <div class="ui cards">
   <div class="card">
@@ -36,30 +35,14 @@
 {{/if}}
 
 
-
-<h2 class="ui header">Tags</h2>
-
-
 {{#if tags}}
+
+<h2 id="tags" class="ui header">Tags</h2>
+
 <div class="ui cards">
 
   {{#each tags}}
-    <div class="card">
-      <div class="ui top attached label">{{name}}</div>
-      <div class="content">
-        <div class="meta"><a href="{{url}}" target="_blank">{{url}}</a></div>
-        <div class="description">
-          {{description}}
-        </div>
-      </div>
-      {{#externalDocs}}
-      <div class="extra content">
-        <div>
-          {{#markdown}}{{description}} <a href="{{url}}" target="_blank"><i class="external icon small"></i></a>{{/markdown}}
-        </div>
-      </div>
-      {{/externalDocs}}
-    </div>
+    <a class="ui tag label" title="{{description}}">{{name}}</a>
   {{/each}}
 
 </div>
@@ -69,6 +52,6 @@
 
 
 {{#if externalDocs}}
-<h2 class="ui header">External docs <a href="{{externalDocs.url}}" target="_blank"><i class="external icon small"></i></a></h2>
+<h2 id="external-docs" class="ui header">External docs <a href="{{externalDocs.url}}" target="_blank"><i class="external icon small"></i></a></h2>
 {{#markdown}}{{externalDocs.description}}{{/markdown}}
 {{/if}}

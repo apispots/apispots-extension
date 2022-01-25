@@ -33,35 +33,97 @@ body {
 }
 
 
-/*******************************
-  Master headers backgrounds
-*******************************/
-
-.masthead {
-  background-repeat: no-repeat!important;
-  background-size: cover!important;
-}
-
-.masthead.segment {
-  min-height: 500px;
-  padding: 1em 0em;
-}
-
-.masthead h1.ui.header {
-  margin-top: 1em;
-}
 
 .ui.vertical.stripe {
-  padding: 3em 0em;
+  padding: 8em 0em;
 }
 
-#home .masthead {
-  background-image: url("/assets/backgrounds/stars.jpg")!important;
-  background-size: auto;
+/******************************
+  API Explorer
+*******************************/
+
+/*******************************
+         Sidebar Layout
+*******************************/
+
+#api > .pusher > .full.height {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+#api:not(.site) > .pusher > .full.height {
+  background-color: #FFFFFF;
 }
 
-#openapis .masthead {
-  background-image: url("/assets/images/openapis/logo.png")!important;
+/* page layout */
+#api .full.height > .toc {
+  position: fixed;
+  z-index: 1;
+  background-color: #1b1c1d;
+  width: 250px;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+}
+
+#api .full.height > .toc .ui.menu {
+  border-radius: 0;
+  border-width: 0 1px 0 0;
+  box-shadow: none;
+  margin: 0;
+  width: inherit;
+  overflow: hidden;
+  will-change: transform;
+  max-height: 100vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#api .article {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  min-width: 0px;
+  margin-left: 0px;
+}
+
+#api .full.height > .toc .ui.menu::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+#api .full.height > .toc .ui.menu::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0);
+}
+#api .full.height > .toc .ui.menu::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0);
+}
+
+#api .full.height > .toc .ui.menu:hover::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+#api .full.height > .toc .ui.menu:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+#api .article > .footer {
+  border-top: 1px solid #DDDDDD;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.08) inset;
+  background-color: #FAFAFA;
+  padding-top: 2em;
+}
+
+#api .tag {
+  margin-left: 2em;
+  margin-bottom: 1em
+}
+
+#graph {
+  height: 500px;
 }
 
 /*******************************

@@ -4,9 +4,9 @@
   "name": "API Spots",
   "short_name": "apispots",
   "description": "APIs for Humans",
-  "version": "2.4.4",
+  "version": "3.0.0",
 
-  "author": "Chris Spiliotopoulos",
+  "author": "Chrysanthos Spiliotopoulos",
   "homepage_url": "https://apispots.github.io",
 
   "icons": {

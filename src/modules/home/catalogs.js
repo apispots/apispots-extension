@@ -5,7 +5,7 @@
 import * as _ from 'lodash';
 import postal from 'postal';
 
-import tplBody from '../../../extension/templates/modules/openapis/catalog/index.hbs';
+import tplBody from '../../../extension/templates/modules/catalogs/index.hbs';
 
 export default (function() {
 

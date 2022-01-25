@@ -1,0 +1,53 @@
+<div class="ui vertical inverted menu">
+
+  <div class="item">
+    <a href="#"><b>{{spec.info.title}}</b></a>
+  </div>
+
+  <a class="item" href="/index.html">
+    Back home
+  </a>
+
+  <a class="item" data-section="general">
+    General
+  </a>
+
+  <a class="item" data-section="security">
+    Security
+  </a>
+
+  <div class="item">
+    <div class="header">Operations</div>
+    <div class="menu">
+
+      <a class="item"  data-section="graph">
+        Graph
+      </a>
+
+      {{!-- {{#each classes}}
+      <a class="item" data-item="definition" data-id="{{this}}">
+        {{this}}
+      </a>
+      {{/each}} --}}
+
+
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="header">Definitions</div>
+    <div class="menu">
+
+      {{#each classes}}
+      <a class="item" data-item="definition" data-id="{{this}}">
+        {{this}}
+      </a>
+      {{/each}}
+
+
+    </div>
+  </div>
+
+  
+
+</div>

@@ -2,17 +2,27 @@
  * Handlebars helpers.
  * @return {[type]} [description]
  */
-import * as markdown from 'helper-markdown';
+import shodown from 'showdown';
 import * as Handlebars from 'handlebars/runtime';
 import _ from 'lodash';
+import { decode } from 'html-entities';
 
-export default (function() {
+
+const converter = new shodown.Converter();
+
+export default (function () {
 
   // register the Markdown helper
-  Handlebars.registerHelper('markdown', markdown());
+  Handlebars.registerHelper('markdown', function (options) {
+
+    const text = options.fn(this);
+    const html = converter.makeHtml(decode(text));
+    return html;
+
+  });
 
   // equals helper
-  Handlebars.registerHelper('eq', function(a, b, options) {
+  Handlebars.registerHelper('eq', function (a, b, options) {
 
     if (_.isEqual(a, b)) {
       return options.fn(this);

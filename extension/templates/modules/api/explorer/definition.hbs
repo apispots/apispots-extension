@@ -1,0 +1,88 @@
+<div class="content">
+
+  <h1>{{id}}</h1>
+
+  {{#if definition.description}}
+    <div class="description">
+      {{#markdown}}
+        {{definition.description}}
+      {{/markdown}}
+    </div>
+  {{/if}}
+
+  {{#if definition.properties}}
+  <table class="ui celled table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Format</th>
+        <th>Required</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each definition.properties}}
+      <tr class="{{#if required}}positive{{/if}}">
+       
+        <td title="{{@key}}">
+          <span><b>{{@key}}</b></span>
+        </td>
+
+        <td>
+          {{#markdown}}{{description}}{{/markdown}}
+        </td>
+       
+        <td>
+          
+          {{#if items}}
+            {{#if items.$$ref}}
+            <a href="#" title="{{items.type}}"
+              data-item="definition"
+              data-id="{{items.type}}">
+              {{items.type}}
+            </a>
+            {{else}}
+            <span class="ui basic label blue" title="{{items.type}}">{{items.type}}</span>
+            {{/if}}
+          {{else}}
+
+            {{#if $$ref}}
+            <a href="#" 
+              data-item="definition"
+              data-id="{{type}}">
+              {{type}}
+            </a>
+            {{else}}
+              <span class="ui basic label blue" title="{{type}}">{{type}}</span>
+            {{/if}}
+  
+          {{/if}}
+        </td>
+
+        <td>
+          {{format}}
+        </td>
+
+        <td>
+          {{#if required}}
+          <i class="icon check green"></i>
+          {{/if}}
+        </td>
+
+         <td>
+          {{#markdown}}{{example}}{{/markdown}}
+        </td>
+
+      </tr>
+      {{/each}}
+
+    </tbody>
+  </table>
+  {{else}}
+  <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+  {{/if}}
+
+
+</div>

@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 let webpackConfig = {
@@ -11,7 +11,8 @@ let webpackConfig = {
 
   entry: {
     base: './common/base.js',
-    openapis: './modules/openapis/index.js',
+    home: './modules/home/index.js',
+    api: './modules/api/index.js',
     background: './browser/background/index.js',
     content: './browser/content/index.js'
   },
@@ -26,13 +27,13 @@ let webpackConfig = {
     port: 8080
   },
 
-  devtool: '#cheap-source-map',
+  devtool: 'cheap-module-source-map',
 
   plugins: [
 
     new MiniCssExtractPlugin({
-    // Options similar to the same options in webpackOptions.output
-    // both options are optional
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
@@ -47,7 +48,13 @@ let webpackConfig = {
       postal: 'postal'
     })
 
-  ]
+  ],
+
+  resolve: {
+    fallback: {
+      stream: require.resolve("stream-browserify") 
+    }
+  }
 
 };
 

@@ -31,7 +31,7 @@ export default (function() {
 
         chrome.tabs.create({
           active: true,
-          url: 'pages/openapis.html'
+          url: 'index.html'
         });
       });
 
