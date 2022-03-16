@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import postal from 'postal';
-import swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 import asyncWaterfall from 'async/waterfall';
 import ApiDefinitionLoader from '../../lib/openapi/api-definition-loader';
 
@@ -18,12 +18,16 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
    */
   const onReady = function () {
 
-    // check if any query params have
-    // been provided for loading specific
-    // content
-    const command = _checkForDeepLinks();
+    try {
+      // check if any query params have
+      // been provided for loading specific
+      // content
+      const command = _checkForDeepLinks();
 
-    if (command) {
+      if (! command){
+        throw new Error('Did not find any action to execute...');
+      }
+
       // if a command has been returned
       // switch view to loading state
 
@@ -32,31 +36,18 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
       // and publish the action
       postal.publish(command);
-    } else {
-
-      // load the default view
-      _loadDefaultView();
     }
-
+    catch (e) {
+      // show an error alert
+      Swal.fire({
+        title: 'Open API explorer',
+        text: e.message,
+        icon: 'error',
+        timer: 10000
+      });
+    }
   };
 
-  /**
-   * Loads the default view.
-   * @return {[type]} [description]
-   */
-  const _loadDefaultView = () => {
-
-    const model = {};
-
-    // render the default view
-    const html = tplBody(model);
-    $('body').html(html);
-
-    // bind all event listeners
-    _bindListeners();
-    _bindValidators();
-
-  };
 
 
   /**
@@ -65,24 +56,23 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
    */
   const _checkForDeepLinks = function () {
 
+    let command = null;
+
     try {
 
-      let command = null;
 
       // check if a specific URL is provided
       // as a query param
       if (!_.isEmpty(_getUrlParam('url'))) {
         const url = _getUrlParam('url');
         command = { channel: 'openapis', topic: 'openapi.load', data: { spec: url } };
-      } 
-
-      return command;
+      }
 
     } catch (e) {
       console.error(e);
     }
 
-    return null;
+    return command;
   };
 
 
@@ -103,22 +93,6 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   };
 
-  /**
-   * Binds all event listeners
-   * @return {[type]} [description]
-   */
-  const _bindListeners = function () {
-
-    // API URL input
-    $('#form-openapi').on('submit', (e) => {
-      e.preventDefault();
-      return true;
-    });
-
-
-    $('[data-action="remove bookmark"]').on('click', _onDeleteBookmark);
-
-  };
 
   /**
    * Called when a user clicks on the
@@ -160,10 +134,10 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
           Explorer.render(api)
             .catch((e) => {
               // show an error alert
-              swal({
+              Swal.fire({
                 title: 'Open API explorer',
                 text: e.message,
-                type: 'error',
+                icon: 'error',
                 timer: 3000
               });
             });
@@ -172,23 +146,20 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
           // show an error alert
           // and reload the default view
-          swal({
+          Swal.fire({
             title: 'Something went wrong...',
             text: `${err.message} [${url}]`,
-            type: 'error',
+            icon: 'error',
             timer: 10000
-          })
-            .then(() => {
-              setTimeout(_loadDefaultView, 300);
-            })
-            .catch(() => {
-              setTimeout(_loadDefaultView, 300);
-            });
+          });
         });
 
     });
 
   };
+
+  
+
 
   /**
    * User selected to delete a spot
@@ -200,7 +171,7 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
     const specUrl = $(e.currentTarget).attr('data-spec');
 
-    swal({
+    Swal.fire({
       title: 'Are you sure?',
       text: 'Do you really want to delete the selected bookmark?',
       type: 'warning',
@@ -235,5 +206,5 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
   // listen for events
   postal.subscribe({ channel: 'openapis', topic: 'openapi.load', callback: _onLoadApiDefinition });
-  
+
 }

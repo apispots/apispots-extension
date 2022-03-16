@@ -50,45 +50,25 @@ export default (function () {
 
         const model = {
           spec: openapi.spec,
-          classes: _.chain(_api.schemas).sortBy('name').flatMap((o) => o.name).value()
+          classes: _.chain(_api.schemas).sortBy('name').flatMap((o) => o.name).value(),
+          operations: _.chain(_api.operations).sortBy('operationId').value()
         };
 
-        asyncWaterfall([
+        // render the body
+        const html = tplBody(model);
 
-          (cb) => {
-            // load bookmarked spots
-            CatalogService.getBookmarkedSpots()
-              .then(bookmarks => {
-                model.bookmarks = bookmarks;
-                cb();
-              })
-              .catch(cb);
-          }
+        // render the body
+        $('body').html(html);
 
-        ], (e) => {
-          if (e) {
-            console.error(e);
-          }
+        // scroll to top
+        window.scrollTo(0, 0);
 
-          // render the body
-          const html = tplBody(model);
+        // attach event listeners
+        _attachListeners();
 
-          // render the body
-          $('body').html(html);
+        // render the general section
+        _renderSection('general');
 
-          // scroll to top
-          window.scrollTo(0, 0);
-
-          // attach event listeners
-          _attachListeners();
-
-          // render the general section
-          _renderSection('general');
-
-
-          // done
-          resolve();
-        });
 
       } catch (e) {
         reject(e);
@@ -111,6 +91,8 @@ export default (function () {
 
     // listeners
     $('.menu .item[data-item=\"definition\"]').on('click', _onDefinitionSelected);
+    $('.menu .item[data-item=\"operation\"]').on('click', _onOperationSelected);
+
 
     $('.menu .item[data-action="bookmark api"]').on('click', _bookmarkApi);
 
@@ -130,7 +112,7 @@ export default (function () {
       _renderSecurity();
     } else if (section === 'graph') {
       _renderOperationsGraph();
-    }
+    } 
 
     // change the hashbang
     window.location.hash = `#${section}`;
@@ -290,6 +272,33 @@ export default (function () {
     window.scrollTo(0, 0);
   };
 
+  /**
+   * Displays the selected operation
+   * details.
+   * @param  {[type]} e [description]
+   * @return {[type]}   [description]
+   */
+   const _onOperationSelected = function () {
+ 
+    const id = $(this).attr('data-id');
+console.log(id)
+    // get the operation instance
+    // const definition = _api.
+
+    // const data = {
+    //   id,
+    //   definition
+    // };
+
+    // const html = tplDefinition(data);
+    // $('#content').html(html);
+
+    // $('a[data-item=\"definition\"]').on('click', _onDefinitionSelected);
+
+    // scroll to top
+    window.scrollTo(0, 0);
+  };
+
 
   /**
    * Renders the operations section
@@ -387,7 +396,7 @@ export default (function () {
 
       const html = tplGraph(data);
       $('#content').html(html);
-console.log(_api.paths)
+
       // render the graph view
       graph.render('#graph', _api);
 

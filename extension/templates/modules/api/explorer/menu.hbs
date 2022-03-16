@@ -9,26 +9,34 @@
   </a>
 
   <a class="item" data-section="general">
-    General
+    About
   </a>
 
   <a class="item" data-section="security">
     Security
   </a>
 
+  <a class="item" data-section="graph">
+    Surface Graph
+  </a>
+
   <div class="item">
     <div class="header">Operations</div>
     <div class="menu">
 
-      <a class="item"  data-section="graph">
-        Graph
+      {{#each operations}}
+      <a class="item" data-item="operation" 
+        data-id="{{operationId}}"
+        title="{{path}}" >
+        
+        {{#if operationId}}
+          {{operationId}}
+        {{else}}
+          {{path}}  
+        {{/if}}
+        {{#verb verb}}{{/verb}} 
       </a>
-
-      {{!-- {{#each classes}}
-      <a class="item" data-item="definition" data-id="{{this}}">
-        {{this}}
-      </a>
-      {{/each}} --}}
+      {{/each}}
 
 
     </div>

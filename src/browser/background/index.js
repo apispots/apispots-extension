@@ -8,7 +8,7 @@ import './spots-catalog';
  * [channel description]
  * @type {[type]}
  */
-chrome.browserAction.onClicked.addListener(() => {
+chrome.action.onClicked.addListener(() => {
   try {
     postal.publish({
       channel: 'browser',

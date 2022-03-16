@@ -310,6 +310,10 @@ export default class OpenApiDefinition extends ApiDefinition {
 
     _.each(paths, (entry, path) => {
       _.each(entry, (op, verb) => {
+
+        if (verb === 'parameters')
+          return;
+
         op.path = path;
         op.verb = verb;
         operations.push(op);
