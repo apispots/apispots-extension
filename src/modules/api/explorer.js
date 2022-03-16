@@ -23,6 +23,8 @@ import tplOperations from '../../../extension/templates/modules/api/explorer/ope
 import tplOperation from '../../../extension/templates/modules/api/explorer/operation.hbs';
 import tplPaths from '../../../extension/templates/modules/api/explorer/paths.hbs';
 import tplGraph from '../../../extension/templates/modules/api/explorer/graph.hbs';
+import tplDefinitions from '../../../extension/templates/modules/api/explorer/definitions.hbs';
+
 
 export default (function () {
 
@@ -112,6 +114,8 @@ export default (function () {
       _renderSecurity();
     } else if (section === 'graph') {
       _renderOperationsGraph();
+    } else if (section === 'definitions') {
+      _renderDefinitions();
     } 
 
     // change the hashbang
@@ -246,6 +250,62 @@ export default (function () {
     }
   };
 
+   /**
+    * Renders the definitions section
+    * @return {[type]} [description]
+    */
+    const _renderDefinitions = function() {
+      try {
+  
+        const data = {
+          definitions: []
+        };
+  
+        const definitions = _api.schemas;
+        data.definitions = definitions;
+  
+        const html = tplDefinitions(data);
+        $('#content').html(html);
+  
+        // listeners
+        $('.card.definition .button').on('click', _renderDefinition);
+  
+      } catch (e) {
+        console.error(`Failed to render General section - ${e}`);
+      }
+    };
+
+      /**
+    * Displays the selected definition
+    * details.
+    * @param  {[type]} e [description]
+    * @return {[type]}   [description]
+    */
+   const _renderDefinition = function() {
+    const id = $(this).attr('data-id');
+
+    // get the definition instance
+    const definition = _api.getDefinition(id);
+
+    const data = {
+      id,
+      definition
+    };
+
+    const html = tplDefinition(data);
+
+    $(html)
+      .modal({
+        duration: 100
+      })
+      .modal('show');
+
+    // listeners
+    $('.view.definition').on('click', _renderDefinition);
+  };
+
+  
+
   /**
    * Displays the selected definition
    * details.
@@ -264,9 +324,15 @@ export default (function () {
     };
 
     const html = tplDefinition(data);
-    $('#content').html(html);
+    
+    $(html)
+      .modal({
+        duration: 100
+      })
+      .modal('show');
 
-    $('a[data-item=\"definition\"]').on('click', _onDefinitionSelected);
+    // listeners
+    $('.view.definition').on('click', _renderDefinition);
 
     // scroll to top
     window.scrollTo(0, 0);

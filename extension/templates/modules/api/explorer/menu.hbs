@@ -20,21 +20,23 @@
     Surface Graph
   </a>
 
+  <a class="item" data-section="definitions">
+      Definitions
+    </a>
+
   <div class="item">
     <div class="header">Operations</div>
     <div class="menu">
 
       {{#each operations}}
-      <a class="item" data-item="operation" 
-        data-id="{{operationId}}"
-        title="{{path}}" >
-        
+      <a class="item" data-item="operation" data-id="{{operationId}}" title="{{path}}">
+
         {{#if operationId}}
-          {{operationId}}
+        {{operationId}}
         {{else}}
-          {{path}}  
+        {{path}}
         {{/if}}
-        {{#verb verb}}{{/verb}} 
+        {{#verb verb}}{{/verb}}
       </a>
       {{/each}}
 
@@ -43,7 +45,8 @@
   </div>
 
   <div class="item">
-    <div class="header">Definitions</div>
+    <div class="header">Model</div>
+    
     <div class="menu">
 
       {{#each classes}}
@@ -56,6 +59,6 @@
     </div>
   </div>
 
-  
+
 
 </div>

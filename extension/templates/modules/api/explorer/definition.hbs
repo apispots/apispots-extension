@@ -1,88 +1,86 @@
-<div class="content">
+<div class="ui large long scrolling modal">
+  <i class="close icon"></i>
+  <div class="header">
+    {{id}}
+  </div>
+  <div class="content">
 
-  <h1>{{id}}</h1>
+    <h4>Description</h4>
+    {{#if definition.description}}
+      <div class="description">
+      {{#markdown}}{{definition.description}}{{/markdown}}
+      </div>
+    {{else}}
+      <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+    {{/if}}
 
-  {{#if definition.description}}
-    <div class="description">
-      {{#markdown}}
-        {{definition.description}}
-      {{/markdown}}
+    <h4>Properties</h4>
+    {{#if definition.properties}}
+    <table class="ui compact table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Definition</th>
+          <th>Description</th>
+          <th>Required</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each definition.properties}}
+          <tr class="{{#if required}}positive{{/if}}">
+            <td title="{{@key}}">
+              <span>{{@key}}</span>
+            </td>
+            <td>
+              {{#if type}}
+                <span class="ui label basic blue">{{type}}</span>
+              {{/if}}
+            </td>
+            <td>
+              {{#if $$ref}}
+                <button class="ui right labeled icon button mini view definition" data-id="{{type}}">
+                  <i class="right arrow icon"></i>
+                  {{type}}
+                </button>
+              {{/if}}
+
+              {{#if items}}
+                {{#if items.$$ref}}
+                  <button class="ui right labeled icon button mini view definition" title="{{items.type}}"
+                    data-id="{{items.type}}">
+                    <i class="right arrow icon"></i>
+                    {{items.type}}
+                  </button>
+                {{else}}
+                  <span class="ui label basic blue" title="{{items.type}}">{{items.type}}</span>
+                {{/if}}
+
+              {{/if}}
+            </td>
+            <td>
+              {{#markdown}}{{description}}{{/markdown}}
+            </td>
+            <td>
+              {{#if required}}
+              <i class="icon check green"></i>
+              {{/if}}
+            </td>
+          </tr>
+        {{/each}}
+
+      </tbody>
+    </table>
+    {{else}}
+      <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+    {{/if}}
+
+
+  </div>
+  <div class="actions">
+    <div class="ui positive right labeled icon button">
+      Ok
+      <i class="checkmark icon"></i>
     </div>
-  {{/if}}
-
-  {{#if definition.properties}}
-  <table class="ui celled table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Type</th>
-        <th>Format</th>
-        <th>Required</th>
-        <th>Example</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each definition.properties}}
-      <tr class="{{#if required}}positive{{/if}}">
-       
-        <td title="{{@key}}">
-          <span><b>{{@key}}</b></span>
-        </td>
-
-        <td>
-          {{#markdown}}{{description}}{{/markdown}}
-        </td>
-       
-        <td>
-          
-          {{#if items}}
-            {{#if items.$$ref}}
-            <a href="#" title="{{items.type}}"
-              data-item="definition"
-              data-id="{{items.type}}">
-              {{items.type}}
-            </a>
-            {{else}}
-            <span class="ui basic label blue" title="{{items.type}}">{{items.type}}</span>
-            {{/if}}
-          {{else}}
-
-            {{#if $$ref}}
-            <a href="#" 
-              data-item="definition"
-              data-id="{{type}}">
-              {{type}}
-            </a>
-            {{else}}
-              <span class="ui basic label blue" title="{{type}}">{{type}}</span>
-            {{/if}}
-  
-          {{/if}}
-        </td>
-
-        <td>
-          {{format}}
-        </td>
-
-        <td>
-          {{#if required}}
-          <i class="icon check green"></i>
-          {{/if}}
-        </td>
-
-         <td>
-          {{#markdown}}{{example}}{{/markdown}}
-        </td>
-
-      </tr>
-      {{/each}}
-
-    </tbody>
-  </table>
-  {{else}}
-  <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
-  {{/if}}
-
-
+  </div>
 </div>

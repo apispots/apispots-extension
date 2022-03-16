@@ -1,0 +1,34 @@
+<h2>Data definitions</h2>
+<p>
+Data objects to hold data types that can be consumed and produced by operations.
+These data types can be primitives, arrays or models.
+</p>
+
+{{#if definitions}}
+<div class="ui special cards">
+
+  {{#each definitions}}
+  <div class="ui card definition">
+      <div class="content">
+        <div class=""><h4>{{name}}</h4></div>
+        <div class="meta">
+
+        </div>
+        <div class="description">
+          {{#if description}}
+            {{#markdown}}{{description}}{{/markdown}}
+          {{else}}
+            <img class="ui wireframe image small" src="../../../../assets/images/common/paragraph.png">
+          {{/if}}
+        </div>
+      </div>
+      <div class="ui bottom attached button" data-id="{{name}}">
+        View
+      </div>
+    </div>
+  {{/each}}
+
+</div>
+{{else}}
+  <img class="ui wireframe image" src="../../../../assets/images/common/paragraph.png">
+{{/if}}
