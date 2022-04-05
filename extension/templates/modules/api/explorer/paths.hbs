@@ -1,50 +1,46 @@
 <h2>Operations grouped by path</h2>
 <p>
-List of supported API paths with supported summarized operations.
-Clicking on a path will open its details.
+  List of supported API paths with supported summarized operations.
+  Clicking on a path will open its details.
 </p>
 
 
+
 {{#if paths}}
-<div class="ui segments">
-  {{#each paths}}
-  <div class="ui clearing segment">
 
-    <div class="ui stackable grid">
-      <div class="two column row">
-        <div class="column">
+<table class="ui celled table operations">
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Verb</th>
+      <th>Operation Id</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
 
-          <div class="ui list">
-            {{#each this}}
-              <div class="item">
-                {{#verb verb}}{{/verb}}
+    {{#each operations}}
+    <tr>
+      <td data-label="Path"> 
+        <a href='#' data-type="path" data-id="{{path}}">{{path}}</a>
+      </td>
+      <td data-label="Verb">
+        {{#verb_label verb}}{{/verb_label}} 
+      </td>
+      <td data-label="Operation Id">
+        <a href="#" data-type="path" data-id="{{this.path}}" data-verb="{{this.verb}}">{{operationId}}</a>
+      </td>
+      <td data-label="Description">
+        {{summary}}
+      </td>
+    </tr>
+    {{/each}}
 
-                {{#if deprecated}}
-                  <del>{{summary}}</del>
-                {{else}}
-                  <a href="#" data-type="path" data-id="{{this.path}}" data-verb="{{this.verb}}">{{summary}}</a>
-                {{/if}}
+  </tbody>
+</table>
 
-                {{#if deprecated}}
-                  <span class="ui tiny label">deprecated</span>
-                {{/if}}
-              </div>
-            {{/each}}
 
-          </div>
 
-        </div>
-        <div class="column">
-          <h4>
-            <a href='#' data-type="path" data-id="{{@key}}">{{@key}}</a></h4>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-  {{/each}}
-</div>
 {{else}}
-  <img class="ui wireframe image" src="../../../../assets/images/common/paragraph.png">
+<img class="ui wireframe image" src="../../../../assets/images/common/paragraph.png">
 {{/if}}

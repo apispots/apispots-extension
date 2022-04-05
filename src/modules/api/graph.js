@@ -40,7 +40,7 @@ export default (function() {
       },
       nodes: {
         shape: 'dot',
-        size: 20,
+        size: 10,
         font: {
           size: 18
         },
@@ -64,7 +64,7 @@ export default (function() {
       let group = o.group;
 
       if (_.isEmpty(name)) {
-        name = 'API Base';
+        name = openapi.spec.info.title;
         group = 'root';
       }
 

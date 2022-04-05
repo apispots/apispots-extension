@@ -3,10 +3,18 @@
         Application
 *******************************/
 body {
-  font-size: 14px;
+  font-size: 12px;
 }
 
+.ui.text.container {
+  max-width: 900px!important;
+ }
+
 .ui.modal>.content {
+  font-size: 14px!important;
+}
+
+.ui.table {
   font-size: 14px!important;
 }
 
@@ -32,11 +40,10 @@ body {
     left: 80%;
 }
 
-
-
 .ui.vertical.stripe {
   padding: 8em 0em;
 }
+
 
 /******************************
   API Explorer
@@ -140,10 +147,26 @@ body {
   line-height: 2;
 }
 
+/*******************************
+  Side menu
+*******************************/
+
+.ui.menu a[data-item="operation"] {
+  word-break: break-all;
+}
 
 /*******************************
   Card lists
 *******************************/
+
+.ui.card.definition {
+  font-size: .8em;
+}
+
+.ui.card.definition h5 {
+  word-break: break-all;
+}
+
 
 .ui.cards.top.margin {
   margin-top: 20px;
@@ -156,6 +179,11 @@ body {
 .ui.cards>.card>.content>.header:not(.ui) {
   word-wrap: break-word;
 }
+
+.ui.grid a[data-type="path"] {
+  word-break: break-all;
+}
+
 
 /*******************************
   Story maker
@@ -178,6 +206,14 @@ body {
     color: #21ba45
 }
 
+
+/*******************************
+  Operations
+*******************************/
+
+.ui.table.operations a {
+  word-break: break-all;
+}
 
 /*******************************
   Story player

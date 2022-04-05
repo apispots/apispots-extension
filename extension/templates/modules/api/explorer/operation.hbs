@@ -13,7 +13,7 @@
         {{#if deprecated}}
           <span><del>{{@key}}</del></span> <span class="ui tiny label">deprecated</span>
         {{else}}
-          <span>{{@key}}</span>
+          <span style="text-transform: uppercase;">{{@key}}</span>
         {{/if}}
       </a>
       {{/each}}
@@ -25,15 +25,6 @@
 
         <h4>Operation Id</h4>
         <span class="ui label basic blue">{{operationId}}</span>
-
-        {{#unless deprecated}}
-          <button class="ui labeled mini green icon basic button"
-            data-action="create story"
-            data-operation="{{operationId}}">
-            <i class="play icon"></i>
-            Create data story
-          </button>
-        {{/unless}}
 
         <h3>Summary</h3>
         {{#if summary}}
@@ -59,23 +50,10 @@
         {{/if}}
 
         {{#if security}}
-        <h3>Security</h3>
+        <h3>Security &amp; Scopes</h3>
           {{#each security}}
           <div>
-            <span class="ui basic blue label"
-
-              {{#if active}}
-                data-tooltip="This security has been activated"
-              {{else}}
-                data-tooltip="This security has not been activated"
-              {{/if}}
-            >
-              {{#if active}}
-                <i class="green toggle on icon"></i>
-              {{else}}
-                <i class="red toggle on icon"></i>
-              {{/if}}
-
+            <span class="ui basic blue label">
               {{definition}}
             </span>
             {{#each scopes}}
@@ -90,15 +68,15 @@
 
         {{#if parameters}}
         <h3>Parameters</h3>
-        <table class="ui fixed table">
+        <table class="ui table">
           <thead>
             <tr>
               <th>Name</th>
-              <th>Required</th>
               <th>In</th>
               <th>Type</th>
               <th>Description</th>
               <th>Format</th>
+              <th>Required</th>
             </tr>
           </thead>
           <tbody>
@@ -106,11 +84,6 @@
               <tr class="{{#if required}}positive{{/if}}">
                 <td>
                   {{name}}
-                </td>
-                <td>
-                  {{#if required}}
-                  <i class="icon check green"></i>
-                  {{/if}}
                 </td>
                 <td>
                   {{#if in}}
@@ -139,6 +112,12 @@
                   {{format}}
                   {{/if}}
                 </td>
+                <td>
+                  {{#if required}}
+                  <i class="icon check green"></i>
+                  {{/if}}
+                </td>
+                
               </tr>
             {{/each}}
 

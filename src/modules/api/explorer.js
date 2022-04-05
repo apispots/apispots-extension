@@ -39,7 +39,8 @@ export default (function () {
    * @param  {[type]} openapi [description]
    * @return {[type]}         [description]
    */
-  const _render = function (openapi) {
+  const _render = function (openapi, opts = {}) {
+
     return new Promise((resolve, reject) => {
       try {
 
@@ -69,8 +70,13 @@ export default (function () {
         _attachListeners();
 
         // render the general section
-        _renderSection('general');
+        const section = opts.section || 'general';
+        _renderSection(section);
 
+        // check if URL points to specific definition
+        if (opts.definition) {
+          _onDefinitionSelected(opts.definition);
+        }
 
       } catch (e) {
         reject(e);
@@ -92,8 +98,14 @@ export default (function () {
     });
 
     // listeners
-    $('.menu .item[data-item=\"definition\"]').on('click', _onDefinitionSelected);
-    $('.menu .item[data-item=\"operation\"]').on('click', _onOperationSelected);
+    $('.menu .item[data-item=\"definition\"]').on('click', (e) => {
+      const id = $(e.currentTarget).attr('data-id');
+      _onDefinitionSelected(id);
+    });
+    $('.menu .item[data-item=\"operation\"]').on('click', (e) => {
+      const id = $(e.currentTarget).attr('data-id');
+      _onOperationSelected(id);
+    });
 
 
     $('.menu .item[data-action="bookmark api"]').on('click', _bookmarkApi);
@@ -116,10 +128,22 @@ export default (function () {
       _renderOperationsGraph();
     } else if (section === 'definitions') {
       _renderDefinitions();
-    } 
+    } else if (section === 'operations') {
+      _renderOperations();
+    }
 
-    // change the hashbang
-    window.location.hash = `#${section}`;
+    // update the URL without reloading
+    if (history.pushState) {
+
+      let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+
+      const query = new URLSearchParams();
+      query.append("url", _api.openapi.specUrl);
+      query.append("section", section);
+      newurl = `${newurl}?${query.toString()}`;
+
+      window.history.pushState({ path: newurl }, '', newurl);
+    }
 
     // scroll to top
     window.scrollTo(0, 0);
@@ -250,38 +274,41 @@ export default (function () {
     }
   };
 
-   /**
-    * Renders the definitions section
-    * @return {[type]} [description]
-    */
-    const _renderDefinitions = function() {
-      try {
-  
-        const data = {
-          definitions: []
-        };
-  
-        const definitions = _api.schemas;
-        data.definitions = definitions;
-  
-        const html = tplDefinitions(data);
-        $('#content').html(html);
-  
-        // listeners
-        $('.card.definition .button').on('click', _renderDefinition);
-  
-      } catch (e) {
-        console.error(`Failed to render General section - ${e}`);
-      }
-    };
+  /**
+   * Renders the definitions section
+   * @return {[type]} [description]
+   */
+  const _renderDefinitions = function () {
+    try {
 
-      /**
-    * Displays the selected definition
-    * details.
-    * @param  {[type]} e [description]
-    * @return {[type]}   [description]
-    */
-   const _renderDefinition = function() {
+      const data = {
+        definitions: []
+      };
+
+      const definitions = _api.schemas;
+      data.definitions = definitions;
+
+      const html = tplDefinitions(data);
+      $('#content').html(html);
+
+      // listeners
+      $('.card.definition .button').on('click', (e) => {
+        const id = $(e.currentTarget).attr('data-id');
+        _onDefinitionSelected(id);
+      });
+
+    } catch (e) {
+      console.error(`Failed to render General section - ${e}`);
+    }
+  };
+
+  /**
+* Displays the selected definition
+* details.
+* @param  {[type]} e [description]
+* @return {[type]}   [description]
+*/
+  const _renderDefinition = function () {
     const id = $(this).attr('data-id');
 
     // get the definition instance
@@ -304,7 +331,7 @@ export default (function () {
     $('.view.definition').on('click', _renderDefinition);
   };
 
-  
+
 
   /**
    * Displays the selected definition
@@ -312,11 +339,15 @@ export default (function () {
    * @param  {[type]} e [description]
    * @return {[type]}   [description]
    */
-  const _onDefinitionSelected = function () {
-    const id = $(this).attr('data-id');
+  const _onDefinitionSelected = function (id) {
 
     // get the definition instance
     const definition = _api.getDefinition(id);
+
+    if (!definition) {
+      console.error(`Definition [${id}] not found`);
+      return;
+    }
 
     const data = {
       id,
@@ -324,15 +355,49 @@ export default (function () {
     };
 
     const html = tplDefinition(data);
-    
+
     $(html)
       .modal({
-        duration: 100
+        duration: 100,
+
+        onVisible: function () {
+
+          // update the URL without reloading
+          if (history.pushState) {
+            let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+
+            // get the URL query params
+            const query = new URLSearchParams(window.location.search);
+            query.delete("definition");
+            query.append("definition", id);
+            newurl = `${newurl}?${query.toString()}`;
+
+            window.history.pushState({ path: newurl }, '', newurl);
+          }
+
+          window.scrollTo(0, 0);
+        },
+
+        onHide: function () {
+
+          // // update the URL without reloading
+          // if (history.pushState) {
+          //   let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+          //   const query = new URLSearchParams(window.location.search);
+          //   query.delete("definition");
+          //   newurl = `${newurl}?${query.toString()}`;
+          //   window.history.pushState({ path: newurl }, '', newurl);
+          // }
+
+        }
       })
       .modal('show');
 
     // listeners
-    $('.view.definition').on('click', _renderDefinition);
+    $('.view.definition').on('click', (e) => {
+      const id = $(e.currentTarget).attr('data-id');
+      _onDefinitionSelected(id);
+    });
 
     // scroll to top
     window.scrollTo(0, 0);
@@ -344,22 +409,20 @@ export default (function () {
    * @param  {[type]} e [description]
    * @return {[type]}   [description]
    */
-   const _onOperationSelected = function () {
- 
-    const id = $(this).attr('data-id');
-console.log(id)
-    // get the operation instance
-    // const definition = _api.
+  const _onOperationSelected = function (id) {
 
-    // const data = {
-    //   id,
-    //   definition
-    // };
+    // get the path Id and dispatch the event
+    const path = $(this).attr('data-id');
+    const verb = $(this).attr('data-verb');
 
-    // const html = tplDefinition(data);
-    // $('#content').html(html);
-
-    // $('a[data-item=\"definition\"]').on('click', _onDefinitionSelected);
+    postal.publish({
+      channel: 'openapis',
+      topic: 'openapi.path.operations',
+      data: {
+        path,
+        verb
+      }
+    });
 
     // scroll to top
     window.scrollTo(0, 0);
@@ -378,40 +441,17 @@ console.log(id)
       const html = tplOperations(data);
       $('#content').html(html);
 
-      // bind the menu listener
-      $('.menu.presentation .item').on('click', function () {
-        // render the selected operations view
-        const id = $(this).attr('data-id');
-        _onRenderOperationsView(id);
-      });
-
-      // render the API paths by default
-      _onRenderOperationsView('paths');
-
-    } catch (e) {
-      console.error(`Failed to render General section - ${e}`);
-    }
-  };
-
-  /**
-   * Renders the selected operations view
-   * by Id.
-   * @param  {[type]} id [description]
-   * @return {[type]}    [description]
-   */
-  const _onRenderOperationsView = function (id = 'paths') {
-
-    if (id === 'paths') {
       // default view
       _renderOperationPaths();
-    } else if (id === 'graph') {
-      _renderOperationsGraph();
-    }
 
-    // switch active item
-    $('.menu.presentation .item').removeClass('active');
-    $(`.menu.presentation .item[data-id="${id}"]`).addClass('active');
+
+    } catch (e) {
+      console.error(`Failed to render Operations view - ${e}`);
+    }
   };
+
+
+
 
 
   /**
@@ -421,8 +461,11 @@ console.log(id)
   const _renderOperationPaths = function () {
     try {
 
+      const operations = _.chain(_api.operations).orderBy(['path', 'verb']).value()
+
       const data = {
-        paths: _api.operationsByPath
+        paths: _api.operationsByPath,
+        operations
       };
 
       const html = tplPaths(data);
@@ -466,9 +509,6 @@ console.log(id)
       // render the graph view
       graph.render('#graph', _api);
 
-      // scroll to top
-      window.scrollTo(0, 0);
-
     } catch (e) {
       console.error(`Failed to render General section - ${e}`);
     }
@@ -492,16 +532,6 @@ console.log(id)
 
       asyncWaterfall([
 
-        (cb) => {
-
-          // get the list of activated
-          // security definitions
-          CredentialsManager.getActivatedBySpecUrl(_api.specUrl)
-            .then((securities) => {
-              data.securities = securities;
-              cb();
-            });
-        },
 
         (cb) => {
 
@@ -514,8 +544,7 @@ console.log(id)
               // enrich security elements
               o.security = _.map(s, (o, key) => ({
                 definition: key,
-                scopes: o,
-                active: _.includes(data.securities, key)
+                scopes: o
               }));
             });
           });
@@ -554,27 +583,13 @@ console.log(id)
         }
 
         // listeners
-        $('.modal .view.definition').on('click', _renderDefinition);
-        $('.modal .button[data-action="create story"]').on('click', (e) => {
-
-          // get the target operation Id
-          const operationId = $(e.currentTarget).attr('data-operation');
-
-          // render the data stories section
-          _renderSection('stories');
-
-          postal.publish({
-            channel: 'stories',
-            topic: 'create story',
-            data: {
-              api: _api,
-              operationId
-            }
-          });
-
+        $('.modal .view.definition').on('click', (e)=>{
+          const id = $(e.currentTarget).attr('data-id');
+          _onDefinitionSelected(id);
         });
 
-
+        // scroll to top
+        window.scrollTo(0, 0);
       });
 
     } catch (e) {

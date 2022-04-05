@@ -63,7 +63,7 @@ export default class SwaggerApiDefinition extends ApiDefinition {
 
         // check if the prop is a ref
         if (typeof o.$$ref !== 'undefined') {
-          
+
           // enrich the model with the reference Id
           const id = o.$$ref.split('#/definitions/')[1];
           o.type = id;
@@ -124,7 +124,7 @@ export default class SwaggerApiDefinition extends ApiDefinition {
   get paths() {
     const paths = _.chain(this.spec.paths)
       .map((o, path) => {
-        
+
         const obj = {
           path,
           verbs: _.keys(o).sort()
@@ -248,14 +248,16 @@ export default class SwaggerApiDefinition extends ApiDefinition {
 
           if ((typeof p.schema !== 'undefined') &&
             (typeof p.schema.$$ref !== 'undefined')) {
-            const schema = p.schema.$$ref.replace('#/definitions/', '');
+            const parts = p.schema.$$ref.split('/');
+            const schema = parts[parts.length - 1];
             p.schema = schema;
             p.hasSchema = true;
 
           } else if ((typeof p.schema !== 'undefined') &&
             (typeof p.schema.items !== 'undefined') &&
             (typeof p.schema.items.$$ref !== 'undefined')) {
-            const schema = p.schema.items.$$ref.replace('#/definitions/', '');
+            const parts = p.schema.items.$$ref.split('/');
+            const schema = parts[parts.length - 1];
             p.type = p.schema.type;
             p.schema = schema;
             p.hasSchema = true;
@@ -276,9 +278,13 @@ export default class SwaggerApiDefinition extends ApiDefinition {
           // is this a collection of objects?
           if ((typeof o.schema.items !== 'undefined') &&
             (typeof o.schema.items.$$ref !== 'undefined')) {
-            obj.schema = o.schema.items.$$ref.replace('#/definitions/', '');
+            const parts = o.schema.items.$$ref.split('/');
+            const schema = parts[parts.length - 1];
+            obj.schema = schema;
           } else if (_.has(o.schema, '$$ref')) {
-            obj.schema = o.schema.$$ref.replace('#/definitions/', '');
+            const parts = o.schema.$$ref.split('/');
+            const schema = parts[parts.length - 1];
+            obj.schema = schema;
           }
         }
 
@@ -497,7 +503,7 @@ export default class SwaggerApiDefinition extends ApiDefinition {
 
         // check if the tag is
         // already included in the list
-        const matches = _.find(tags, {name: tag});
+        const matches = _.find(tags, { name: tag });
 
         // console.log(matches);
         // add the tag only if it
@@ -523,7 +529,7 @@ export default class SwaggerApiDefinition extends ApiDefinition {
    * @param  {[type]} tag [description]
    * @return {[type]}     [description]
    */
-  filterOperations({verbs, tag, keywords, allowedOnly=false, sortBy}={}) {
+  filterOperations({ verbs, tag, keywords, allowedOnly = false, sortBy } = {}) {
 
     let ops = this.operations;
 

@@ -49,5 +49,21 @@ export default (function () {
     const html = `<span class="verb ui ${colors[verb]} circular label mini empty" title='${verb.toUpperCase()}'></span>`;
     return html;
   });
+  
+  Handlebars.registerHelper('verb_label', (verb) => {
+
+    const colors = {
+      get: 'blue',
+      put: 'yellow',
+      post: 'orange',
+      patch: 'teal',
+      delete: 'red',
+      options: 'grey',
+      head: 'brown'
+    };
+
+    const html = `<span class="verb ui ${colors[verb]} label" title='${verb.toUpperCase()}'>${verb.toUpperCase()}</span>`;
+    return html;
+  });
 
 }());

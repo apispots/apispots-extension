@@ -24,7 +24,7 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
       // content
       const command = _checkForDeepLinks();
 
-      if (! command){
+      if (!command) {
         throw new Error('Did not find any action to execute...');
       }
 
@@ -60,13 +60,15 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
     try {
 
-
-      // check if a specific URL is provided
-      // as a query param
-      if (!_.isEmpty(_getUrlParam('url'))) {
-        const url = _getUrlParam('url');
-        command = { channel: 'openapis', topic: 'openapi.load', data: { spec: url } };
-      }
+      command = {
+        channel: 'openapis', topic: 'openapi.load',
+        data: {
+          spec: _getUrlParam('url'),
+          section: _getUrlParam('section'),
+          definition: _getUrlParam('definition'),
+          operation: _getUrlParam('operation')
+        }
+      };
 
     } catch (e) {
       console.error(e);
@@ -83,14 +85,10 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
    */
   const _getUrlParam = function (name) {
 
-    const url = window.location.href;
+    const params = new URLSearchParams(window.location.search);
 
-    name = name.replace(/[[]]/g, '\\$&');
-    const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
-    const results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    return params.get(name);
+
   };
 
 
@@ -103,6 +101,11 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
     // load the definition from the given URL
     const url = data.spec;
+    const {
+      section,
+      definition
+    } = data;
+
     let spec = null;
 
     asyncWaterfall([
@@ -126,12 +129,17 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
     ], () => {
 
-      // load the story definition
+      // load the API definition
       ApiDefinitionLoader.load({ url, spec })
         .then((api) => {
 
+          const opts = {
+            section,
+            definition
+          };
+
           // load the Open API into the explorer
-          Explorer.render(api)
+          Explorer.render(api, opts)
             .catch((e) => {
               // show an error alert
               Swal.fire({
@@ -158,7 +166,7 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
   };
 
-  
+
 
 
   /**
