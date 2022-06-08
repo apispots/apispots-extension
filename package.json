@@ -25,9 +25,9 @@
   "analyze": true,
   "license": "MIT",
   "scripts": {
-    "clean": "rm extension/dist -Rf",
-    "start": "node_modules/.bin/webpack --config=webpack.dev.js --watch",
-    "build": "npm run clean && node_modules/.bin/webpack --config=webpack.prod.js",
+    "clean": "rd /s /q .\\extension\\dist ",
+    "start": ".\\node_modules\\.bin\\webpack --config=webpack.dev.js --watch",
+    "build": "npm run clean && .\\node_modules\\.bin\\webpack --config=webpack.prod.js",
     "zip": "cd extension && bestzip extension.zip * && mv extension.zip ~/Downloads/extension.zip",
     "dev": "npm run clean && npm run start",
     "bundle": "npm run clean && npm run build && npm run zip"
