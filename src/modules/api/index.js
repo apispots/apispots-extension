@@ -36,6 +36,24 @@ import tplBody from '../../../extension/templates/modules/home/index.hbs';
 
       // and publish the action
       postal.publish(command);
+
+      if (window.history && window.history.pushState) {
+
+        // on back browser button, force reload the page
+        $(window).on('popstate', function () {
+
+          // window.location.reload();
+          // check if any query params have
+          // been provided for loading specific
+          // content
+          const command = _checkForDeepLinks();
+          // and publish the action
+          // postal.publish(command);
+          console.log(window.history)
+        });
+
+
+      }
     }
     catch (e) {
       // show an error alert

@@ -112,6 +112,36 @@ export default (function () {
 
     $('.ui.dropdown').dropdown();
 
+    /**
+     * initialize search box
+     */
+
+     var categoryContent = [
+      { category: 'South America', title: 'Brazil' },
+      { category: 'South America', title: 'Peru' },
+      { category: 'North America', title: 'Canada' },
+      { category: 'Asia', title: 'South Korea' },
+      { category: 'Asia', title: 'Japan' },
+      { category: 'Asia', title: 'China' },
+      { category: 'Europe', title: 'Denmark' },
+      { category: 'Europe', title: 'England' },
+      { category: 'Europe', title: 'France' },
+      { category: 'Europe', title: 'Germany' },
+      { category: 'Africa', title: 'Ethiopia' },
+      { category: 'Africa', title: 'Nigeria' },
+      { category: 'Africa', title: 'Zimbabwe' },
+    ];
+
+    $('#searchbox')
+      .search({
+        type: 'category',
+        minCharacters: 3,
+        onSearchQuery: (query) => {
+          console.log(query);
+        }
+      });
+
+      
   };
 
   /**
@@ -583,7 +613,7 @@ export default (function () {
         }
 
         // listeners
-        $('.modal .view.definition').on('click', (e)=>{
+        $('.modal .view.definition').on('click', (e) => {
           const id = $(e.currentTarget).attr('data-id');
           _onDefinitionSelected(id);
         });

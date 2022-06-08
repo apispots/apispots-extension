@@ -1,4 +1,3 @@
-
 {{!-- {{>modules/api/explorer/menu}} --}}
 
 {{!-- <div class="pusher">
@@ -20,13 +19,24 @@
 
     <div class="toc">
 
-       {{>modules/api/explorer/menu}}
+      {{>modules/api/explorer/menu}}
 
     </div>
 
     <div class="article">
 
-      <div id="content" class="main ui text container">
+
+      <div class="main ui text container">
+
+        <div id="searchbox" class="ui search centered row"  style="margin-bottom: 40px;">
+          <div class="ui icon input" style="width: 100%;">
+            <input class="prompt" type="text" placeholder="Search specification ...">
+            <i class="search icon"></i>
+          </div>
+          <div class="results"></div>
+        </div>
+
+        <div id="content" class="ui centered row"></div>
 
       </div>
 
